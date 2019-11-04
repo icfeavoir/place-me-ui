@@ -1,0 +1,58 @@
+@startuml
+class Event {
+  id
+  name
+  date
+}
+
+class Group {
+  id
+  name
+  number
+  event_id
+  constraint_id
+  constraint_nb
+}
+
+class Plan {
+  id
+  name
+  width
+  height
+}
+
+class Forbidden_seat {
+  id
+  plan_id
+  line
+  cell
+}
+
+class constraint {
+  id
+  name
+  description
+}
+
+class Constraint_seat {
+  id
+  plan_id
+  constraint_id
+  line
+  cell
+}
+
+class Group_seat {
+  id
+  group_id
+  plan_id
+  line
+  cell
+}
+
+Plan -- Forbidden_seat
+Plan -- Constraint_seat
+Plan -- Group_seat
+Group -- Group_seat
+Constraint -- Constraint_seat
+@enduml

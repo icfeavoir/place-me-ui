@@ -1,8 +1,8 @@
 const express = require("express")
 const router = express.Router()
-const userService = require("../services/user.service")
+const eventService = require("../services/event.service")
 
-router.get("/users", userService.getAll.bind(userService))
-router.get("/users/:userId", userService.getById.bind(userService))
+router.get("/events", eventService.getAll.bind(eventService))
+router.get("/events/:eventId", eventService.getById.bind(eventService))
 
 module.exports = router

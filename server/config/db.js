@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
 const config = require('./index')
 
-const sequelize = new Sequelize(config.dbConnection)
+const sequelize = new Sequelize(config.dbConnection, {logging: false})
 sequelize.authenticate()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    console.log('Connection has been established successfully!');
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);

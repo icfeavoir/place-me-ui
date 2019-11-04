@@ -1,0 +1,38 @@
+const {Sequelize, sequelize} = require('../config/db');
+const Plan = require('./plan.model')
+const Constraint = require('./constraint.model')
+
+const Model = Sequelize.Model;
+class ConstraintSeat extends Model {}
+ConstraintSeat.init({
+    plan_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: Plan,
+            key: 'id',
+        },
+        allowNull: false,
+    },
+    constraint_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: Constraint,
+            key: 'id',
+        },
+        allowNull: false,
+    },
+    line: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+    },
+    cell: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+    }
+}, {
+    sequelize,
+    modelName: 'constraint_seat'
+    // options
+});
+
+module.exports = ConstraintSeat
