@@ -1,7 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Users from '@/components/Users'
-import User from '@/components/UserPage'
+
+import Groups from '@/components/Groups'
+import Group from '@/components/GroupPage'
+
+import Events from '@/components/Events'
+import Event from '@/components/EventPage'
+
+import Plans from '@/components/Plans'
+import Plan from '@/components/PlanPage'
 
 Vue.use(Router)
 
@@ -9,13 +16,35 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Users',
-      component: Users
+      name: 'Groups',
+      component: Groups
     },
     {
-      path: '/users/:userId',
-      name: 'UserPage',
-      component: User
+      path: '/groups/:groupId',
+      name: 'GroupPage',
+      component: Group
+    },
+
+    {
+      path: '/events',
+      name: 'Events',
+      component: Events
+    },
+    {
+      path: '/events/:eventId',
+      name: 'EventPage',
+      component: Event
+    },
+
+    {
+      path: '/plans',
+      name: 'Plans',
+      component: Plans
+    },
+    {
+      path: '/plans/:planId',
+      name: 'PlanPage',
+      component: Plan
     }
   ]
 })

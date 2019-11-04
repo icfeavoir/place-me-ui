@@ -1,24 +1,24 @@
 <template>
-  <div class='users'>
-    <router-link v-for='user in users' class='user' :key='user._id' :to='{name: "UserPage", params: {userId: user.id}}'>
-      {{ user.firstName }} {{ user.lastName }}
+  <div class='events'>
+    <router-link v-for='event in events' class='event' :key='event._id' :to='{name: "EventPage", params: {eventId: event.id}}'>
+      {{ event.name }}
     </router-link>
   </div>
 </template>
 
 <script>
-import userService from '../services/user.service'
+import eventService from '../services/event.service'
 export default {
-  name: 'Users',
+  name: 'Events',
   data () {
     return {
-      users: []
+      events: []
     }
   },
   mounted () {
-    userService.getAll()
-      .then((users) => {
-        this.$set(this, 'users', users)
+    eventService.getAll()
+      .then((events) => {
+        this.$set(this, 'events', events)
       })
   }
 }
@@ -26,14 +26,14 @@ export default {
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
-.users {
+.events {
   width: 80%;
   margin: 0 auto;
   padding-top: 100px;
   display: flex;
   flex-wrap: wrap;
 }
-.user {
+.event {
   border-radius: 3px;
   color: #FFFFFF;
   display: block;

@@ -35,4 +35,7 @@ ConstraintSeat.init({
     // options
 });
 
+ConstraintSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
+ConstraintSeat.belongsTo(Constraint, {foreignKey: 'constraint_id'});
+
 module.exports = ConstraintSeat

@@ -1,30 +1,31 @@
 <template>
-  <div class='user-page-main'>
-    <template v-if='user'>
-      <div class='user-firstName'>
-        <h2>{{ user.firstName }}</h2>
+  <div class='plan-page-main'>
+    <template v-if='plan'>
+      <div class='plan-name'>
+        <h2>{{ plan.name }}</h2>
+        {{ plan.width }} x {{ plan.height }}
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import userService from '../services/user.service'
+import planService from '../services/plan.service'
 export default {
   components: {
 
   },
   data () {
     return {
-      user: null,
+      plan: null,
       lists: []
     }
   },
   created () {
   },
   mounted () {
-    userService.findById(this.$route.params.userId).then(user => {
-      this.$set(this, 'user', user)
+    planService.findById(this.$route.params.planId).then(plan => {
+      this.$set(this, 'plan', plan)
     })
   },
   methods: {
@@ -33,7 +34,7 @@ export default {
 </script>
 
 <style>
-.user-firstName .is-editing {
+.plan-firstName .is-editing {
   background-color: #ffffff;
   color: #000000;
   padding: 8px;

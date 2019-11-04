@@ -8,7 +8,7 @@ module.exports = {
         })
     },
     getById (req, res) {
-        Event.findOne({id: req.params.eventId}).then(event => {
+        Event.findOne({where: {id: req.params.eventId}}).then(event => {
             console.log(event)
             this._handleResponse(event, res)
         })

@@ -56,7 +56,7 @@ module.exports = {
                 height: 9
             },
             {
-                name: "Samedi",
+                name: "Chaises",
                 width: 16,
                 height: 10
             }

@@ -43,4 +43,7 @@ Group.init({
     // options
 });
 
+Group.belongsTo(Event, {foreignKey: 'event_id'})
+Group.belongsTo(Constraint, {foreignKey: 'constraint_id'})
+
 module.exports = Group

@@ -26,4 +26,6 @@ ForbiddenSeat.init({
     // options
 });
 
+ForbiddenSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
+
 module.exports = ForbiddenSeat
