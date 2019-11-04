@@ -1,33 +1,32 @@
 <template>
   <div id='app'>
-    <router-view/>
+    <Menu />
+    <div class="main"><router-view/></div>
   </div>
 </template>
 
 <script>
+import Menu from './components/Menu'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    Menu
+  }
 }
 </script>
 
 <style>
-html {
-  box-sizing: border-box;
-  font-size: 62.5%;
-}
-body {
+* {
   margin: 0;
+  padding: 0;
 }
-html, body, #app {
-  height: 100%;
+Menu {
+  width: 15%;
+  display: inline-block;
 }
-body {
-  background-color: #4fc08d;
-  font-size: 1.6rem;
-  font-family: Helvetica Neue,Arial,Helvetica,sans-serif;
-  line-height: 20px;
-}
-*, *:before, *:after {
-  box-sizing: inherit;
+
+.main {
+  width: 84%;
+  display: inline-block;
 }
 </style>
