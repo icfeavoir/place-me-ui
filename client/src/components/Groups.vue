@@ -1,10 +1,16 @@
 <template>
   <div class='groups'>
-    <router-link v-for='group in groups' class='group' :key='group._id' :to='{name: "GroupPage", params: {groupId: group.id}}'>
-      {{ group.name }}<br>
-      {{ group.number }} persons<br>
-      {{ group.event.name}}
-    </router-link>
+    <button><router-link :to='{name: "GroupNew"}'>New group</router-link></button>
+    <br><br>
+
+    <div class="group" v-for='group in groups' :key='group._id'>
+      <router-link :to='{name: "GroupPage", params: {groupId: group.id}}'>
+        {{ group.name }}<br>
+        {{ group.number }} persons<br>
+        {{ group.event.name}}<br>
+      </router-link>
+      <button @click="delGroup(group.id)">DEL</button>
+    </div>
   </div>
 </template>
 
@@ -22,6 +28,20 @@ export default {
       .then((groups) => {
         this.$set(this, 'groups', groups)
       })
+  },
+  methods: {
+    delGroup: function (id) {
+      if (id) {
+        groupService.delete(id).then(res => {
+          if (res.success) {
+            // remove from groups
+            this.groups = this.groups.filter((group) => {
+              return group.id !== id
+            })
+          }
+        })
+      }
+    }
   }
 }
 </script>
@@ -31,18 +51,13 @@ export default {
 .groups {
   width: 80%;
   margin: 0 auto;
-  padding-top: 100px;
-  display: flex;
-  flex-wrap: wrap;
 }
 .group {
   border-radius: 3px;
   color: #FFFFFF;
-  display: block;
+  display: inline-block;
   text-decoration: none;
   width: 15%;
-  min-width: 150px;
-  min-height: 80px;
   padding: 10px;
   background-color: rgb(0, 121, 191);
   margin: 0 15px 15px 0;

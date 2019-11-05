@@ -30,13 +30,14 @@ module.exports = {
         .then(e => {
             it.createGroups(e.map(a => a.id))
         })
-        .catch(e => console.log("EVENT ERROR: " + e))
+        .catch(e => console.error("EVENT ERROR: " + e))
     },
 
     createGroups (events) {
-        var groups = []
+        const NB_GROUPS = 1
 
-        for (var i=0; i<10; i++) {
+        var groups = []
+        for (var i=0; i<NB_GROUPS; i++) {
             groups.push({
                 name: faker.name.firstName() + ' ' + faker.name.lastName(),
                 number: faker.random.number({min: 5, max: 20}),
@@ -44,7 +45,7 @@ module.exports = {
             })
         }
 
-        Group.bulkCreate(groups).catch(e => console.log("GROUP ERROR: " + e))
+        Group.bulkCreate(groups).catch(e => console.error("GROUP ERROR: " + e))
     },
 
     createPlans () {
@@ -65,7 +66,7 @@ module.exports = {
             it.createForbiddenSeats(plans)
             it.createConstraints(plans)
         })
-        .catch(e => console.log("Plan ERROR: " + e))
+        .catch(e => console.error("Plan ERROR: " + e))
 
     },
 
@@ -81,7 +82,7 @@ module.exports = {
             })
         }
 
-        ForbiddenSeat.bulkCreate(forbidden).catch(e => console.log("FORBIDDEN ERROR: " + e))
+        ForbiddenSeat.bulkCreate(forbidden).catch(e => console.error("FORBIDDEN ERROR: " + e))
     },
 
     createConstraints (plans) {
@@ -89,18 +90,16 @@ module.exports = {
 
         Constraint.bulkCreate([
             {
-                name: "p_rang",
-                description: "Premier rang"
+                name: "Premier rang"
             },
             {
-                name: "handic",
-                description: "Place fauteuil"
+                name: "Place fauteuil"
             },
         ])
         .then(constraints => {
             it.createConstraintSeats(plans, constraints)
         })
-        .catch(e => console.log("FORBIDDEN ERROR: " + e))
+        .catch(e => console.error("FORBIDDEN ERROR: " + e))
     },
 
     createConstraintSeats (plans, constraints) {

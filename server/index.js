@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 const corsConfig = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
     res.header('Access-Control-Allow-Credentials', true)
-    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE')
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
     next()
 }
@@ -24,21 +24,21 @@ if (config.seedData) {
     seederService.seedData()
 }
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.info(`Place-me app listening on port ${port}!`))
 
 // var net = require('net');
 
 // var client = new net.Socket();
 // client.connect(65432, '127.0.0.1', function() {
-// 	console.log('Connected');
+// 	console.info('Connected');
 // 	client.write('Hello, server! Love, Client.');
 // });
 
 // client.on('data', function(data) {
-// 	console.log('Received: ' + data);
+// 	console.info('Received: ' + data);
 // 	client.destroy(); // kill client after server's response
 // });
 
 // client.on('close', function() {
-// 	console.log('Connection closed');
+// 	console.info('Connection closed');
 // });

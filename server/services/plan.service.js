@@ -3,7 +3,6 @@ const Plan = require('../models/plan.model')
 module.exports = {
     getAll (req, res) {
         Plan.findAll().then(plans => {
-            console.log(plans)
             this._handleResponse(plans, res)
         })
     },

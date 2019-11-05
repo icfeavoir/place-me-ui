@@ -26,7 +26,8 @@ Menu {
 }
 
 .main {
-  width: 84%;
+  width: 100%;
   display: inline-block;
+  text-align: center;
 }
 </style>

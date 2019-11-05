@@ -8,9 +8,6 @@ Constraint.init({
         type: Sequelize.STRING,
         allowNull: false
     },
-    description: {
-        type: Sequelize.STRING(1000)
-    }
 }, {
     sequelize,
     modelName: 'constraint'
