@@ -9,5 +9,12 @@ export default {
   },
   findByPlanId (planId) {
     return axios.get('/api/forbiddenSeatsByPlan/' + planId).then(res => res.data)
+  },
+  update (planId, fseats) {
+    var data = {
+      planId: planId,
+      forbiddenSeats: fseats
+    }
+    return axios.post('/api/forbiddenSeatsByPlan/update', data).then(res => res.data)
   }
 }

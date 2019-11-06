@@ -16,6 +16,48 @@ module.exports = {
             this._handleResponse(forbiddenSeats, res)
         })
     },
+    update (req, res) {
+        // on vérifie le plan associé
+        var params = req.body || req || []
+        var result = ''
+        if (!params.planId) {
+            result = "No plan id"
+        } else {
+            // on check tout
+            params.planId = parseInt(params.planId)
+            result = true
+        }
+
+        if (result === true) {
+            // on supprime tous les forbiddenSeats de ce plan puis on les rajoute
+            ForbiddenSeat.destroy({where: {plan_id: params.planId}})
+                .then(() => {
+                    // on rajoute tous les sièges donnés
+                    var fseats = []
+                    if (params.forbiddenSeats) {
+                        for (var i in params.forbiddenSeats) {
+                            var fseat = params.forbiddenSeats[i]
+                            fseats.push({
+                                plan_id: params.planId,
+                                line: fseat.line,
+                                cell: fseat.cell
+                            })
+                        }
+
+                        ForbiddenSeat.bulkCreate(fseats)
+                            .then(fseats => {
+                                console.log('ok')
+                                result.success = true
+                                result.data = fseats
+                                this._handleResponse(result, res)
+                            })
+                    }
+                })
+        } else {
+            this._handleResponse({error: result}, res)
+        }
+
+    },
     _handleResponse (data, res) {
         res.send(data)
     }

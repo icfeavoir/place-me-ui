@@ -31,5 +31,6 @@ router.get("/constraints/:constraintId", constraintService.getById.bind(constrai
 router.get("/forbiddenSeats", forbiddenSeatService.getAll.bind(forbiddenSeatService))
 router.get("/forbiddenSeats/:forbiddenSeatId", forbiddenSeatService.getById.bind(forbiddenSeatService))
 router.get("/forbiddenSeatsByPlan/:planId", forbiddenSeatService.getByPlanId.bind(forbiddenSeatService))
+router.post("/forbiddenSeatsByPlan/update", forbiddenSeatService.update.bind(forbiddenSeatService))
 
 module.exports = router
