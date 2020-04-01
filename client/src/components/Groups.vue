@@ -1,23 +1,41 @@
 <template>
-  <div class='groups'>
-    <button><router-link :to='{name: "GroupNew"}'>New group</router-link></button>
-    <br><br>
+  <div>
+    <router-link class="btn-lg-container" :to='{name: "GroupNew"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
 
-    <div class="group" v-for='group in groups' :key='group._id'>
-      <router-link :to='{name: "GroupPage", params: {groupId: group.id}}'>
-        {{ group.name }}<br>
-        {{ group.number }} persons<br>
-        {{ group.event.name}}<br>
-      </router-link>
-      <button @click="delGroup(group.id)">DEL</button>
+    <p class="search">Rechercher</p>
+    <div class='groups'>
+
+      <div class="group" v-for='group in groups' :key='group._id'>
+        <!-- <router-link :to='{name: "GroupPage", params: {groupId: group.id}}'>
+          {{ group.name }}<br>
+          {{ group.number }} persons<br>
+          {{ group.event.name}} in {{ group.plan.name }}<br>
+        </router-link>
+        <button @click="delGroup(group.id)">DEL</button> -->
+        <Card
+          url="GroupPage"
+          :params="{groupId: group.id}"
+          :data="{
+            title: group.name,
+            number: group.number,
+            desc: group.event.name + ' en ' + group.plan.name,
+            obj: group
+          }"
+          @delete-group='deleteGroup'
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import groupService from '../services/group.service'
+import Card from './elem/Card'
 export default {
   name: 'Groups',
+  components: {
+    Card
+  },
   data () {
     return {
       groups: []
@@ -30,36 +48,34 @@ export default {
       })
   },
   methods: {
-    delGroup: function (id) {
+    deleteGroup: function (group) {
+      const id = group.id
+      const it = this
       if (id) {
-        groupService.delete(id).then(res => {
-          if (res.success) {
-            // remove from groups
-            this.groups = this.groups.filter((group) => {
-              return group.id !== id
+        let options = {
+          okText: 'Valider',
+          cancelText: 'Fermer',
+          backdropClose: true
+        }
+        this.$dialog
+          .confirm('Voulez-vous supprimer la réservation de ' + group.name + ' ?', options)
+          .then(function (dialog) {
+            groupService.delete(id).then(res => {
+              if (res.success) {
+                // remove from groups
+                it.groups = it.groups.filter((group) => {
+                  return group.id !== id
+                })
+              }
             })
-          }
-        })
+          })
+          .catch(function () {})
       }
     }
   }
 }
 </script>
 
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped>
-.groups {
-  width: 80%;
-  margin: 0 auto;
-}
-.group {
-  border-radius: 3px;
-  color: #FFFFFF;
-  display: inline-block;
-  text-decoration: none;
-  width: 15%;
-  padding: 10px;
-  background-color: rgb(0, 121, 191);
-  margin: 0 15px 15px 0;
-}
+<style lang="scss" scoped>
+  @import '../scss/groups.scss';
 </style>

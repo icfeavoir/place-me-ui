@@ -10,6 +10,7 @@ const forbiddenSeatService = require("../services/forbiddenSeat.service")
 
 router.get("/events", eventService.getAll.bind(eventService))
 router.get("/events/:eventId", eventService.getById.bind(eventService))
+router.post("/events/generate", eventService.generate.bind(eventService))
 // router.post("/events/create", eventService.create.bind(eventService))
 
 router.get("/groupSeats", groupSeatService.getAll.bind(groupSeatService))

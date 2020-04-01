@@ -32,10 +32,12 @@ GroupSeat.init({
 }, {
     sequelize,
     modelName: 'group_seat'
-    // options
 });
 
 GroupSeat.belongsTo(Group, {foreignKey: 'group_id'});
+Group.hasMany(GroupSeat, {as: 'group_seats', foreignKey: 'group_id'})
+
 GroupSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
+Plan.hasMany(GroupSeat, {as: 'group_seats', foreignKey: 'plan_id'})
 
 module.exports = GroupSeat

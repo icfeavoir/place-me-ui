@@ -1,10 +1,11 @@
 const Group = require('../models/group.model')
 const Event = require('../models/event.model')
+const Plan = require('../models/plan.model')
 const Constraint = require('../models/constraint.model')
 
 module.exports = {
     getAll (req, res) {
-        Group.findAll({include: [Event]}).then(groups => {
+        Group.findAll({include: [Event, Plan]}).then(groups => {
             this._handleResponse(groups, res)
         })
     },
@@ -142,6 +143,9 @@ module.exports = {
         }
         if (!params.event_id || params.event_id <= 0) {
             return {result: "no event", params: params}
+        }
+        if (!params.plan_id || params.plan_id <= 0) {
+            return {result: "no plan", params: params}
         }
 
         if (!params.constraint_name) {

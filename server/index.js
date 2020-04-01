@@ -1,9 +1,11 @@
+const http = require('http')
 const express = require('express')
 const app = express()
 const port = 3000
 const bodyParser = require('body-parser')
 const config = require('./config/index')
-const seederService = require('./services/seeder.service');
+const seederService = require('./services/seeder.service')
+const socketService = require('./services/socket.service')
 
 app.use(bodyParser.json())
 
@@ -15,30 +17,16 @@ const corsConfig = function(req, res, next) {
     next()
 }
 
-app.use(corsConfig);
+app.use(corsConfig)
 
-const apiRoutes = require('./routes/api');
-app.use('/api', apiRoutes);
+const apiRoutes = require('./routes/api')
+app.use('/api', apiRoutes)
 
-if (config.seedData) {
-    seederService.seedData()
+if (config.createDB) {
+    seederService.seedData(config.seedData)
 }
 
-app.listen(port, () => console.info(`Place-me app listening on port ${port}!`))
+var server = http.createServer(app)
+socketService.start(server)
 
-// var net = require('net');
-
-// var client = new net.Socket();
-// client.connect(65432, '127.0.0.1', function() {
-// 	console.info('Connected');
-// 	client.write('Hello, server! Love, Client.');
-// });
-
-// client.on('data', function(data) {
-// 	console.info('Received: ' + data);
-// 	client.destroy(); // kill client after server's response
-// });
-
-// client.on('close', function() {
-// 	console.info('Connection closed');
-// });
+server.listen(port, () => console.info(`Place-me app listening on port ${port}!`))

@@ -6,5 +6,8 @@ export default {
   },
   findById (id) {
     return axios.get('/api/events/' + id).then(res => res.data)
+  },
+  generate (data) {
+    return axios.post('/api/events/generate', data).then(res => res.data)
   }
 }

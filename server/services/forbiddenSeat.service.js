@@ -46,7 +46,6 @@ module.exports = {
 
                         ForbiddenSeat.bulkCreate(fseats)
                             .then(fseats => {
-                                console.log('ok')
                                 result.success = true
                                 result.data = fseats
                                 this._handleResponse(result, res)

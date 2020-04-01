@@ -1,5 +1,5 @@
 <template>
-  <div class='plan-page-main'>
+  <div class='plan-page-main' @keyup.esc="enterPress">
     <template v-if='plan'>
       <div class='plan-name'>
         <h2>{{ plan.name }}<br>{{ plan.width }} x {{ plan.height }}</h2>
@@ -57,10 +57,14 @@ export default {
       seatSize: SEAT_SIZE,
       seats: [],
       forbiddenSeats: [],
-      selected: []
+      selected: [],
+
+      isShiftPressed: false
     }
   },
   created () {
+    window.addEventListener('keydown', this.keydown, true)
+    window.addEventListener('keyup', this.keyup, true)
   },
   mounted () {
     forbiddenSeatService.findByPlanId(this.planId).then(forbiddenSeats => {
@@ -95,10 +99,57 @@ export default {
   },
   methods: {
     seatClicked: function (seatId) {
+      // quand on clique sur un siège
       if (this.selected.includes(seatId)) {
+        // on a cliqué sur un siège déjà cliqué => on enlève
         this.selected = this.selected.filter((id, i, arr) => { return id !== seatId })
       } else {
+        // si on avait SHIFT enfoncé
+        if (this.isShiftPressed && this.selected.length > 0) {
+          var firstSeat = this.seats.filter((seat, i, arr) => { return seat.id === this.selected[0] })[0]
+          var selectedSeat = this.seats.filter((seat, i, arr) => { return seat.id === seatId })[0]
+          if (firstSeat.id !== undefined && selectedSeat.id !== undefined && firstSeat.id !== selectedSeat.id) {
+            // on prend tous les sièges entre les deux
+            var minLine = Math.min(firstSeat.line, selectedSeat.line)
+            var maxLine = Math.max(firstSeat.line, selectedSeat.line)
+            var minCell = Math.min(firstSeat.cell, selectedSeat.cell)
+            var maxCell = Math.max(firstSeat.cell, selectedSeat.cell)
+
+            for (var line = minLine; line <= maxLine; line++) {
+              for (var cell = minCell; cell <= maxCell; cell++) {
+                var newSeat = this.seats.find(s => s.line === line && s.cell === cell)
+                if (newSeat.id !== undefined) {
+                  this.selected.push(newSeat.id)
+                }
+              }
+            }
+          }
+        }
+
+        // on ajoute le siège sélectionnée dans tous les cas
         this.selected.push(seatId)
+      }
+    },
+
+    keydown: function (event) {
+      switch (event.keyCode) {
+        case 16:
+          // SHIFT
+          this.isShiftPressed = true
+          break
+      }
+    },
+    keyup: function (event) {
+      switch (event.keyCode) {
+        case 16:
+          // SHIFT
+          this.isShiftPressed = false
+          break
+
+        case 27:
+          // ESC
+          this.selected = []
+          break
       }
     },
 
@@ -147,4 +198,5 @@ export default {
   padding: 8px;
   margin: 0;
 }
+
 </style>

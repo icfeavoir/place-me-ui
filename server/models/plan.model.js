@@ -21,7 +21,6 @@ Plan.init({
 }, {
     sequelize,
     modelName: 'plan'
-    // options
 });
 
 module.exports = Plan

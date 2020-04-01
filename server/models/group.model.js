@@ -1,5 +1,6 @@
 const {Sequelize, sequelize} = require('../config/db');
 const Event = require('./event.model')
+const Plan = require('./plan.model')
 const Constraint = require('./constraint.model')
 
 const Model = Sequelize.Model;
@@ -19,6 +20,14 @@ Group.init({
         type: Sequelize.INTEGER,
         references: {
             model: Event,
+            key: 'id',
+        },
+        allowNull: false,
+    },
+    plan_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: Plan,
             key: 'id',
         },
         allowNull: false,
@@ -44,6 +53,12 @@ Group.init({
 });
 
 Group.belongsTo(Event, {foreignKey: 'event_id'})
+Event.hasMany(Group, {as: 'groups', foreignKey: 'event_id'});
+
+Group.belongsTo(Plan, {foreignKey: 'plan_id'})
+Plan.hasMany(Group, {as: 'groups', foreignKey: 'plan_id'})
+
 Group.belongsTo(Constraint, {foreignKey: 'constraint_id'})
+Constraint.hasMany(Group, {as: 'groups', foreignKey: 'constraint_id'})
 
 module.exports = Group

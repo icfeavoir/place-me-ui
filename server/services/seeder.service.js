@@ -8,10 +8,11 @@ const ConstraintSeat = require('../models/constraintSeat.model')
 const ForbiddenSeat = require('../models/forbiddenSeat.model')
 
 module.exports = {
-    seedData () {
+    seedData (seed) {
         sequelize.sync({force: true}).then(() => {
-            this.createEvents()
-            this.createPlans()
+            if (seed) {
+                this.createEvents()
+            }
         })
     },
 
@@ -28,27 +29,12 @@ module.exports = {
             }
         ])
         .then(e => {
-            it.createGroups(e.map(a => a.id))
+            it.createPlans(e.map(a => a.id))
         })
         .catch(e => console.error("EVENT ERROR: " + e))
     },
 
-    createGroups (events) {
-        const NB_GROUPS = 1
-
-        var groups = []
-        for (var i=0; i<NB_GROUPS; i++) {
-            groups.push({
-                name: faker.name.firstName() + ' ' + faker.name.lastName(),
-                number: faker.random.number({min: 5, max: 20}),
-                event_id: events[Math.floor(Math.random() * events.length)],
-            })
-        }
-
-        Group.bulkCreate(groups).catch(e => console.error("GROUP ERROR: " + e))
-    },
-
-    createPlans () {
+    createPlans (events) {
         const it = this
         Plan.bulkCreate([
             {
@@ -63,11 +49,27 @@ module.exports = {
             }
         ])
         .then(plans => {
+            it.createGroups(events, plans.map(p => p.id))
             it.createForbiddenSeats(plans)
             it.createConstraints(plans)
         })
         .catch(e => console.error("Plan ERROR: " + e))
 
+    },
+
+    createGroups (events, plans) {
+        const NB_GROUPS = 1
+        var groups = []
+        for (var i=0; i<NB_GROUPS; i++) {
+            groups.push({
+                name: faker.name.firstName() + ' ' + faker.name.lastName(),
+                number: faker.random.number({min: 5, max: 20}),
+                plan_id: plans[Math.floor(Math.random() * plans.length)],
+                event_id: events[Math.floor(Math.random() * events.length)],
+            })
+        }
+
+        Group.bulkCreate(groups).catch(e => console.error("GROUP ERROR: " + e))
     },
 
     createForbiddenSeats (plans) {

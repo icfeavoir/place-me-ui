@@ -1,42 +1,39 @@
 <template>
-  <nav>
-    <ul>
-        <li><router-link to="/">Reservations</router-link></li>
-        <li><router-link to="/events">Events</router-link></li>
-        <li><router-link to="/plans">Plans</router-link></li>
-    </ul>
-</nav>
+<sidebar-menu @toggle-collapse="$emit('onToggleCollapse', $event)" :menu="menu" :width="width" />
 </template>
 
 <script>
 export default {
-  name: 'Menu',
   data () {
     return {
+      menu: [
+        {
+          header: true,
+          title: 'Menu',
+          hiddenOnCollapse: true
+        },
+        {
+          href: '/',
+          title: 'Réservations',
+          icon: 'fa fa-user'
+        },
+        {
+          href: '/events',
+          title: 'Évènements',
+          icon: 'fa fa-calendar-week'
+        },
+        {
+          href: '/plans',
+          title: 'Plans',
+          icon: 'fa fa-th'
+        }
+      ],
+      width: '250px'
     }
-  },
-  mounted () {
   }
 }
 </script>
 
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
-$mainColor:#b35757;
-nav {
-    width: 15%;
-    background-color: $mainColor;
-    height:100%;
-    ul {
-        list-style-type:none;
-        position:relative;
-    }
-    li {
-        font-size:2em;
-        margin:10px auto;
-        padding-left: 5px;
-        color:white;
-        margin-bottom: 25px;
-    }
-}
+<style lang="scss">
+  @import '../scss/menu.scss';
 </style>

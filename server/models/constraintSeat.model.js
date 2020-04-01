@@ -36,6 +36,9 @@ ConstraintSeat.init({
 });
 
 ConstraintSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
+Plan.hasMany(ConstraintSeat, {as: 'constraint_seats', foreignKey: 'plan_id'})
+
 ConstraintSeat.belongsTo(Constraint, {foreignKey: 'constraint_id'});
+Constraint.hasMany(ConstraintSeat, {as: 'constraint_seats', foreignKey: 'constraint_id'})
 
 module.exports = ConstraintSeat

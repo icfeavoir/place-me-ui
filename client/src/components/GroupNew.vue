@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2>Add a group</h2>
+  <div class="form">
+    <h2 class="form-title">Nouveau groupe</h2>
      <form class="review-form" @submit.prevent="onSubmit">
       <p>
         <label for="name">Name:</label>
@@ -14,6 +14,12 @@
         <label for="event">Event:</label>
         <select id="event" v-model.number="event">
           <option v-for="(item, key) in events" v-bind:key="key" :value="item.id">{{item.name}}</option>
+        </select>
+      </p>
+      <p>
+        <label for="plan">Plan:</label>
+        <select id="plan" v-model.number="plan">
+          <option v-for="(item, key) in plans" v-bind:key="key" :value="item.id">{{item.name}}</option>
         </select>
       </p>
       <p>
@@ -37,6 +43,7 @@
 import eventService from '../services/event.service'
 import constraintService from '../services/constraint.service'
 import groupService from '../services/group.service'
+import planService from '../services/plan.service'
 
 export default {
   components: {
@@ -45,11 +52,13 @@ export default {
   data () {
     return {
       events: [],
+      plans: [],
       constraints: [],
 
       name: '',
       number: null,
       event: null,
+      plan: null,
       constraint: '',
       constraintNumber: 0,
 
@@ -59,11 +68,15 @@ export default {
   computed: {
   },
   mounted () {
+    const it = this
     eventService.getAll().then((events) => {
-      this.$set(this, 'events', events)
+      it.events = events
     })
     constraintService.getAll().then((constraints) => {
-      this.$set(this, 'constraints', constraints)
+      it.constraints = constraints
+    })
+    planService.getAll().then((plans) => {
+      it.plans = plans
     })
   },
   methods: {
@@ -77,6 +90,7 @@ export default {
         name: this.name,
         number: this.number,
         event_id: this.event,
+        plan_id: this.plan,
         constraint_name: this.constraint,
         constraint_number: this.constraintNumber
       }
@@ -98,6 +112,7 @@ export default {
       this.name = ''
       this.number = null
       this.event = null
+      this.plan = null
       this.constraint = ''
       this.constraintNumber = 0
       this.error = ''
@@ -107,4 +122,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import '../scss/form.scss';
 </style>

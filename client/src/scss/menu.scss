@@ -1,0 +1,29 @@
+@import 'variables';
+
+.v-sidebar-menu a {
+  outline: none;
+  letter-spacing: 3px;
+}
+
+.v-sidebar-menu .vsm--link.vsm--link_active {
+  -webkit-box-shadow: 3px 0px 0px 0px $main-blue inset;
+  box-shadow: 3px 0px 0px 0px $main-blue inset;
+}
+.v-sidebar-menu .vsm--mobile-bg, .v-sidebar-menu.vsm_collapsed .vsm--link_level-1.vsm--link_hover .vsm--icon, .v-sidebar-menu.vsm_collapsed .vsm--link_level-1:hover .vsm--icon {
+  background-color: $main-blue;
+}
+
+.v-sidebar-menu .vsm--link_level-1 .vsm--icon {
+  background-color: $bg-color;
+}
+.v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active .vsm--icon, .v-sidebar-menu .vsm--link_level-1.vsm--link_active .vsm--icon {
+  background-color: $main-blue;
+}
+
+.v-sidebar-menu .vsm--toggle-btn {
+  outline: none;
+  background-color: $bg-color;
+  border: 3px solid $dark-grey;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}

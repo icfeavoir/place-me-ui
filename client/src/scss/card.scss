@@ -1,0 +1,67 @@
+@import 'variables';
+
+$card-size: 200px;
+
+a {
+    text-decoration: none;
+}
+
+.card {
+    width: $card-size;
+    height: $card-size;
+    background-color: #2A2A2E;
+    margin: 10px;
+    border-radius: 10px 10px 0 0;
+    color: $lighter-grey;
+    text-align: center;
+    text-decoration: none;
+    position: relative;
+
+    p.title {
+        color: $dark-grey;
+        background-color: $lighter-grey;
+        border-radius: 10px 10px 0 0;
+        padding: 20px 0;
+        font-size: 18px;
+    }
+
+    div.number-container {
+        background: #0079BF;
+        width: 50px;
+        min-height: 50px;
+        margin: 15px auto;
+        position: relative;
+        border-radius: 100%;
+
+        p.number {
+            position: absolute;
+            top: 50%;
+            text-align: center;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            width: 100%;
+            font-size: 20px;
+        }
+    }
+
+    p.desc {
+        font-size: 12px;
+    }
+
+    button.del {
+        color: $dark-grey;
+        background: $main-red;
+        position: absolute;
+        border: none;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        padding: 5px 0;
+        font-size: 11px;
+        color: $light-grey;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}

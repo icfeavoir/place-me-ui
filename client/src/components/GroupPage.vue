@@ -17,6 +17,12 @@
           </select>
         </p>
         <p>
+          <label for="plan">Plan:</label>
+          <select id="plan" v-model.number="plan">
+            <option v-for="(item, key) in plans" v-bind:key="key" :value="item.id">{{item.name}}</option>
+          </select>
+        </p>
+        <p>
           <label for="constraint">Constraint:</label>
           <input type="constraint" id="constraint" v-model="constraint" list="constraintsNames" />
           <datalist id="constraintsNames">
@@ -37,7 +43,9 @@
 <script>
 import groupService from '../services/group.service'
 import eventService from '../services/event.service'
+import planService from '../services/plan.service'
 import constraintService from '../services/constraint.service'
+
 export default {
   components: {
 
@@ -48,11 +56,13 @@ export default {
 
       group: null,
       events: [],
+      plans: [],
       constraints: [],
 
       name: null,
       number: null,
       event: null,
+      plan: null,
       constraintId: null,
       constraint: null,
       constraintNumber: null
@@ -68,6 +78,9 @@ export default {
     eventService.getAll().then((events) => {
       it.events = events
     })
+    planService.getAll().then((plans) => {
+      it.plans = plans
+    })
     constraintService.getAll().then((constraints) => {
       it.constraints = constraints
     })
@@ -77,6 +90,7 @@ export default {
       this.name = group.name
       this.number = group.number
       this.event = group.event_id
+      this.plan = group.plan_id
       this.constraintId = group.constraint_id
       this.constraintNumber = group.constraint_number
     },
@@ -99,6 +113,7 @@ export default {
         name: this.name,
         number: this.number,
         event_id: this.event,
+        plan_id: this.plan,
         constraint_name: this.constraint,
         constraint_number: this.constraintNumber
       }

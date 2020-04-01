@@ -1,0 +1,38 @@
+@import 'variables';
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    font-family: 'Montserrat Light';
+}
+
+// GENERAL
+html {
+    background-color: $bg-color;
+}
+
+.btn-lg-container {
+    display: block;
+    margin: 50px auto;
+    text-align: center;
+}
+.btn-lg {
+    color: #2A2A2E;
+    background-color: rgba(255,255,255,.7);
+    padding: 10px;
+    border-radius: 30px;
+    border: 0;
+    font-size: 25px;
+    letter-spacing: 3px;
+    transition: background-color .5s;
+
+    i {
+        margin-right: 10px;
+    }
+
+    &:hover {
+        background-color: rgba(255,255,255,.9);
+        cursor: pointer;
+    }
+}

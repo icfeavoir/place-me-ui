@@ -1,7 +1,7 @@
-<template>
-  <div id='app'>
-    <Menu />
-    <div class="main"><router-view/></div>
+<template id="all">
+  <div id='app' :style="{paddingLeft: paddingLeft + 'px'}">
+    <Menu @onToggleCollapse="onToggleCollapse" />
+    <div class="container"><router-view/></div>
   </div>
 </template>
 
@@ -11,23 +11,24 @@ export default {
   name: 'App',
   components: {
     Menu
+  },
+  data () {
+    return {
+      paddingLeft: 250
+    }
+  },
+  methods: {
+    onToggleCollapse: function (collapse) {
+      this.paddingLeft = collapse ? 50 : 250
+    }
   }
 }
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-}
-Menu {
-  width: 15%;
-  display: inline-block;
-}
+  @import './assets/css/fontawesome/css/all.css';
+</style>
 
-.main {
-  width: 100%;
-  display: inline-block;
-  text-align: center;
-}
+<style lang="scss">
+  @import './scss/main.scss';
 </style>

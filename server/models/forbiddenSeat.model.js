@@ -26,6 +26,7 @@ ForbiddenSeat.init({
     // options
 });
 
-ForbiddenSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
+ForbiddenSeat.belongsTo(Plan, {foreignKey: 'plan_id'})
+Plan.hasMany(ForbiddenSeat, {as: 'forbidden_seats', foreignKey: 'plan_id'})
 
 module.exports = ForbiddenSeat

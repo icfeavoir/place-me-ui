@@ -3,6 +3,13 @@
     <template v-if='event'>
       <div class='event-firstName'>
         <h2>{{ event.name }}</h2>
+        <br>
+        <p><button @click="generate">GENERATE ALL</button></p>
+        <br>
+        <div v-for='plan in plans' class='plan' :key='plan._id'>
+          {{ plan.name }}
+          <p><button @click="generate(this, plan.id)">GENERATE</button></p>
+        </div>
       </div>
     </template>
   </div>
@@ -10,6 +17,8 @@
 
 <script>
 import eventService from '../services/event.service'
+import planService from '../services/plan.service'
+
 export default {
   components: {
 
@@ -17,17 +26,27 @@ export default {
   data () {
     return {
       event: null,
-      lists: []
+      plans: []
     }
   },
   created () {
   },
   mounted () {
+    const it = this
     eventService.findById(this.$route.params.eventId).then(event => {
-      this.$set(this, 'event', event)
+      it.event = event
+    })
+    planService.getAll().then(plans => {
+      it.plans = plans
     })
   },
   methods: {
+    generate: function (e, planId = null) {
+      eventService.generate({
+        eventId: this.event.id,
+        planId: planId
+      }).then(data => console.log(data))
+    }
   }
 }
 </script>
@@ -45,5 +64,18 @@ export default {
   color: #000000;
   padding: 8px;
   margin: 0;
+}
+
+.plan {
+  border-radius: 3px;
+  color: #FFFFFF;
+  display: inline-block;
+  text-decoration: none;
+  width: 15%;
+  min-width: 150px;
+  min-height: 80px;
+  padding: 10px;
+  background-color: rgb(0, 121, 191);
+  margin: 0 15px 15px 0;
 }
 </style>
