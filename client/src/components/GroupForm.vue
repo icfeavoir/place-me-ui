@@ -1,6 +1,6 @@
 <template>
-  <div class="form">
-    <h2 class="form-title">Nouveau groupe</h2>
+  <div class="form" @keydown.esc="init">
+    <h2 class="form-title">{{ this.group ? name : 'Nouveau groupe'}}</h2>
      <form class="group-form" @keydown.enter="submit">
         <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
         <input id="number" type="number" v-model="number" placeholder="Nombre" />
@@ -28,7 +28,7 @@
             </div>
           </transition>
         </div>
-      <input type="button" value="Enregistrer" @click="submit">
+      <input type="button" :value="group ? 'Modifier la réservation' : 'Enregistrer'" @click="submit">
       <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
     </form>
   </div>
@@ -43,8 +43,12 @@ import planService from '../services/plan.service'
 import Checkbox from './elem/Checkbox'
 
 export default {
+  name: 'GroupForm',
   components: {
     Checkbox
+  },
+  props: {
+    group: Object
   },
   data () {
     return {
@@ -80,6 +84,11 @@ export default {
       it.constraints = constraints
     })
   },
+  watch: {
+    group: function (newGroup, oldGroup) {
+      this.init()
+    }
+  },
   methods: {
     submit: function () {
       if (!this.verifyForm()) {
@@ -96,13 +105,27 @@ export default {
         constraint_number: this.constraintForAll ? this.number : this.constraintNumber
       }
 
-      groupService.create(data).then(res => {
-        if (res.error) {
-          this.error = res.error
-        } else {
-          this.init()
-        }
-      })
+      if (this.group) {
+        // UPDATE
+        data.id = this.group.id
+        groupService.update(data).then(res => {
+          if (res.error) {
+            this.error = res.error
+          } else {
+            this.$toasted.success('Modifié !')
+          }
+        })
+      } else {
+        // NEW
+        groupService.create(data).then(res => {
+          if (res.error) {
+            this.error = res.error
+          } else {
+            this.$toasted.success('Enregistré !')
+            this.init()
+          }
+        })
+      }
     },
 
     verifyForm: function () {
@@ -110,10 +133,21 @@ export default {
     },
 
     init: function () {
-      this.name = ''
-      this.number = null
-      this.constraint = ''
-      this.constraintNumber = 0
+      let group = this.group || {}
+
+      this.name = group.name || ''
+      this.number = group.number || null
+      this.event = group.event_id || (this.events.length ? this.events[0].id : null)
+      this.plan = group.plan_id || (this.plans.length ? this.plans[0].id : null)
+      this.constraint = group.constraintText || ''
+      this.constraintNumber = group.constraint_number || 0
+      if (this.constraint) {
+        this.showConstraint = true
+        this.constraintForAll = this.constraintNumber === this.number
+      } else {
+        this.showConstraint = false
+        this.constraintForAll = true
+      }
       this.error = ''
     },
 
@@ -132,7 +166,7 @@ export default {
   @import '../scss/form.scss';
 </style>
 <style lang="scss" scoped>
-  @import '../scss/group-new.scss';
+  @import '../scss/group-form.scss';
 </style>
 <style lang="scss">
   // on veut toucher aux composants enfants (checkbox ici)

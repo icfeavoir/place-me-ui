@@ -7,6 +7,7 @@ import router from './router'
 import axios from 'axios'
 import VueSidebarMenu from 'vue-sidebar-menu'
 import VuejsDialog from 'vuejs-dialog'
+import Toasted from 'vue-toasted'
 
 // Style
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
@@ -21,6 +22,7 @@ Vue.config.silent = true
 Vue.use(VueKonva)
 Vue.use(VueSidebarMenu)
 Vue.use(VuejsDialog)
+Vue.use(Toasted, {position: 'bottom-center', duration: 4000, iconPack: 'fontawesome', icon: 'check', theme: 'outline'})
 
 // directives
 Vue.directive('focus', {

@@ -5,6 +5,7 @@
       <router-link :to='{name: "GroupAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
     </header>
     <div class='groups'>
+      <p class="info" v-if="groups.length === 0">Aucun groupe</p>
       <div class="group" v-for='group in groups' :key='group._id'>
         <Card
           url="GroupPage"
@@ -67,6 +68,7 @@ export default {
                 it.groups = it.groups.filter((group) => {
                   return group.id !== id
                 })
+                it.$toasted.success('Supprimé !')
               }
             })
           })

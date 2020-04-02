@@ -39,6 +39,18 @@ hr {
     border-bottom: 1px solid $lighter-grey;
 }
 
+.info {
+    background: $main-blue;
+    color: $lighter-grey;
+    width: 50%;
+    text-align: center;
+    margin: 50px auto;
+    padding: 18px;
+    font-size: 20px;
+    letter-spacing: 1px;
+    border-radius: 10px;
+}
+
 // TRANSITIONS
 .fade-enter-active, .fade-leave-active {
     transition: opacity .3s;
