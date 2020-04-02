@@ -35,5 +35,5 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../scss/menu.scss';
+  @import '@/scss/menu.scss';
 </style>

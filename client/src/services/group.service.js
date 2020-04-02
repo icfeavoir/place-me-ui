@@ -7,6 +7,9 @@ export default {
   findById (id) {
     return axios.get('/api/groups/' + id).then(res => res.data)
   },
+  countGroupByEvent () {
+    return axios.get('/api/countGroupByEvent').then(res => res.data)
+  },
   create (data) {
     return axios.post('/api/groups/create', data).then(res => res.data)
   },

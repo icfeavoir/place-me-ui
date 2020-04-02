@@ -1,0 +1,11 @@
+@import 'variables';
+
+.group-info {
+    background-color: $lighter-grey;
+    color: $bg-color;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 40px auto;
+    font-size: 14px;
+}

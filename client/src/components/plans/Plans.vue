@@ -1,24 +1,24 @@
 <template>
-  <div class='events'>
-    <router-link v-for='event in events' class='event' :key='event._id' :to='{name: "EventPage", params: {eventId: event.id}}'>
-      {{ event.name }}
+  <div class='plans'>
+    <router-link v-for='plan in plans' class='plan' :key='plan._id' :to='{name: "PlanPage", params: {planId: plan.id}}'>
+      {{ plan.name }}
     </router-link>
   </div>
 </template>
 
 <script>
-import eventService from '../services/event.service'
+import planService from '@/services/plan.service'
 export default {
-  name: 'Events',
+  name: 'Plans',
   data () {
     return {
-      events: []
+      plans: []
     }
   },
   mounted () {
-    eventService.getAll()
-      .then((events) => {
-        this.$set(this, 'events', events)
+    planService.getAll()
+      .then((plans) => {
+        this.$set(this, 'plans', plans)
       })
   }
 }
@@ -26,14 +26,14 @@ export default {
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
-.events {
+.plans {
   width: 80%;
   margin: 0 auto;
   padding-top: 100px;
   display: flex;
   flex-wrap: wrap;
 }
-.event {
+.plan {
   border-radius: 3px;
   color: #FFFFFF;
   display: block;

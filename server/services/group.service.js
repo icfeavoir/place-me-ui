@@ -1,3 +1,4 @@
+const {Sequelize, sequelize} = require('../config/db')
 const Group = require('../models/group.model')
 const Event = require('../models/event.model')
 const Plan = require('../models/plan.model')
@@ -9,15 +10,23 @@ module.exports = {
             this._handleResponse(groups, res)
         })
     },
+    getGroup (id) {
+        return Group.findByPk(id)
+    },
     getById (req, res) {
         this.getGroup(req.params.groupId)
             .then(group => {
                 this._handleResponse(group, res)
             })
     },
-
-    getGroup (id) {
-        return Group.findByPk(id)
+    countGroupByEvent (req, res) {
+        Group.findAll({
+            attributes: ['event_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
+            group : ['group.event_id'],
+            raw: true,
+        }).then(total => {
+            this._handleResponse(total, res)
+        })
     },
 
     create (req, res) {

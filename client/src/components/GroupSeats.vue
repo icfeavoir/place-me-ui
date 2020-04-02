@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import groupSeatService from '../services/groupSeat.service'
+import groupSeatService from '@/services/groupSeat.service'
 export default {
   name: 'Events',
   data () {

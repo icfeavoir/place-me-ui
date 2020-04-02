@@ -1,0 +1,30 @@
+@import 'variables';
+
+header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  margin: 10px 0 30px;
+
+  .search {
+    color: $bg-color;
+    width: 30%;
+    border-radius: 10px;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: rgba(255,255,255,.6);
+    transition: background-color .5s;
+
+    &:hover, &:focus {
+      background-color: rgba(255,255,255,.9);
+    }
+  }
+}
+
+.events {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: first baseline;
+}

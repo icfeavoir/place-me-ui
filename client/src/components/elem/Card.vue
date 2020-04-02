@@ -24,8 +24,6 @@ export default {
   },
   mounted () {
   },
-  methods: {
-  },
   computed: {
     title: function () {
       if (this.data && this.data.title) {

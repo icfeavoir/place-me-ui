@@ -1,15 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Groups from '@/components/Groups'
-import Group from '@/components/GroupPage'
-import GroupForm from '@/components/GroupForm'
+import Groups from '@/components/groups/Groups'
+import Group from '@/components/groups/GroupPage'
+import GroupForm from '@/components/groups/GroupForm'
 
-import Events from '@/components/Events'
-import Event from '@/components/EventPage'
+import Events from '@/components/events/Events'
+import Event from '@/components/events/EventPage'
+import EventForm from '@/components/events/EventForm'
 
-import Plans from '@/components/Plans'
-import Plan from '@/components/PlanPage'
+import Plans from '@/components/plans/Plans'
+import Plan from '@/components/plans/PlanPage'
+import PlanForm from '@/components/plans/PlanForm'
 
 Vue.use(Router)
 
@@ -41,6 +43,11 @@ export default new Router({
       name: 'EventPage',
       component: Event
     },
+    {
+      path: '/events_add/',
+      name: 'EventAdd',
+      component: EventForm
+    },
 
     {
       path: '/plans',
@@ -51,6 +58,11 @@ export default new Router({
       path: '/plans/:planId',
       name: 'PlanPage',
       component: Plan
+    },
+    {
+      path: '/plans_add/',
+      name: 'PlanAdd',
+      component: PlanForm
     }
   ]
 })

@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import eventService from '../services/event.service'
-import constraintService from '../services/constraint.service'
-import groupService from '../services/group.service'
-import planService from '../services/plan.service'
+import eventService from '@/services/event.service'
+import constraintService from '@/services/constraint.service'
+import groupService from '@/services/group.service'
+import planService from '@/services/plan.service'
 
-import Checkbox from './elem/Checkbox'
+import Checkbox from '@/components/elem/Checkbox'
 
 export default {
   name: 'GroupForm',
@@ -163,10 +163,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../scss/form.scss';
+  @import '@/scss/form.scss';
 </style>
 <style lang="scss" scoped>
-  @import '../scss/group-form.scss';
+  @import '@/scss/group-form.scss';
 </style>
 <style lang="scss">
   // on veut toucher aux composants enfants (checkbox ici)
