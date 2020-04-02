@@ -9,8 +9,8 @@ a {
 .card {
     width: $card-size;
     height: $card-size;
-    background-color: #2A2A2E;
-    margin: 10px;
+    background-color: $dark-grey;
+    margin: 10px 20px;
     border-radius: 10px 10px 0 0;
     color: $lighter-grey;
     text-align: center;
@@ -26,7 +26,7 @@ a {
     }
 
     div.number-container {
-        background: #0079BF;
+        background: $main-blue;
         width: 50px;
         min-height: 50px;
         margin: 15px auto;
@@ -50,7 +50,7 @@ a {
 
     button.del {
         color: $dark-grey;
-        background: $main-red;
+        background-color: $main-red;
         position: absolute;
         border: none;
         width: 100%;
@@ -59,9 +59,12 @@ a {
         padding: 5px 0;
         font-size: 11px;
         color: $light-grey;
+        transition: background-color .3s, color .3s;
 
         &:hover {
             cursor: pointer;
+            color: white;
+            background-color: $light-red;
         }
     }
 }

@@ -22,6 +22,16 @@ Vue.use(VueKonva)
 Vue.use(VueSidebarMenu)
 Vue.use(VuejsDialog)
 
+// directives
+Vue.directive('focus', {
+  // Enregistrer une directive globale appelée `v-focus`
+  // Quand l'élément lié est inséré dans le DOM...
+  inserted: function (el) {
+    // L'élément prend le focus
+    el.focus()
+  }
+})
+
 axios.defaults.baseURL = 'http://localhost:3000'
 
 /* eslint-disable no-new */

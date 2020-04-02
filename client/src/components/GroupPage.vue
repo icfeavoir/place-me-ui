@@ -129,19 +129,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.group-firstName .is-editing {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 8px;
-  display: inline-block;
-  min-width: 600px;
-}
-.add-new-list .is-editing {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 8px;
-  margin: 0;
-}
-</style>

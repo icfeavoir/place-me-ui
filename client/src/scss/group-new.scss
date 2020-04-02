@@ -1,0 +1,55 @@
+@import 'variables';
+
+form.group-form {
+    display: flex;
+    flex-wrap: wrap;
+
+    input, select {
+        width: 45%;
+
+        &#name {
+            width: 75%;
+        }
+        &#number {
+            width: 15%;
+        }
+    }
+
+    .constraint-container {
+        width: 100%;
+
+        button {
+            font-size: 12px;
+            background-color: $light-grey;
+            border: none;
+            color: $bg-color;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        #constraint {
+            width: 90%;
+        }
+
+        .check-constraint {
+            width: 100%;
+            position: relative;
+            
+            .special-checkbox {
+                width: fit-content;
+                text-align: right;
+                .checkmark {
+                    top: 10px !important;
+                }
+            }
+
+            #constraint-number {
+                width: 15%;
+                position: absolute;
+                top: -7px;
+            }
+        }
+    }
+}

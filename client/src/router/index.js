@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Groups from '@/components/Groups'
 import Group from '@/components/GroupPage'
-import GroupNew from '@/components/GroupNew'
+import GroupForm from '@/components/GroupForm'
 
 import Events from '@/components/Events'
 import Event from '@/components/EventPage'
@@ -27,8 +27,8 @@ export default new Router({
     },
     {
       path: '/groups_add/',
-      name: 'GroupNew',
-      component: GroupNew
+      name: 'GroupAdd',
+      component: GroupForm
     },
 
     {

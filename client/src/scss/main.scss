@@ -12,13 +12,8 @@ html {
     background-color: $bg-color;
 }
 
-.btn-lg-container {
-    display: block;
-    margin: 50px auto;
-    text-align: center;
-}
 .btn-lg {
-    color: #2A2A2E;
+    color: $bg-color;
     background-color: rgba(255,255,255,.7);
     padding: 10px;
     border-radius: 30px;
@@ -26,13 +21,28 @@ html {
     font-size: 25px;
     letter-spacing: 3px;
     transition: background-color .5s;
-
+    
     i {
         margin-right: 10px;
     }
-
+    
     &:hover {
         background-color: rgba(255,255,255,.9);
         cursor: pointer;
     }
+}
+
+hr {
+    width: 80%;
+    margin: 10px auto;
+    border: none;
+    border-bottom: 1px solid $lighter-grey;
+}
+
+// TRANSITIONS
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
 }
