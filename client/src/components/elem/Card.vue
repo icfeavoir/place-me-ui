@@ -3,7 +3,7 @@
     <div class='card'>
       <p class="title">{{ title }}</p>
       <div class="number-container"><p class="number">{{ number }}</p></div>
-      <p class="desc">{{ (data || {}).desc || 'No desc' }}</p>
+      <p v-if="data.desc" class="desc">{{ data.desc }}</p>
       <button class="del" @click.stop.prevent="$emit('delete-group', data.obj)"><i class="fa fa-trash"></i></button>
     </div>
   </router-link>
@@ -29,7 +29,7 @@ export default {
       if (this.data && this.data.title) {
         return this.data.title.length <= 20 ? this.data.title : (this.data.title.substring(0, 17) + '...')
       } else {
-        return 'No title'
+        return ''
       }
     },
     number: function () {
