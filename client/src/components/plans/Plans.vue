@@ -1,48 +1,100 @@
 <template>
-  <div class='plans'>
-    <router-link v-for='plan in plans' class='plan' :key='plan._id' :to='{name: "PlanPage", params: {planId: plan.id}}'>
-      {{ plan.name }}
-    </router-link>
+  <div>
+    <header>
+      <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
+      <router-link :to='{name: "PlanAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvel événement</button></router-link>
+    </header>
+    <div class='plans'>
+      <p class="bloc-info" v-if="plans.length === 0">Aucun plan</p>
+      <div class="plan" v-for='plan in plans' :key='plan.total'>
+        <Card
+          url="PlanPage"
+          :params="{planId: plan.id}"
+          :data="{
+            title: plan.name,
+            number: plan.total,
+            desc: 'places',
+            obj: plan
+          }"
+          @delete-plan='deletePlan'
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import planService from '@/services/plan.service'
+
+import Card from '@/components/elem/Card'
+
 export default {
   name: 'Plans',
+  components: {
+    Card
+  },
   data () {
     return {
-      plans: []
+      allPlans: [],
+      plans: [],
+
+      search: ''
     }
   },
-  mounted () {
+  created: function () {
     planService.getAll()
       .then((plans) => {
+        this.$set(this, 'allPlans', plans)
         this.$set(this, 'plans', plans)
       })
+
+    planService.countSeats()
+      .then((data) => {
+        data.forEach(element => {
+          this.$set(this.plans.find(p => p.id === element.id) || {}, 'total', element.total)
+        })
+      })
+  },
+  mounted () {
+  },
+  methods: {
+    deletePlan: function (plan) {
+      const id = plan.id
+      const it = this
+      if (id) {
+        let msg = {
+          title: 'Supprimer un plan',
+          body: 'Voulez-vous supprimer le plan ' + plan.name + ' ?'
+        }
+        let options = {
+          okText: 'Valider',
+          cancelText: 'Fermer',
+          backdropClose: true
+        }
+        this.$dialog
+          .confirm(msg, options)
+          .then(function (dialog) {
+            planService.delete(id).then(res => {
+              if (res.success) {
+                // remove from plans
+                it.plans = it.plans.filter((plan) => {
+                  return plan.id !== id
+                })
+                it.$toasted.success('Supprimé !')
+              }
+            })
+          })
+          .catch(function () {})
+      }
+    },
+
+    doSearch: function () {
+      this.plans = this.allPlans.filter((plan) => plan.name.toLowerCase().includes(this.search.toLowerCase()))
+    }
   }
 }
 </script>
 
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped>
-.plans {
-  width: 80%;
-  margin: 0 auto;
-  padding-top: 100px;
-  display: flex;
-  flex-wrap: wrap;
-}
-.plan {
-  border-radius: 3px;
-  color: #FFFFFF;
-  display: block;
-  text-decoration: none;
-  width: 15%;
-  min-width: 150px;
-  min-height: 80px;
-  padding: 10px;
-  background-color: rgb(0, 121, 191);
-  margin: 0 15px 15px 0;
-}
+<style lang="scss" scoped>
+  @import '@/scss/plans.scss';
 </style>

@@ -6,5 +6,8 @@ export default {
   },
   findById (id) {
     return axios.get('/api/plans/' + id).then(res => res.data)
+  },
+  countSeats () {
+    return axios.get('/api/countSeats').then(res => res.data)
   }
 }

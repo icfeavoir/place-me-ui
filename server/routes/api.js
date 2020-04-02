@@ -25,6 +25,7 @@ router.delete("/groups/delete", groupService.delete.bind(groupService))
 
 router.get("/plans", planService.getAll.bind(planService))
 router.get("/plans/:planId", planService.getById.bind(planService))
+router.get("/countSeats", planService.countSeats.bind(planService))
 // router.post("/plans/create", planService.create.bind(planService))
 
 router.get("/constraints", constraintService.getAll.bind(constraintService))
