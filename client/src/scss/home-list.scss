@@ -1,5 +1,18 @@
 @import 'variables';
 
+.title {
+  text-align: center;
+  margin: 10px 0 0 0;
+
+  input {
+    font-size: 54px;
+    border: none;
+    background: none;
+    color: $lighter-grey;
+    text-align: center;
+  }
+}
+
 header {
   display: flex;
   flex-wrap: nowrap;
@@ -22,7 +35,7 @@ header {
   }
 }
 
-.plans {
+.list {
   margin: 10px;
   display: flex;
   flex-wrap: wrap;

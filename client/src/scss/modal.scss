@@ -1,0 +1,67 @@
+@import 'variables';
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: table;
+  transition: opacity 0.3s ease;
+  
+  .modal-wrapper {
+        display: table-cell;
+        vertical-align: middle;
+
+        .modal-container {
+            width: 30%;
+            margin: 0px auto;
+            background-color: $lighter-grey;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+            transition: all 0.3s ease;
+            font-family: Helvetica, Arial, sans-serif;
+
+            .modal-header {
+                color: $main-blue;
+                font-weight: 600;
+                letter-spacing: 1px;
+                font-size: 20px;
+                margin: 15px 10px;
+                padding-top: 15px;
+            }
+
+            hr {
+                width: 95%;
+                border-bottom: 1px solid $light-grey;
+            }
+
+            .modal-body {
+                margin: 20px 10px;
+            }
+
+            .modal-footer {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+
+                .modal-button {
+                    border: none;
+                    margin: 15px 20px;
+                    color: $lighter-grey;
+                    background-color: $main-blue;
+                    min-width: 80px;
+                    padding: 6px 20px;
+
+                    &.btn-modal-valid {
+                        background-color: transparent;
+                        color: $main-blue;
+                        border: 2px solid $main-blue;
+                    }
+                }
+            }
+        }
+    }
+}

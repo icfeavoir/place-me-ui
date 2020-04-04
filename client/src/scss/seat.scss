@@ -1,0 +1,15 @@
+@import 'variables';
+
+td {
+    white-space: nowrap;
+    overflow: hidden;
+
+    p {
+        width: 100%;
+        text-align: center;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}

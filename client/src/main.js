@@ -8,6 +8,7 @@ import axios from 'axios'
 import VueSidebarMenu from 'vue-sidebar-menu'
 import VuejsDialog from 'vuejs-dialog'
 import Toasted from 'vue-toasted'
+import Vuex from 'vuex'
 
 // Style
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
@@ -23,6 +24,18 @@ Vue.use(VueKonva)
 Vue.use(VueSidebarMenu)
 Vue.use(VuejsDialog)
 Vue.use(Toasted, {position: 'bottom-center', duration: 4000, iconPack: 'fontawesome', icon: 'check', theme: 'outline'})
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+  state: {
+    dataEventAddPlan: null
+  },
+  mutations: {
+    setDataEventAddPlan (state, data) {
+      state.dataEventAddPlan = data
+    }
+  }
+})
 
 // directives
 Vue.directive('focus', {
@@ -39,6 +52,7 @@ axios.defaults.baseURL = 'http://localhost:3000'
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>'

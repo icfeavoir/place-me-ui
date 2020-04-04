@@ -4,8 +4,8 @@
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <router-link :to='{name: "EventAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvel événement</button></router-link>
     </header>
-    <div class='events'>
-      <p class="bloc-info" v-if="events.length === 0">Aucun événement</p>
+    <div class='list'>
+      <p class="bloc-info" v-if="events && events.length === 0">Aucun événement</p>
       <div class="event" v-for='event in events' :key='event.total'>
         <Card
           url="EventPage"
@@ -16,7 +16,7 @@
             desc: 'réservations',
             obj: event
           }"
-          @delete-event='deleteEvent'
+          @del='del'
         />
       </div>
     </div>
@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       allEvents: [],
-      events: [],
+      events: null,
 
       search: ''
     }
@@ -59,7 +59,7 @@ export default {
   mounted () {
   },
   methods: {
-    deleteEvent: function (event) {
+    del: function (event) {
       const id = event.id
       const it = this
       if (id) {
@@ -82,6 +82,8 @@ export default {
                   return event.id !== id
                 })
                 it.$toasted.success('Supprimé !')
+              } else {
+                it.$toasted.error('Error')
               }
             })
           })
@@ -97,5 +99,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/events.scss';
+  @import '@/scss/home-list.scss';
 </style>

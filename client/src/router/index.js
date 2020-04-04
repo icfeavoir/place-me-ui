@@ -8,6 +8,7 @@ import GroupForm from '@/components/groups/GroupForm'
 import Events from '@/components/events/Events'
 import Event from '@/components/events/EventPage'
 import EventForm from '@/components/events/EventForm'
+import EventPlan from '@/components/events/EventPlan'
 
 import Plans from '@/components/plans/Plans'
 import Plan from '@/components/plans/PlanPage'
@@ -47,6 +48,16 @@ export default new Router({
       path: '/events_add/',
       name: 'EventAdd',
       component: EventForm
+    },
+    {
+      path: '/events_add/',
+      name: 'EventPlanAdd',
+      component: EventForm
+    },
+    {
+      path: '/events_add/',
+      name: 'EventPlan',
+      component: EventPlan
     },
 
     {

@@ -2,10 +2,10 @@
   <div>
     <header>
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "PlanAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvel événement</button></router-link>
+      <router-link :to='{name: "PlanAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouveau plan</button></router-link>
     </header>
-    <div class='plans'>
-      <p class="bloc-info" v-if="plans.length === 0">Aucun plan</p>
+    <div class='list'>
+      <p class="bloc-info" v-if="plans && plans.length === 0">Aucun plan</p>
       <div class="plan" v-for='plan in plans' :key='plan.total'>
         <Card
           url="PlanPage"
@@ -16,7 +16,7 @@
             desc: '',
             obj: plan
           }"
-          @delete-plan='deletePlan'
+          @del='del'
         />
       </div>
     </div>
@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       allPlans: [],
-      plans: [],
+      plans: null,
 
       search: ''
     }
@@ -96,5 +96,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/plans.scss';
+  @import '@/scss/home-list.scss';
 </style>

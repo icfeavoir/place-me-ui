@@ -6,11 +6,14 @@ const Plan = require('../models/plan.model')
 const Constraint = require('../models/constraint.model')
 const ConstraintSeat = require('../models/constraintSeat.model')
 const ForbiddenSeat = require('../models/forbiddenSeat.model')
+const EventPlan = require('../models/eventPlan.model')
 
 module.exports = {
     seedData (seed) {
+        console.log('CREATING DB')
         sequelize.sync({force: true}).then(() => {
             if (seed) {
+                console.log('SEEDING DB')
                 this.createEvents()
             }
         })

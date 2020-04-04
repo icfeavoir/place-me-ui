@@ -4,8 +4,8 @@
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <router-link :to='{name: "GroupAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
     </header>
-    <div class='groups'>
-      <p class="bloc-info" v-if="groups.length === 0">Aucun groupe</p>
+    <div class='list'>
+      <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
       <div class="group" v-for='group in groups' :key='group._id'>
         <Card
           url="GroupPage"
@@ -16,7 +16,7 @@
             desc: group.event.name + ' en ' + group.plan.name,
             obj: group
           }"
-          @delete-group='deleteGroup'
+          @del='del'
         />
       </div>
     </div>
@@ -34,7 +34,7 @@ export default {
   data () {
     return {
       allGroups: [],
-      groups: [],
+      groups: null,
       search: ''
     }
   },
@@ -46,7 +46,7 @@ export default {
       })
   },
   methods: {
-    deleteGroup: function (group) {
+    del: function (group) {
       const id = group.id
       const it = this
       if (id) {
@@ -84,5 +84,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/groups.scss';
+  @import '@/scss/home-list.scss';
 </style>

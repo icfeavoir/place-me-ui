@@ -11,62 +11,88 @@ div.form {
     text-align: center;
     text-decoration: none;
     position: relative;
+}
 
-    .form-title {
-        color: $dark-grey;
-        background-color: $lighter-grey;
-        border-radius: 10px 10px 0 0;
-        padding: 20px 0;
-        font-size: 25px;
-        letter-spacing: 3px;
-    }
+.form-title {
+    color: $dark-grey;
+    background-color: $lighter-grey;
+    border-radius: 10px 10px 0 0;
+    padding: 20px 0;
+    font-size: 25px;
+    letter-spacing: 3px;
+}
 
-    input, select, button {
-        height: 25px;
-        margin: 10px auto;
-        border: 1px solid $lighter-grey;
+input, select, button {
+    height: 25px;
+    margin: 10px auto;
+    border: 1px solid $lighter-grey;
+    background: none;
+    color: $lighter-grey;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    letter-spacing: 1px;
+
+    &.dark {
+        border: 1px solid $bg-color;
         background: none;
-        padding: 5px;
-        color: $lighter-grey;
-        border-radius: 5px;
-        font-size: 16px;
-        letter-spacing: 1px;
-
-        &::placeholder {
-            color: $light-grey;
-            font-size: 14px;
-            letter-spacing: normal;
-        }
-    }
-
-    select {
-        height: 40px;
-        option {
-            color: $dark-grey;
-            background-color: $light-grey;
-        }
-    }
-
-    input[type=button] {
-        height: 50px;
-        background: $light-grey;
-        border: none;
         color: $bg-color;
-        transition: background-color .3s;
-        font-size: 16px;
-        width: 100%;
-        margin: 20px 10%;
+    }
 
+    &.lg {
+        width: 90%;
+    }
+    &.md {
+        width: 40%;
+    }
+
+    &::placeholder {
+        color: $light-grey;
+        font-size: 14px;
+        letter-spacing: normal;
+    }
+}
+
+select {
+    height: 40px;
+
+    &:disabled {
+        background-color: $light-grey;
+        font-size: 14px;
+        letter-spacing: normal;
         &:hover {
-            cursor: pointer;
-            background-color: $lighter-grey;
+            cursor: not-allowed;
         }
     }
-
-    .error {
-        color: $light-red;
-        text-align: center;
-        width: 100%;
-        margin: 0 0 10px 0;
+    option {
+        color: $dark-grey;
+        background-color: $light-grey;
     }
+}
+
+input[type=button] {
+    height: 50px;
+    background: $light-grey;
+    border: none;
+    color: $bg-color;
+    transition: background-color .3s;
+    font-size: 16px;
+    width: 100%;
+    margin: 20px 10%;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $lighter-grey;
+    }
+}
+
+.error {
+    color: $light-red;
+    text-align: center;
+    width: 100%;
+    margin: 0 0 10px 0;
+}
+
+.form-lg-container {
+    width: 100%;
 }

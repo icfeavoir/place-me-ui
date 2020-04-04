@@ -1,6 +1,6 @@
 @import 'variables';
 
-form.group-form {
+form.add-form {
     display: flex;
     flex-wrap: wrap;
 
@@ -13,6 +13,10 @@ form.group-form {
         &#number {
             width: 15%;
         }
+    }
+
+    .submit-container {
+        width: 100%;
     }
 
     .constraint-container {

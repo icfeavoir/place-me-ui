@@ -96,7 +96,7 @@ module.exports = {
                                 this._handleResponse(result, res)
                             })
                             .catch(e => {
-                                console.error("ERROR GROUP CREATE: " + e)
+                                console.error("ERROR GROUP UPDATE: " + e)
                                 result.error = "Cannot create group"
                                 this._handleResponse(result, res)
                             })
@@ -122,7 +122,7 @@ module.exports = {
                     this._handleResponse(result, res)
                 })
                 .catch(e => {
-                    console.error("ERROR GROUP CREATE: " + e)
+                    console.error("ERROR GROUP DELETE: " + e)
                     result.error = "Cannot delete group"
                     this._handleResponse(result, res)
                 })

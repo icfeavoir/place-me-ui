@@ -4,7 +4,7 @@
       <p class="title">{{ title }}</p>
       <div class="number-container"><p class="number">{{ number }}</p></div>
       <p v-if="data.desc" class="desc">{{ data.desc }}</p>
-      <button class="del" @click.stop.prevent="$emit('delete-group', data.obj)"><i class="fa fa-trash"></i></button>
+      <button class="del" @click.stop.prevent="$emit('del', data.obj)"><i class="fa fa-trash"></i></button>
     </div>
   </router-link>
 </template>
@@ -19,8 +19,7 @@ export default {
   props: {
     url: String,
     params: Object,
-    data: Object,
-    delId: Number
+    data: Object
   },
   mounted () {
   },
