@@ -49,7 +49,7 @@ export default {
   data () {
     return {
       allPlans: [],
-      plans: [],
+      plans: null,
       event: null,
 
       search: '',
@@ -84,7 +84,9 @@ export default {
       eventService.countBook(eventId)
         .then((data) => {
           data.forEach(element => {
-            this.$set(this.plans.find(p => p.id === element.plan_id) || {}, 'total', element.total)
+            if (this.plans && element) {
+              this.$set(this.plans.find(p => p.id === element.plan_id) || {}, 'total', element.total)
+            }
           })
         })
     },

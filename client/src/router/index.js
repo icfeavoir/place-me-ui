@@ -50,12 +50,12 @@ export default new Router({
       component: EventForm
     },
     {
-      path: '/events_add/',
+      path: '/events_plan_add/',
       name: 'EventPlanAdd',
       component: EventForm
     },
     {
-      path: '/events_add/',
+      path: '/events_plan/:eventId/:planId',
       name: 'EventPlan',
       component: EventPlan
     },

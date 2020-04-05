@@ -52,6 +52,14 @@ module.exports = {
             }
         ])
         .then(plans => {
+            plans.forEach(p => {
+                events.forEach(eventId => {
+                    EventPlan.create({
+                        event_id: eventId,
+                        plan_id: p.id
+                    })
+                })
+            })
             it.createGroups(events, plans.map(p => p.id))
             it.createForbiddenSeats(plans)
             it.createConstraints(plans)
@@ -61,7 +69,7 @@ module.exports = {
     },
 
     createGroups (events, plans) {
-        const NB_GROUPS = 1
+        const NB_GROUPS = 50
         var groups = []
         for (var i=0; i<NB_GROUPS; i++) {
             groups.push({
@@ -78,16 +86,33 @@ module.exports = {
     createForbiddenSeats (plans) {
         var forbidden = []
 
-        for (var i=0; i<10; i++) {
-            var plan = plans[Math.floor(Math.random() * plans.length)]
-            forbidden.push({
-                plan_id: plan.id,
-                line: faker.random.number(plan.width),
-                cell: faker.random.number(plan.height),
-            })
-        }
+        Plan.findOne({where: {name: 'Gradins'}}).then(plan => {
+            let cells = [6, 7, 16, 17]
+            for (let line = 1; line < plan.height; line++) {
+                cells.forEach(cell => {
+                    forbidden.push({
+                        plan_id: plan.id,
+                        line: line,
+                        cell: cell,
+                    })
+                })
+            }
+            ForbiddenSeat.bulkCreate(forbidden).catch(e => console.error("FORBIDDEN ERROR: " + e))
+        })
 
-        ForbiddenSeat.bulkCreate(forbidden).catch(e => console.error("FORBIDDEN ERROR: " + e))
+        Plan.findOne({where: {name: 'Chaises'}}).then(plan => {
+            let cells = [7, 8]
+            for (let line = 0; line < plan.height; line++) {
+                cells.forEach(cell => {
+                    forbidden.push({
+                        plan_id: plan.id,
+                        line: line,
+                        cell: cell,
+                    })
+                })
+            }
+            ForbiddenSeat.bulkCreate(forbidden).catch(e => console.error("FORBIDDEN ERROR: " + e))
+        })
     },
 
     createConstraints (plans) {
@@ -147,5 +172,7 @@ module.exports = {
                 }
             }
         }
+
+        console.log('READY TO GO!')
     }
 }

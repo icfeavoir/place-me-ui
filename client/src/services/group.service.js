@@ -7,6 +7,9 @@ export default {
   findById (id) {
     return axios.get('/api/groups/' + id).then(res => res.data)
   },
+  getByEventPlan (eventId, planId) {
+    return axios.post('/api/groups/getByEventPlan', {eventId: eventId, planId: planId}).then(res => res.data)
+  },
   countGroupByEvent () {
     return axios.get('/api/countGroupByEvent').then(res => res.data)
   },

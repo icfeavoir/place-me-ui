@@ -1,68 +1,60 @@
 <template>
-  <div class='event-plan'>
-    <table class="seats">
-      <tr v-for="line in seats" :key="line._id">
-        <Seat v-for="seat in line" :key="seat._id" :seat=seat>{{ seat.text }}</Seat>
-      </tr>
-    </table>
+  <div class="event-plan-container">
+    <GroupList class="group-list" v-if="groups" :groups="groups" />
+    <Plan class="plan" v-if="plan" :plan="plan" @group-changed="groupChanged" />
   </div>
 </template>
 
 <script>
 import eventService from '@/services/event.service'
 import planService from '@/services/plan.service'
+import groupService from '@/services/group.service'
 
-import Line from '@/components/elem/Line'
-import Seat from '@/components/elem/Seat'
+import GroupList from '@/components/elem/GroupList'
+import Plan from '@/components/elem/Plan'
 
 export default {
   components: {
-    Line,
-    Seat
+    GroupList,
+    Plan
   },
   data () {
     return {
       event: null,
-      plans: [],
-      seats: []
+      plan: null,
+      groups: null
     }
   },
-  created () {
-  },
   mounted () {
-    eventService.findById(this.$route.params.eventId).then(event => {
-      this.$set(this, event, event)
+    let eventId = this.$route.params.eventId
+    let planId = this.$route.params.planId
+    eventService.findById(eventId).then(e => {
+      this.$set(this, 'event', e)
     })
-    planService.getAll().then(plans => {
-      let plan = plans[0]
-      this.$set(this, plans, plan)
-
-      for (var line = 0; line < plan.height; line++) {
-        this.seats.push([])
-        for (var cell = 0; cell < plan.width; cell++) {
-          this.seats[line].push({
-            text: line + '.' + cell,
-            line: line,
-            cell: cell,
-            selected: false,
-            forbidden: false
-          })
-        }
-      }
-      console.log(this.seats)
+    planService.findById(planId).then(p => {
+      this.$set(this, 'plan', p)
+    })
+    groupService.getByEventPlan(eventId, planId).then(groups => {
+      this.$set(this, 'groups', groups)
     })
   },
   methods: {
-    generate: function (e, planId = null) {
-      eventService.generate({
-        eventId: this.event.id,
-        planId: planId
-      }).then(data => console.log(data))
+    groupChanged: function (data) {
+      let group = data.group
+      let count = data.count
+
+      let realGroup = this.groups.find(g => g.id === group.id)
+      if (realGroup) {
+        let done = realGroup.done ? realGroup.done + count : count
+        this.$set(this.groups.find(g => g.id === group.id), 'done', done)
+        let remaining = realGroup.number - realGroup.done
+        this.$set(this.groups.find(g => g.id === group.id), 'remaining', remaining)
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import '../../scss/seats.scss';
+  @import '@/scss/event-plan.scss';
 </style>

@@ -16,7 +16,7 @@
             desc: '',
             obj: plan
           }"
-          @del='del'
+          @del='deletePlan'
         />
       </div>
     </div>

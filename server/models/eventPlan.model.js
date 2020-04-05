@@ -11,6 +11,7 @@ EventPlan.init({
             model: Event,
             key: 'id',
         },
+        onDelete: 'CASCADE',
         allowNull: false,
     },
     plan_id: {
@@ -19,6 +20,7 @@ EventPlan.init({
             model: Plan,
             key: 'id',
         },
+        onDelete: 'CASCADE',
         allowNull: false,
     }
 }, {

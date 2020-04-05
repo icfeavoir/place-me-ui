@@ -1,5 +1,12 @@
 <template>
-  <td :style=style @click="selected = !selected"><p><slot v-bind="text"></slot></p></td>
+<!-- TODO: forbidden seat -->
+  <td :style="style" @click="onClick">
+    <drop class="drop" @drop="onDrop">
+      <drag class="drag" :draggable="seat && !seat.isEmpty" :transfer-data="seat && seat.group ? {group: seat.group, fromSeat: true, prevSeat: seat} : null">
+        <p>{{ seat && seat.group ? seat.group.name : '' }}</p>
+      </drag>
+    </drop>
+  </td>
 </template>
 
 <script>
@@ -7,7 +14,7 @@ export default {
   name: 'Seat',
   data () {
     return {
-      selected: false
+      isSelected: false
     }
   },
   props: {
@@ -20,9 +27,12 @@ export default {
     cell: Number,
     size: Number
   },
+  created: function () {
+  },
   computed: {
     style: function () {
       return {
+        minWidth: this.sizeComp + 'px',
         width: this.sizeComp + 'px',
         maxWidth: this.sizeComp + 'px',
         height: this.sizeComp + 'px',
@@ -36,24 +46,27 @@ export default {
       return this.size || 50
     },
     borderSize: function () {
-      return this.selected ? 3 : 1
+      return this.isSelected ? 3 : 1
     },
     borderStyle: function () {
-      return this.selected ? 'dashed' : 'solid'
+      return this.isSelected ? 'dashed' : 'solid'
     }
   },
   methods: {
     onClick: function (e) {
-      console.log(e)
+      this.isSelected = !this.isSelected
     },
 
-    onDrop: function (e) {
-      console.log(e)
+    onDrop: function (drop) {
+      if (drop) {
+        drop.seat = this.seat
+        this.$emit('place-group', drop)
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import '../../scss/seat.scss';
+  @import '@/scss/seat.scss';
 </style>

@@ -19,6 +19,15 @@ module.exports = {
                 this._handleResponse(group, res)
             })
     },
+    getByEventPlan (req, res) {
+        let params = req.body || req || []
+        let eventId = params.eventId
+        let planId = params.planId
+        Group.findAll({include: [Event, Plan], where: {event_id: eventId, plan_id: planId}})
+            .then(groups => {
+                this._handleResponse(groups, res)
+            })
+    },
     countGroupByEvent (req, res) {
         Group.findAll({
             attributes: ['event_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
@@ -108,8 +117,8 @@ module.exports = {
     },
 
     delete (req, res) {
-        var params = req.body || req || []
-        var result = {}
+        let params = req.body || req || []
+        let result = {}
         if (!params.id) {
             result.error = "No group id"
         }

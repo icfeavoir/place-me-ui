@@ -9,6 +9,7 @@ import VueSidebarMenu from 'vue-sidebar-menu'
 import VuejsDialog from 'vuejs-dialog'
 import Toasted from 'vue-toasted'
 import Vuex from 'vuex'
+import VueDragDrop from 'vue-drag-drop'
 
 // Style
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
@@ -25,6 +26,7 @@ Vue.use(VueSidebarMenu)
 Vue.use(VuejsDialog)
 Vue.use(Toasted, {position: 'bottom-center', duration: 4000, iconPack: 'fontawesome', icon: 'check', theme: 'outline'})
 Vue.use(Vuex)
+Vue.use(VueDragDrop)
 
 const store = new Vuex.Store({
   state: {

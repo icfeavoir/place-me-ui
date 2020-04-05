@@ -25,25 +25,6 @@ a {
         font-size: 18px;
     }
 
-    div.number-container {
-        background: $main-blue;
-        width: 50px;
-        min-height: 50px;
-        margin: 15px auto;
-        position: relative;
-        border-radius: 100%;
-
-        p.number {
-            position: absolute;
-            top: 50%;
-            text-align: center;
-            -ms-transform: translateY(-50%);
-            transform: translateY(-50%);
-            width: 100%;
-            font-size: 20px;
-        }
-    }
-
     p.desc {
         font-size: 12px;
     }

@@ -28,6 +28,7 @@ router.get("/groups/:groupId", groupService.getById.bind(groupService))
 router.get("/countGroupByEvent", groupService.countGroupByEvent.bind(groupService))
 router.post("/groups/create", groupService.create.bind(groupService))
 router.post("/groups/update", groupService.update.bind(groupService))
+router.post("/groups/getByEventPlan", groupService.getByEventPlan.bind(groupService))
 router.delete("/groups/delete", groupService.delete.bind(groupService))
 
 router.get("/plans", planService.getAll.bind(planService))

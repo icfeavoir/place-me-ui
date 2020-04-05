@@ -13,11 +13,11 @@
   
   .modal-wrapper {
         display: table-cell;
-        vertical-align: middle;
+        vertical-align: top;
 
         .modal-container {
             width: 30%;
-            margin: 0px auto;
+            margin: 100px auto;
             background-color: $lighter-grey;
             border-radius: 2px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);

@@ -26,7 +26,7 @@ if (config.createDB) {
     seederService.seedData(config.seedData)
 }
 
-var server = http.createServer(app)
+let server = http.createServer(app)
 socketService.start(server)
 
 server.listen(port, () => console.info(`Place-me app listening on port ${port}!`))

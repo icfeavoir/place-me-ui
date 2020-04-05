@@ -1,0 +1,85 @@
+@import 'variables';
+
+.group-list-container {
+    text-align: center;
+
+    input {
+        background-color: $lighter-grey;
+        color: $bg-color;
+        border: 1px solid $bg-color;
+        border-radius: 10px;
+        width: 90%;
+    }
+
+    table.list {
+        border-collapse: collapse;
+        width: 100%;
+        tr.group-data {
+            width: 100%;
+            border-bottom: 1px solid $lighter-grey;
+
+            &:hover {
+                background-color: $dark-grey;
+                cursor: pointer;
+            }
+            &.selected {
+                border: 2px dashed $main-blue;
+                border-left: none;
+                border-right: none;
+                background-color: $dark-grey;
+            }
+
+            &.group-done-separator {
+                background-color: $main-blue;
+                &:hover {
+                    cursor: initial;
+                }
+                td {
+                    padding: 0;
+                    font-size: 12px;
+                }
+            }
+            
+            td {
+                color: $lighter-grey;
+                padding: 10px 0;
+
+                &.name-container {
+                    overflow: hidden;
+                    margin-right: 10px;
+                }
+
+                p.name {
+                    width: fit-content;
+                    max-width: 100%;
+                    margin: 0 auto;
+                }
+
+                .number-container {
+                    margin: 0 auto;
+                }
+                .number-success {
+                    background-color: $main-green;
+                }
+                .number-error {
+                    background-color: $main-red;
+                }
+            }
+
+            &.selected-completion {
+                border: 5px solid red;
+                height: 5px;
+            }
+        }
+    }
+
+    .draggable {
+        color: white;
+    }
+
+    .droppable {
+        width: 50px;
+        height: 50px;
+        background-color: red;
+    }
+}

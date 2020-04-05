@@ -30,7 +30,8 @@ Group.init({
             model: Plan,
             key: 'id',
         },
-        allowNull: false,
+        onDelete: 'SET NULL',
+        allowNull: true,
     },
     constraint_id: {
         type: Sequelize.INTEGER,

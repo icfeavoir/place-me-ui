@@ -20,5 +20,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../../scss/special-checkbox.scss';
+  @import '@/scss/special-checkbox.scss';
 </style>

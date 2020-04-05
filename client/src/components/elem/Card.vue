@@ -44,5 +44,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../../scss/card.scss';
+  @import '@/scss/card.scss';
 </style>
