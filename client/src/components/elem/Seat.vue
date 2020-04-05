@@ -29,14 +29,15 @@ export default {
         color: this.color || this.colors.lighterGrey,
         backgroundColor: this.bgColor || this.colors.bgColor,
         border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
-        fontSize: '10px'
+        fontSize: '10px',
+        opacity: this.opacity
       }
     },
     sizeComp () {
       return this.size || 50
     },
     borderSize () {
-      return this.isForbidden ? 0 : this.isSelected ? 2 : 1
+      return this.isForbidden ? 0 : this.isSelected ? 1 : 1
     },
     borderStyle () {
       return this.isSelected ? 'dashed' : 'solid'
@@ -48,8 +49,20 @@ export default {
       return this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
     },
     bgColor () {
-      return this.isForbidden ? this.colors.mainRed : (this.group ? this.group.color : null)
+      if (this.isForbidden) {
+        return this.colors.mainRed
+      } else if (this.group) {
+        return this.group.color
+      } else if (this.isSelected) {
+        return this.colors.darkGrey
+      } else {
+        return this.colors.bgColor
+      }
     },
+    opacity () {
+      return this.isSelected || this.isForbidden ? 1 : 0.75
+    },
+
     group () {
       return this.seat ? this.seat.group : null
     },

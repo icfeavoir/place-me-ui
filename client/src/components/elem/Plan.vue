@@ -1,4 +1,5 @@
 <template>
+<!-- TODO: ne pas faire selector si group -->
   <div class='event-plan' v-if="seats">
     <div class="plan-selector" :style="selectorStyle"></div>
     <table class="seats" ref="seatsTable">
@@ -94,6 +95,9 @@ export default {
         this.emptySeat(data.prevSeat)
         // on assigne
         this.setSeat(data.seat, data.group)
+        // on annule le selector
+        this.isSelecting = false
+        this.mouseUp()
       } else if (data.del) {
         // suppr le siège
         this.emptySeat(data.seat)

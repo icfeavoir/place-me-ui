@@ -17,16 +17,18 @@
         tr.group-data {
             width: 100%;
             border-bottom: 1px solid $lighter-grey;
+            opacity: 0.75;
 
             &:hover {
                 background-color: $dark-grey;
                 cursor: pointer;
             }
             &.selected {
-                border: 2px dashed $main-blue;
+                font-weight: 700;
+                opacity: 1;
                 border-left: none;
                 border-right: none;
-                background-color: $dark-grey;
+                color: red;
             }
 
             &.group-done-separator {
@@ -65,21 +67,6 @@
                     background-color: $main-red;
                 }
             }
-
-            &.selected-completion {
-                border: 5px solid red;
-                height: 5px;
-            }
         }
-    }
-
-    .draggable {
-        color: $lighter-grey;
-    }
-
-    .droppable {
-        width: 50px;
-        height: 50px;
-        background-color: red;
     }
 }

@@ -1,14 +1,13 @@
 <template>
   <div class='group-list-container'>
-    <!-- <drop class="droppable" @drop="groupDrag(1)"></drop> -->
     <input type="text" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''"/>
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
       <!-- GROUP A FAIRE -->
-      <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining !== 0)" :key="group._id" @click="select(group.id)">
+      <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining !== 0)" :key="group._id" :style="getStyle(group, 'bg')" @click="select(group.id)">
         <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
           <p class="name">
-            <drag :transfer-data="{group: group, auto: true}" class="draggable" :draggable="group.remaining > 0">{{ group.name }}</drag>
+            <drag :transfer-data="{group: group, auto: true}" class="draggable" :draggable="group.remaining > 0" :style="getStyle(group, 'color')">{{ group.name }}</drag>
           </p>
         </td>
         <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
@@ -66,6 +65,13 @@ export default {
 
     getSelectedGroup () {
       return this.groups.find(g => g.isSelected)
+    },
+
+    getStyle (group, key) {
+      return {
+        bg: {backgroundColor: group.color || 'none'},
+        color: {color: this.shoulColorBeDark(group.color) ? this.colors.bgColor : this.colors.lighterGrey}
+      }[key]
     },
 
     select: function (id) {
