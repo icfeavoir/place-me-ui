@@ -13,10 +13,24 @@ form.add-form {
         &#number {
             width: 15%;
         }
+        &#color {
+            width: 40px;
+            height: 40px;
+            border: none;
+            margin: 0;
+        }
     }
 
     .submit-container {
         width: 100%;
+    }
+
+    .color-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
     }
 
     .constraint-container {

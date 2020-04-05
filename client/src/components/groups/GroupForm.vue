@@ -10,6 +10,12 @@
       <select id="plan" v-model.number="plan">
         <option v-for="(item, key) in plans" v-bind:key="key" :value="item.id">{{item.name}}</option>
       </select>
+      <div class="color-container" v-if="group">
+        <label>Couleur</label>
+        <!-- <div class="input-color-container"> -->
+          <input id="color" type="color" name="color" v-model="color"/>
+        <!-- </div> -->
+      </div>
 
       <div class="constraint-container">
         <button type="button" @click.prevent="showConstraint = true" v-if="!showConstraint"><i class="fa fa-plus"></i> Ajouter une contrainte</button>
@@ -61,6 +67,7 @@ export default {
 
       name: '',
       number: null,
+      color: '#000000',
       event: null,
       plan: null,
       constraint: '',
@@ -94,14 +101,10 @@ export default {
   },
   methods: {
     submit: function () {
-      if (!this.verifyForm()) {
-        console.log('error')
-        return
-      }
-
       var data = {
         name: this.name,
         number: this.number,
+        color: this.color,
         event_id: this.event,
         plan_id: this.plan,
         constraint_name: this.constraint,
@@ -131,15 +134,12 @@ export default {
       }
     },
 
-    verifyForm: function () {
-      return true
-    },
-
     init: function () {
       let group = this.group || {}
 
       this.name = group.name || ''
       this.number = group.number || null
+      this.color = group.color || null
       this.event = group.event_id || (this.events.length ? this.events[0].id : null)
       this.plan = group.plan_id || (this.plans.length ? this.plans[0].id : null)
       this.constraint = group.constraintText || ''
@@ -167,9 +167,8 @@ export default {
 <style lang="scss" scoped>
   @import '@/scss/add-form.scss';
 </style>
-<style lang="scss">
-  // on veut toucher aux composants enfants (checkbox ici)
-  .checkmark {
+<style lang="scss" scoped>
+  /deep/ .checkmark {
     top: 10px !important;
   }
 </style>

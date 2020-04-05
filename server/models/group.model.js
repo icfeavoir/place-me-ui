@@ -16,6 +16,11 @@ Group.init({
         allowNull: false,
         defaultValue: 1
     },
+    color: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '#000000'
+    },
     event_id: {
         type: Sequelize.INTEGER,
         references: {

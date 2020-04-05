@@ -15,6 +15,9 @@ import VueDragDrop from 'vue-drag-drop'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 import 'vuejs-dialog/dist/vuejs-dialog.min.css'
 
+// mixins
+import { utils } from '@/components/mixins/utils'
+
 import socketService from './services/socket.service'
 socketService.connect()
 
@@ -27,6 +30,9 @@ Vue.use(VuejsDialog)
 Vue.use(Toasted, {position: 'bottom-center', duration: 4000, iconPack: 'fontawesome', icon: 'check', theme: 'outline'})
 Vue.use(Vuex)
 Vue.use(VueDragDrop)
+
+// mixin
+Vue.mixin(utils)
 
 const store = new Vuex.Store({
   state: {

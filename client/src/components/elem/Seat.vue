@@ -2,8 +2,8 @@
 <!-- TODO: forbidden seat -->
   <td :style="style" @click="onClick">
     <drop class="drop" @drop="onDrop">
-      <drag class="drag" :draggable="seat && !seat.isEmpty" :transfer-data="seat && seat.group ? {group: seat.group, fromSeat: true, prevSeat: seat} : null">
-        <p>{{ seat && seat.group ? seat.group.name : '' }}</p>
+      <drag class="drag" :draggable="seat && !seat.isEmpty" :transfer-data="group ? {group: group, fromSeat: true, prevSeat: seat} : null">
+        <p>{{ group ? group.name : '' }}</p>
       </drag>
     </drop>
   </td>
@@ -20,14 +20,10 @@ export default {
   props: {
     seat: Object,
     forbidden: Boolean,
-    color: String,
     borderColor: String,
-    bgColor: String,
     line: Number,
     cell: Number,
     size: Number
-  },
-  created: function () {
   },
   computed: {
     style: function () {
@@ -36,9 +32,9 @@ export default {
         width: this.sizeComp + 'px',
         maxWidth: this.sizeComp + 'px',
         height: this.sizeComp + 'px',
-        color: this.color || 'white',
-        backgroundColor: this.bgColor || 'black',
-        border: this.borderSize + 'px ' + this.borderStyle + ' ' + (this.borderColor || 'red'),
+        color: this.color || this.colors.lighterGrey,
+        backgroundColor: this.bgColor || this.colors.bgColor,
+        border: this.borderSize + 'px ' + this.borderStyle + ' ' + (this.borderColor || this.colors.lightGrey),
         fontSize: '10px'
       }
     },
@@ -50,6 +46,15 @@ export default {
     },
     borderStyle: function () {
       return this.isSelected ? 'dashed' : 'solid'
+    },
+    color () {
+      return this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
+    },
+    bgColor: function () {
+      return this.group ? this.group.color : null
+    },
+    group: function () {
+      return this.seat ? this.seat.group : null
     }
   },
   methods: {

@@ -86,9 +86,10 @@ export default {
       }
     },
     setSeat: function (seat, newGroup) {
-      this.emptySeat(seat)
-      seat.group = newGroup
-      seat.isEmpty = newGroup === null // est vide si group null
+      // this.emptySeat(seat)
+      // seat.group = {test: 'ok'}
+      this.$set(seat, 'group', newGroup)
+      // seat.isEmpty = newGroup === null // est vide si group null
       this.$emit('group-changed', { group: newGroup, count: 1 })
     },
 
