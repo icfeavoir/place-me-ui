@@ -1,13 +1,14 @@
 <template>
   <div class="event-plan-container">
-    <GroupList class="group-list" v-if="groups" :groups="groups" />
-    <Plan class="plan" v-if="plan" :plan="plan" @group-changed="groupChanged" />
+    <GroupList ref="groupList" class="group-list" v-if="groups" :groups="groups" @select-group="selectGroup" />
+    <Plan ref="plan" class="plan" v-if="plan" :plan="plan" @group-changed="groupChanged" @select-seat="selectSeat" />
   </div>
 </template>
 
 <script>
 import eventService from '@/services/event.service'
 import planService from '@/services/plan.service'
+import forbiddenSeatService from '@/services/forbiddenSeat.service'
 import groupService from '@/services/group.service'
 
 import GroupList from '@/components/elem/GroupList'
@@ -32,7 +33,10 @@ export default {
       this.$set(this, 'event', e)
     })
     planService.findById(planId).then(p => {
-      this.$set(this, 'plan', p)
+      forbiddenSeatService.findByPlanId(p.id).then(f => {
+        p.forbiddenSeats = f
+        this.$set(this, 'plan', p)
+      })
     })
     groupService.getByEventPlan(eventId, planId).then(groups => {
       this.$set(this, 'groups', groups)
@@ -49,6 +53,38 @@ export default {
         this.$set(this.groups.find(g => g.id === group.id), 'done', done)
         let remaining = realGroup.number - realGroup.done
         this.$set(this.groups.find(g => g.id === group.id), 'remaining', remaining)
+      }
+    },
+
+    selectSeat (seat) {
+      // quand on clique sur un siège, on check si on a un groupe de select
+      let group = this.$refs.groupList.getSelectedGroup()
+      if (group) {
+        this.$refs.plan.placeGroup({
+          auto: true, // mode auto
+          group: group,
+          seat: seat
+        })
+        this.$refs.plan.unselectAll()
+        // si le groupe est vidé on l'unselect
+        if (group.remaining === 0) {
+          this.$refs.groupList.unselect()
+        }
+      }
+    },
+
+    selectGroup (group) {
+      // quand on clique sur un group, on check si on a des sièges de select
+      if (group) {
+        this.$refs.plan.getSelectedSeats().forEach(seat => {
+          this.$refs.plan.placeGroup({
+            setSeat: true, // mode simple
+            group: group,
+            seat: seat
+          })
+          this.$refs.plan.unselectAll()
+          this.$refs.groupList.unselect()
+        })
       }
     }
   }

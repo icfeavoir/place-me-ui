@@ -74,7 +74,8 @@ module.exports = {
         for (var i=0; i<NB_GROUPS; i++) {
             groups.push({
                 name: faker.name.firstName() + ' ' + faker.name.lastName(),
-                number: faker.random.number({min: 5, max: 20}),
+                number: faker.random.number({min: 1, max: 20}),
+                color: '#' + Math.floor(Math.random()*16777215).toString(16),
                 plan_id: plans[Math.floor(Math.random() * plans.length)],
                 event_id: events[Math.floor(Math.random() * events.length)],
             })

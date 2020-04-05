@@ -1,8 +1,7 @@
 <template>
-<!-- TODO: forbidden seat -->
-  <td :style="style" @click="onClick">
+  <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''">
     <drop class="drop" @drop="onDrop">
-      <drag class="drag" :draggable="seat && !seat.isEmpty" :transfer-data="group ? {group: group, fromSeat: true, prevSeat: seat} : null">
+      <drag class="drag" :draggable="draggable" :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null">
         <p>{{ group ? group.name : '' }}</p>
       </drag>
     </drop>
@@ -14,19 +13,14 @@ export default {
   name: 'Seat',
   data () {
     return {
-      isSelected: false
     }
   },
   props: {
     seat: Object,
-    forbidden: Boolean,
-    borderColor: String,
-    line: Number,
-    cell: Number,
     size: Number
   },
   computed: {
-    style: function () {
+    style () {
       return {
         minWidth: this.sizeComp + 'px',
         width: this.sizeComp + 'px',
@@ -34,39 +28,57 @@ export default {
         height: this.sizeComp + 'px',
         color: this.color || this.colors.lighterGrey,
         backgroundColor: this.bgColor || this.colors.bgColor,
-        border: this.borderSize + 'px ' + this.borderStyle + ' ' + (this.borderColor || this.colors.lightGrey),
+        border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
         fontSize: '10px'
       }
     },
-    sizeComp: function () {
+    sizeComp () {
       return this.size || 50
     },
-    borderSize: function () {
-      return this.isSelected ? 3 : 1
+    borderSize () {
+      return this.isForbidden ? 0 : this.isSelected ? 2 : 1
     },
-    borderStyle: function () {
+    borderStyle () {
       return this.isSelected ? 'dashed' : 'solid'
+    },
+    borderColor () {
+      return this.isSelected ? this.colors.lighterGrey : this.colors.lightGrey
     },
     color () {
       return this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
     },
-    bgColor: function () {
-      return this.group ? this.group.color : null
+    bgColor () {
+      return this.isForbidden ? this.colors.mainRed : (this.group ? this.group.color : null)
     },
-    group: function () {
+    group () {
       return this.seat ? this.seat.group : null
+    },
+    isForbidden () {
+      return this.seat ? this.seat.isForbidden : true
+    },
+    draggable () {
+      return this.seat && !this.seat.isEmpty && !this.seat.isForbidden
+    },
+    isSelected () {
+      return this.seat.isSelected || false
     }
   },
   methods: {
     onClick: function (e) {
-      this.isSelected = !this.isSelected
+      this.seat.isSelected = !this.isSelected && !this.isForbidden
+      this.$emit('seat-click', this.seat)
     },
 
     onDrop: function (drop) {
-      if (drop) {
+      if (!this.isForbidden && drop) {
         drop.seat = this.seat
         this.$emit('place-group', drop)
       }
+    }
+  },
+  watch: {
+    group () {
+      this.seat.isEmpty = this.group === null
     }
   }
 }

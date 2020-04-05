@@ -8,7 +8,7 @@
       <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining !== 0)" :key="group._id" @click="select(group.id)">
         <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
           <p class="name">
-            <drag :transfer-data="{group: group, fromList: true}" class="draggable" :draggable="group.remaining > 0">{{ group.name }}</drag>
+            <drag :transfer-data="{group: group, auto: true}" class="draggable" :draggable="group.remaining > 0">{{ group.name }}</drag>
           </p>
         </td>
         <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
@@ -18,7 +18,7 @@
       <!-- SEPARATOR -->
       <tr class="group-data group-done-separator"><td colspan="4">GROUPE FAIT</td></tr>
       <!-- GROUP DONE -->
-      <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining === 0)" :key="group._id" @click="select(group.id)">
+      <tr class="group-data" v-for="group in groups.filter(g => g.remaining === 0)" :key="group._id">
         <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
           <p class="name">
             <drag :transfer-data="group" class="draggable" :draggable="group.remaining > 0">{{ group.name }}</drag>
@@ -64,21 +64,28 @@ export default {
       this.groups.forEach(group => { group.visible = group.name.toLowerCase().includes(this.search.toLowerCase()) })
     },
 
+    getSelectedGroup () {
+      return this.groups.find(g => g.isSelected)
+    },
+
     select: function (id) {
       if (id) {
         let group = this.groups.find(g => g.id === id)
-        // on remet la selection au nouveau (sauf s'il était déjà select dans ce cas on deselect)
+        // on remet la selection au nouveau (sauf s'il était déjà select dans ce cas on unselect)
         if (!group.isSelected) {
-          this.deselect()
+          // on unselect l'ancien
+          this.unselect()
           this.$set(group, 'isSelected', true)
         } else {
-          this.deselect()
+          this.unselect()
         }
+        // on emet le groupe cliqué
+        this.$emit('select-group', group)
       } else {
-        this.deselect()
+        this.unselect()
       }
     },
-    deselect: function () {
+    unselect: function () {
       // on enlève la selection aux autres (en théorie max 1 autre mais bon)
       this.groups.filter(g => g.isSelected).forEach(group => { group.isSelected = false })
     }

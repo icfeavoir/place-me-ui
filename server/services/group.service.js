@@ -43,8 +43,10 @@ module.exports = {
         var {result, params} = this.checkData(params)
 
         if (result === true) {
-            result = {}
             // tout est ok
+            result = {}
+            // on génère une couleur aléatoire (16777215 = fff en hex)
+            params.color = '#' + Math.floor(Math.random()*16777215).toString(16);
             // on check s'il faut créer une contrainte ou si elle existe déjà
             this.findOrCreateConstraint(params.constraint_name)
                 .then(([constraint, created]) => {

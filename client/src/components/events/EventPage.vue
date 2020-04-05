@@ -62,33 +62,30 @@ export default {
     eventService.findById(eventId).then(e => {
       this.$set(this, 'event', e)
     })
-
     this.refreshPlans(eventId)
   },
   methods: {
     refreshPlans: function (eventId) {
-      eventService.getPlans(eventId)
-        .then((data) => {
-          let plans = []
-          data.forEach(d => {
-            plans.push(d.plan)
-          })
-          this.$set(this, 'allPlans', plans)
-          this.$set(this, 'plans', plans)
+      eventService.getPlans(eventId).then((data) => {
+        let plans = []
+        data.forEach(d => {
+          plans.push(d.plan)
         })
+        this.$set(this, 'allPlans', plans)
+        this.$set(this, 'plans', plans)
 
-      // quand on rafraichit les plan, on refait le comptage
-      this.countBook(eventId)
+        // quand on rafraichit les plan, on refait le comptage
+        this.countBook(eventId)
+      })
     },
     countBook: function (eventId) {
-      eventService.countBook(eventId)
-        .then((data) => {
-          data.forEach(element => {
-            if (this.plans && element) {
-              this.$set(this.plans.find(p => p.id === element.plan_id) || {}, 'total', element.total)
-            }
-          })
+      eventService.countBook(eventId).then((data) => {
+        data.forEach(element => {
+          if (this.plans && element) {
+            this.$set(this.plans.find(p => p.id === element.plan_id) || {}, 'total', element.total)
+          }
         })
+      })
     },
 
     deletePlanFromEvent: function (plan) {

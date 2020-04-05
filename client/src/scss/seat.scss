@@ -22,4 +22,8 @@ td {
     &:hover {
         cursor: pointer;
     }
+
+    &.forbidden:hover {
+        cursor: initial;
+    }
 }

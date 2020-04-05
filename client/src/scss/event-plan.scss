@@ -34,25 +34,5 @@
     .plan {
         max-height: 100vh;
         overflow: auto;
-        /* width */
-        &::-webkit-scrollbar {
-            max-width: 10px;
-            max-height: 10px;
-        }
-        
-        /* Track */
-        &::-webkit-scrollbar-track {
-            background: $lighter-grey; 
-        }
-        
-        /* Handle */
-        &::-webkit-scrollbar-thumb {
-            background: $light-grey; 
-        }
-        
-        /* Handle on hover */
-        &::-webkit-scrollbar-thumb:hover {
-            background: $dark-grey; 
-        }
     }
 }

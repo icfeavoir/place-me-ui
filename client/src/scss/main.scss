@@ -5,18 +5,28 @@
     padding: 0;
     outline: none;
     font-family: 'Montserrat Light';
+    // SCROLLBAR
+    &::-webkit-scrollbar {
+        max-width: 10px;
+        max-height: 10px;
+    }
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: $lighter-grey; 
+    }
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: $light-grey; 
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: $light-grey; 
+    }
 }
 
 // GENERAL
 html {
     background-color: $bg-color;
-    overflow: hidden;
-    /* Hide scrollbar for IE and Edge */
-    -ms-overflow-style: none;
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    &::-webkit-scrollbar {
-        display: none;
-    }
 }
 
 .btn-lg {
