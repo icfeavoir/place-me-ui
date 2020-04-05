@@ -1,8 +1,12 @@
 <template>
   <div class='event-plan' v-if="seats">
-    <table class="seats">
+    <div class="plan-selector" :style="selectorStyle"></div>
+    <table class="seats" ref="seatsTable">
       <tr v-for="line in lineCount" :key="line">
-        <Seat v-for="cell in cellCount" :key="line + '_' + cell"
+        <Seat
+          v-for="cell in cellCount"
+          ref="seats"
+          :key="line + '_' + cell"
           :seat="seats.find(s => s.line === (line - 1) && s.cell === (cell - 1))"
           @place-group="placeGroup"
           @seat-click="seatClick"
@@ -33,12 +37,29 @@ export default {
       // select with shift
       isShiftPressed: false,
       firstSelectedSeat: null,
-      specialSelect: false
+      specialSelect: false,
+      // selector
+      selectorStyle: {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+        realLeft: 0,
+        realTop: 0,
+        realWidth: 0,
+        realHeight: 0,
+        leftStart: 0,
+        topStart: 0
+      },
+      isSelecting: false
     }
   },
   created () {
     window.addEventListener('keydown', this.keydown, true)
     window.addEventListener('keyup', this.keyup, true)
+    window.addEventListener('mousemove', this.mouseMove, true)
+    window.addEventListener('mousedown', this.mouseDown, true)
+    window.addEventListener('mouseup', this.mouseUp, true)
   },
   mounted () {
     if (this.plan) {
@@ -168,42 +189,45 @@ export default {
       } while (stop === false)
     },
 
+    selectSeveralSeats (firstSeat, lastSeat) {
+      this.unselectAll()
+      let lineDirection = -(firstSeat.line - lastSeat.line)
+      if (lineDirection >= 0) lineDirection = 1
+      if (lineDirection < -1) lineDirection = -1
+      let cellDirection = -(firstSeat.cell - lastSeat.cell)
+      if (cellDirection >= 0) cellDirection = 1
+      if (cellDirection < -1) cellDirection = -1
+
+      let currentLine = firstSeat.line
+      let currentCell = firstSeat.cell
+      const startCell = currentCell
+
+      // on fait un + direction car le while s'arrete un coup trop tôt
+      const targetLine = lastSeat.line + lineDirection
+      const targetCell = lastSeat.cell + cellDirection
+
+      while (currentLine !== targetLine) {
+        currentCell = startCell
+        while (currentCell !== targetCell) {
+          this.selectSeat(currentLine, currentCell)
+          currentCell += cellDirection
+        }
+        currentLine += lineDirection
+      }
+      this.specialSelect = true
+      this.selectSeat(firstSeat)
+      this.selectSeat(lastSeat)
+    },
+
     seatClick (seat) {
       if (seat) {
         // SELECTION AVEC SHIFT
         if (this.isShiftPressed && this.firstSelectedSeat) {
           // deselect tout et reselect toute la zone
           let firstSelectedSeat = this.firstSelectedSeat
-          this.unselectAll()
+          this.selectSeveralSeats(firstSelectedSeat, seat)
           // on remet
           this.firstSelectedSeat = firstSelectedSeat
-
-          let lineDirection = -(firstSelectedSeat.line - seat.line)
-          if (lineDirection >= 0) lineDirection = 1
-          if (lineDirection < -1) lineDirection = -1
-          let cellDirection = -(firstSelectedSeat.cell - seat.cell)
-          if (cellDirection >= 0) cellDirection = 1
-          if (cellDirection < -1) cellDirection = -1
-
-          let currentLine = firstSelectedSeat.line
-          let currentCell = firstSelectedSeat.cell
-          const startCell = currentCell
-
-          // on fait un + direction car le while s'arrete un coup trop tôt
-          const targetLine = seat.line + lineDirection
-          const targetCell = seat.cell + cellDirection
-
-          while (currentLine !== targetLine) {
-            currentCell = startCell
-            while (currentCell !== targetCell) {
-              this.selectSeat(currentLine, currentCell)
-              currentCell += cellDirection
-            }
-            currentLine += lineDirection
-          }
-          this.specialSelect = true
-          this.selectSeat(firstSelectedSeat)
-          this.selectSeat(seat)
         } else if (this.specialSelect) {
           this.specialSelect = false
           this.unselectAll()
@@ -226,6 +250,36 @@ export default {
         }
         // on envoie pour faire le lien avec grouplist
         this.$emit('select-seat', seat)
+      }
+    },
+
+    setSelectedSeatsWithSelector () {
+      if (this.$refs.seats) {
+        let seats = []
+        this.$refs.seats.forEach(seat => { // attention: c'est le seat sous forme html
+          let left = seat.$el.offsetLeft + seat.$parent.$el.offsetLeft
+          let top = seat.$el.offsetTop + seat.$parent.$el.offsetTop
+          let right = left + seat.$el.offsetWidth
+          let bottom = top + seat.$el.offsetHeight
+
+          // on prend les extrêmes
+          let selectorPoints = [
+            {x: this.selectorStyle.realLeft, y: this.selectorStyle.realTop},
+            {x: this.selectorStyle.realLeft + this.selectorStyle.realWidth, y: this.selectorStyle.realTop + this.selectorStyle.realHeight}
+          ]
+
+          // on prend chaque point du selecteur et on regarde s'il est dans le seat
+          for (let i = 0; i < selectorPoints.length; i++) {
+            let point = selectorPoints[i]
+            if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) {
+              seats.push(seat.seat)
+              break
+            }
+          }
+        })
+        if (seats.length === 2) {
+          this.selectSeveralSeats(seats[0], seats[1])
+        }
       }
     },
 
@@ -256,6 +310,7 @@ export default {
         case 27:
           // ESC
           this.unselectAll()
+          this.mouseUp(null)
           break
 
         case 46:
@@ -264,6 +319,63 @@ export default {
           this.unselectAll()
           break
       }
+    },
+    getTablePosition () {
+      let pos = {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0
+      }
+      if (this.$refs.seatsTable) {
+        pos.left = this.$refs.seatsTable.offsetLeft
+        pos.top = this.$refs.seatsTable.offsetTop
+        pos.width = pos.left + this.$refs.seatsTable.offsetWidth
+        pos.height = pos.top + this.$refs.seatsTable.offsetHeight
+      }
+      return pos
+    },
+    mouseMove (e) {
+      if (this.isSelecting) {
+        let pos = this.getTablePosition()
+        if (e.x >= pos.left && e.x <= pos.width && e.y >= pos.top && e.y <= pos.height) {
+          let realTop = Math.min(this.selectorStyle.topStart, e.y)
+          let realLeft = Math.min(this.selectorStyle.leftStart, e.x)
+          let realWidth = Math.abs(this.selectorStyle.leftStart - e.x)
+          let realHeight = Math.abs(this.selectorStyle.topStart - e.y)
+          // nb
+          this.selectorStyle.realTop = realTop
+          this.selectorStyle.realLeft = realLeft
+          this.selectorStyle.realWidth = realWidth
+          this.selectorStyle.realHeight = realHeight
+          // en px
+          this.selectorStyle.top = realTop + 'px'
+          this.selectorStyle.left = realLeft + 'px'
+          this.selectorStyle.width = realWidth + 'px'
+          this.selectorStyle.height = realHeight + 'px'
+        }
+      }
+    },
+    mouseDown (e) {
+      let pos = this.getTablePosition()
+      if (e.x >= pos.left && e.x <= pos.width && e.y >= pos.top && e.y <= pos.height) {
+        this.isSelecting = true
+        this.selectorStyle.leftStart = e.x
+        this.selectorStyle.topStart = e.y
+      }
+    },
+    mouseUp (e) {
+      if (this.isSelecting) {
+        // on select les seats
+        this.setSelectedSeatsWithSelector()
+      }
+      this.isSelecting = false
+      this.selectorStyle.leftStart = 0
+      this.selectorStyle.topStart = 0
+      this.selectorStyle.left = 0
+      this.selectorStyle.top = 0
+      this.selectorStyle.width = 0
+      this.selectorStyle.height = 0
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''">
     <drop class="drop" @drop="onDrop">
-      <drag class="drag" :draggable="draggable" :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null">
+      <drag v-if="group" class="drag" :draggable="draggable" :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null">
         <p>{{ group ? group.name : '' }}</p>
       </drag>
     </drop>
