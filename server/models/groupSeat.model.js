@@ -1,6 +1,6 @@
 const {Sequelize, sequelize} = require('../config/db');
 const Group = require('./group.model')
-const Plan = require('./plan.model')
+const EventPlan = require('./eventPlan.model')
 
 const Model = Sequelize.Model;
 class GroupSeat extends Model {}
@@ -11,14 +11,16 @@ GroupSeat.init({
             model: Group,
             key: 'id',
         },
-        allowNull: false,
+        onDelete: 'SET NULL',
+        allowNull: true,
     },
-    plan_id: {
+    event_plan_id: {
         type: Sequelize.INTEGER,
         references: {
-            model: Plan,
+            model: EventPlan,
             key: 'id',
         },
+        onDelete: 'CASCADE',
         allowNull: false,
     },
     line: {
@@ -37,7 +39,7 @@ GroupSeat.init({
 GroupSeat.belongsTo(Group, {foreignKey: 'group_id'});
 Group.hasMany(GroupSeat, {as: 'group_seats', foreignKey: 'group_id'})
 
-GroupSeat.belongsTo(Plan, {foreignKey: 'plan_id'});
-Plan.hasMany(GroupSeat, {as: 'group_seats', foreignKey: 'plan_id'})
+GroupSeat.belongsTo(EventPlan, {foreignKey: 'event_plan_id'});
+EventPlan.hasMany(GroupSeat, {as: 'group_seats', foreignKey: 'event_plan_id'})
 
 module.exports = GroupSeat

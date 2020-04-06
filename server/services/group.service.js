@@ -45,8 +45,11 @@ module.exports = {
         if (result === true) {
             // tout est ok
             result = {}
-            // on génère une couleur aléatoire (16777215 = fff en hex)
+            // on génère une couleur aléatoire (16777215 = ffffff en hex)
             params.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+            while (params.color.length < 7) {
+                params.color += '0'
+            }
             // on check s'il faut créer une contrainte ou si elle existe déjà
             this.findOrCreateConstraint(params.constraint_name)
                 .then(([constraint, created]) => {

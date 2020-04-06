@@ -7,6 +7,7 @@ export const utils = {
         lightGrey: '#BABABB',
         lighterGrey: '#E7E7E7',
         mainBlue: '#0079BF',
+        darkBlue: '#083148',
         mainRed: '#8c343a',
         mainGreen: '#348c38',
         lightRed: '#e5323e'

@@ -14,6 +14,11 @@
     table.list {
         border-collapse: collapse;
         width: 100%;
+        // not selectable
+        user-select: none; /* CSS3 (little to no support) */
+        -ms-user-select: none; /* IE 10+ */
+        -moz-user-select: none; /* Gecko (Firefox) */
+        -webkit-user-select: none; /* Webkit (Safari, Chrome) */
         tr.group-data {
             width: 100%;
             border-bottom: 1px solid $lighter-grey;

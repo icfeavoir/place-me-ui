@@ -3,6 +3,7 @@ const Event = require('../models/event.model')
 const Plan = require('../models/plan.model')
 const EventPlan = require('../models/eventPlan.model')
 const Group = require('../models/group.model')
+const GroupSeat = require('../models/groupSeat.model')
 
 const gaService = require('./ga.service')
 
@@ -67,6 +68,21 @@ module.exports = {
                             data: ep
                         }
                         this._handleResponse(result, res)
+                        // on génére un placement vide pour gagner du temps
+                        Plan.findByPk(params.planId).then(plan => {
+                            let groupSeats = []
+                            for (var line = 0; line < plan.height; line++) {
+                                for (var cell = 0; cell < plan.width; cell++) {
+                                    groupSeats.push({
+                                        event_plan_id: ep.id,
+                                        group: null,
+                                        line: line,
+                                        cell: cell
+                                    })
+                                }
+                            }
+                            GroupSeat.bulkCreate(groupSeats)
+                        })
                     })
                     .catch(e => {
                         console.error("ERROR EVENT PLAN CREATE: " + e)

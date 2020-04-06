@@ -72,10 +72,14 @@ module.exports = {
         const NB_GROUPS = 50
         var groups = []
         for (var i=0; i<NB_GROUPS; i++) {
+            let color = '#' + (Math.floor(Math.random()*16777215)).toString(16)
+            while (color.length < 7) {
+                color += '0'
+            }
             groups.push({
                 name: faker.name.firstName() + ' ' + faker.name.lastName(),
                 number: faker.random.number({min: 1, max: 20}),
-                color: '#' + Math.floor(Math.random()*16777215).toString(16),
+                color: color,
                 plan_id: plans[Math.floor(Math.random() * plans.length)],
                 event_id: events[Math.floor(Math.random() * events.length)],
             })

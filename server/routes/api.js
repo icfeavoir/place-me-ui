@@ -22,6 +22,9 @@ router.delete("/events/delete", eventService.delete.bind(eventService))
 
 router.get("/groupSeats", groupSeatService.getAll.bind(groupSeatService))
 router.get("/groupSeats/:groupSeatId", groupSeatService.getById.bind(groupSeatService))
+// router.post("/groupSeats/getByEventPlan", groupSeatService.getByEventPlan.bind(groupSeatService))
+router.post("/groupSeats/setGroupSeat", groupSeatService.setGroupSeat.bind(groupSeatService))
+router.post("/groupSeats/getByEventPlan", groupSeatService.getByEventPlan.bind(groupSeatService))
 
 router.get("/groups", groupService.getAll.bind(groupService))
 router.get("/groups/:groupId", groupService.getById.bind(groupService))

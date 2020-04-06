@@ -1,6 +1,6 @@
 <template>
 <!-- TODO: ne pas faire selector si group -->
-  <div class='event-plan' v-if="seats">
+  <div ref="plan" class='event-plan' v-if="seats">
     <div class="plan-selector" :style="selectorStyle"></div>
     <table class="seats" ref="seatsTable">
       <tr v-for="line in lineCount" :key="line">
@@ -83,24 +83,46 @@ export default {
     }
   },
   methods: {
-    placeGroup: function (data) {
+    placeGroup: function (data, saved = true) {
+      let hasChanged = true
       if (data.auto) {
         // essaie de placer les gens en auto
-        this.placeGroupAuto(data)
+        hasChanged = this.placeGroupAuto(data)
       } else if (data.setSeat) {
         // mode simple : group vers seat
-        this.setSeat(data.seat, data.group)
+        if (!data.seat.isEmpty && data.seat.group.id === data.group.id) {
+          // même groupe
+          hasChanged = false
+        } else {
+          this.setSeat(data.seat, data.group)
+        }
       } else if (data.fromAnotherSeat) {
-        // on vide l'ancien siège
-        this.emptySeat(data.prevSeat)
-        // on assigne
-        this.setSeat(data.seat, data.group)
-        // on annule le selector
-        this.isSelecting = false
-        this.mouseUp()
+        if (data.prevSeat === data.seat) {
+          // on a drag&drop un seat sur lui même
+          hasChanged = false
+        } else {
+          // on vide l'ancien siège
+          this.emptySeat(data.prevSeat)
+          // on assigne
+          this.setSeat(data.seat, data.group)
+          // on annule le selector
+          this.isSelecting = false
+          this.mouseUp()
+        }
       } else if (data.del) {
-        // suppr le siège
-        this.emptySeat(data.seat)
+        if (data.seat.isEmpty) {
+          // le siège est vide
+          hasChanged = false
+        } else {
+          // suppr le siège
+          data.group = null
+          this.emptySeat(data.seat)
+        }
+      }
+
+      if (saved && hasChanged) {
+        // on emet pour donner la modif
+        this.$emit('save')
       }
     },
 
@@ -109,6 +131,12 @@ export default {
     },
     getSelectedSeats () {
       return this.seats.filter(s => s.isSelected)
+    },
+    getFilledSeats () {
+      return this.seats.filter(s => !s.isEmpty)
+    },
+    getEmptySeats () {
+      return this.seats.filter(s => s.isEmpty && !s.isForbidden)
     },
     selectSeat (seat, cell = null) {
       if (cell !== null) {
@@ -137,6 +165,10 @@ export default {
     },
     setSeat: function (seat, newGroup) {
       if (!seat.isForbidden && newGroup.remaining > 0) {
+        if (!seat.isEmpty && seat.group.id === newGroup.id) {
+          // on a rien changé
+          return false
+        }
         this.emptySeat(seat)
         seat.group = newGroup
         seat.isEmpty = newGroup === null // est vide si group null
@@ -150,11 +182,12 @@ export default {
       let group = data.group
       let seat = data.seat
       let remaining = 'remaining' in group ? group.remaining : group.number
+      let hasChanged = false
       remaining = remaining < 0 ? 0 : remaining
 
       if (seat && remaining) {
         // on met direct le nom du groupe sur le siège
-        this.setSeat(seat, group)
+        hasChanged = this.setSeat(seat, group) || hasChanged
       }
       // let lineDirection = seat.line < (this.lineCount / 2) ? 1 : -1
       let cellDirection = seat.cell < (this.cellCount / 2) ? 1 : -1
@@ -180,7 +213,7 @@ export default {
 
         if (!stop) {
           // si on arrive à mettre la personne ici, on fait +1
-          this.setSeat(currentSeat, group)
+          hasChanged = this.setSeat(currentSeat, group) || hasChanged
         }
         // let changeLine = currentCell > lastCell || this.findSeat(currentLine, currentLine).isEmpty === false
         // if (changeLine) {
@@ -191,6 +224,8 @@ export default {
         // // on check si la cell de la ligne suivante est ok, sinon on continue
         // stop = currentLine > lastLine && currentCell > lastCell
       } while (stop === false)
+
+      return hasChanged
     },
 
     selectSeveralSeats (firstSeat, lastSeat) {
@@ -260,6 +295,7 @@ export default {
     setSelectedSeatsWithSelector () {
       if (this.$refs.seats) {
         let seats = []
+        let scroll = this.getPlanScroll()
         this.$refs.seats.forEach(seat => { // attention: c'est le seat sous forme html
           let left = seat.$el.offsetLeft + seat.$parent.$el.offsetLeft
           let top = seat.$el.offsetTop + seat.$parent.$el.offsetTop
@@ -268,8 +304,8 @@ export default {
 
           // on prend les extrêmes
           let selectorPoints = [
-            {x: this.selectorStyle.realLeft, y: this.selectorStyle.realTop},
-            {x: this.selectorStyle.realLeft + this.selectorStyle.realWidth, y: this.selectorStyle.realTop + this.selectorStyle.realHeight}
+            {x: this.selectorStyle.realLeft + scroll.scrollLeft, y: this.selectorStyle.realTop + scroll.scrollTop},
+            {x: this.selectorStyle.realLeft + this.selectorStyle.realWidth + scroll.scrollLeft, y: this.selectorStyle.realTop + this.selectorStyle.realHeight + scroll.scrollTop}
           ]
 
           // on prend chaque point du selecteur et on regarde s'il est dans le seat
@@ -319,10 +355,23 @@ export default {
 
         case 46:
           // SUPPR
-          this.getSelectedSeats().forEach(s => this.emptySeat(s))
+          this.getSelectedSeats().forEach(s => {
+            this.placeGroup({seat: s, del: true})
+          })
           this.unselectAll()
           break
       }
+    },
+    getPlanScroll () {
+      let pos = {
+        scrollTop: 0,
+        scrollLeft: 0
+      }
+      if (this.$refs.plan) {
+        pos.scrollTop = this.$refs.plan.scrollTop
+        pos.scrollLeft = this.$refs.plan.scrollLeft
+      }
+      return pos
     },
     getTablePosition () {
       let pos = {
@@ -369,17 +418,20 @@ export default {
       }
     },
     mouseUp (e) {
-      if (this.isSelecting) {
-        // on select les seats
-        this.setSelectedSeatsWithSelector()
+      if (e) {
+        let mouseMoved = e.x !== this.selectorStyle.leftStart && e.y !== this.selectorStyle.topStart
+        if (this.isSelecting && mouseMoved) {
+          // on select les seats
+          this.setSelectedSeatsWithSelector()
+        }
+        this.isSelecting = false
+        this.selectorStyle.leftStart = 0
+        this.selectorStyle.topStart = 0
+        this.selectorStyle.left = 0
+        this.selectorStyle.top = 0
+        this.selectorStyle.width = 0
+        this.selectorStyle.height = 0
       }
-      this.isSelecting = false
-      this.selectorStyle.leftStart = 0
-      this.selectorStyle.topStart = 0
-      this.selectorStyle.left = 0
-      this.selectorStyle.top = 0
-      this.selectorStyle.width = 0
-      this.selectorStyle.height = 0
     }
   }
 }

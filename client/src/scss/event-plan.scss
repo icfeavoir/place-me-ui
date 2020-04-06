@@ -31,8 +31,35 @@
         }
     }
 
-    .plan {
-        max-height: 100vh;
-        overflow: auto;
+    .plan-container {
+        width: fit-content;
+        overflow: hidden;
+
+        .event-plan-header {
+            margin: 15px;
+            /deep/ .btn-lg {
+                font-size: 15px;
+                letter-spacing: 1px;
+            }
+
+            .saved {
+                background-color: $lighter-grey;
+                padding: 10px;
+                border-radius: 30px;
+                border: 0;
+                font-size: 15px;
+                letter-spacing: initial;
+                float: right;
+                margin-right: 100px;
+
+                i {
+                    margin-right: 5px;
+                }
+            }
+        }
+        .plan {
+            padding-bottom: 50px;
+            overflow: auto;
+        }
     }
 }

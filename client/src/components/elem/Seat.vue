@@ -1,7 +1,12 @@
 <template>
   <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''">
     <drop class="drop" @drop="onDrop">
-      <drag v-if="group" class="drag" :draggable="draggable" :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null">
+      <drag
+        class="drag"
+        v-if="group"
+        :draggable="draggable"
+        :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null"
+      >
         <p>{{ group ? group.name : '' }}</p>
       </drag>
     </drop>
@@ -37,7 +42,7 @@ export default {
       return this.size || 50
     },
     borderSize () {
-      return this.isForbidden ? 0 : this.isSelected ? 1 : 1
+      return this.isForbidden ? 0 : this.isSelected ? 2 : 1
     },
     borderStyle () {
       return this.isSelected ? 'dashed' : 'solid'
@@ -73,7 +78,7 @@ export default {
       return this.seat && !this.seat.isEmpty && !this.seat.isForbidden
     },
     isSelected () {
-      return this.seat.isSelected || false
+      return this.seat.isSelected
     }
   },
   methods: {

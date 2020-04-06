@@ -7,7 +7,13 @@
       <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining !== 0)" :key="group._id" :style="getStyle(group, 'bg')" @click="select(group.id)">
         <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
           <p class="name">
-            <drag :transfer-data="{group: group, auto: true}" class="draggable" :draggable="group.remaining > 0" :style="getStyle(group, 'color')">{{ group.name }}</drag>
+            <drag
+            class="draggable"
+            :style="getStyle(group, 'color')"
+            :draggable="group.remaining > 0"
+            :transfer-data="{group: group, auto: true}"
+            @drag="onDrag(group)"
+            >{{ group.name }}</drag>
           </p>
         </td>
         <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
@@ -66,6 +72,9 @@ export default {
     getSelectedGroup () {
       return this.groups.find(g => g.isSelected)
     },
+    getGroupById (id) {
+      return this.groups.find(g => g.id === id)
+    },
 
     getStyle (group, key) {
       return {
@@ -74,19 +83,29 @@ export default {
       }[key]
     },
 
-    select: function (id) {
+    select: function (id, drag = false) {
       if (id) {
-        let group = this.groups.find(g => g.id === id)
+        let group
+        if (Number.isInteger(id)) {
+          group = this.groups.find(g => g.id === id)
+        } else {
+          group = id
+        }
         // on remet la selection au nouveau (sauf s'il était déjà select dans ce cas on unselect)
         if (!group.isSelected) {
           // on unselect l'ancien
           this.unselect()
           this.$set(group, 'isSelected', true)
         } else {
-          this.unselect()
+          // on a cliqué sur le même, on deselect (sauf si on a clique pour drag)
+          if (!drag) {
+            this.unselect()
+          }
         }
-        // on emet le groupe cliqué
-        this.$emit('select-group', group)
+        if (!drag) {
+          // on emet le groupe cliqué
+          this.$emit('select-group', group)
+        }
       } else {
         this.unselect()
       }
@@ -94,6 +113,10 @@ export default {
     unselect: function () {
       // on enlève la selection aux autres (en théorie max 1 autre mais bon)
       this.groups.filter(g => g.isSelected).forEach(group => { group.isSelected = false })
+    },
+
+    onDrag (group) {
+      this.select(group, true) // drag = true
     }
   }
 }
