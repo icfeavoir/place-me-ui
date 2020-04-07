@@ -61,6 +61,17 @@
                     max-width: 100%;
                     margin: 0 auto;
                 }
+                p.constraint {
+                    font-size: 10px;
+                    font-weight: initial;
+                    color: $lighter-grey;
+                    background-color: $main-red;
+                    border: 1px solid $main-red;
+                    width: fit-content;
+                    margin: auto;
+                    padding: 1px 4px;
+                    border-radius: 10px;
+                }
 
                 .number-container {
                     margin: 0 auto;

@@ -15,6 +15,7 @@
             @drag="onDrag(group)"
             >{{ group.name }}</drag>
           </p>
+          <p v-if="group.constraint" class="constraint">{{ group.constraint.name }}</p>
         </td>
         <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
         <td v-if="group.visible" :key="group_id + '_3'"><div class="number-container number-success"><p class="number">{{ group.done }}</p></div></td>

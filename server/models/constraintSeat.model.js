@@ -11,6 +11,7 @@ ConstraintSeat.init({
             model: Plan,
             key: 'id',
         },
+        onDelete: 'CASCADE',
         allowNull: false,
     },
     constraint_id: {
@@ -19,6 +20,7 @@ ConstraintSeat.init({
             model: Constraint,
             key: 'id',
         },
+        onDelete: 'CASCADE',
         allowNull: false,
     },
     line: {

@@ -1,13 +1,22 @@
 <template>
+<!-- TODO: gérer les contraintes sur le plan -->
+<!-- TODO: ctrl+z -->
+<!-- TODO: ctrl + clic => ouvre le profil -->
   <div class="event-plan-container">
     <GroupList ref="groupList" class="group-list" v-if="groups" :groups="groups" @select-group="selectGroup" @drag-start="groupDragStart" />
     <div class="plan-container">
       <div class="event-plan-header" v-if="event">
-        <router-link :to="{name: 'EventPage', params: {eventId: event.id}}"><button class="btn-lg"><i class="fa fa-arrow-left"></i> Retour à <b>{{ event.name }}</b></button></router-link>
-        <button @click="autoFill">AUTO FILL</button>
+        <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
+          <button class="btn-lg">
+            <i class="fa fa-arrow-left"></i>Retour à <b>{{ event.name }}</b>
+          </button>
+        </router-link>
+        <button class="btn-lg" @click="autoFill">
+          <i class="fa fa-running"></i>Générer
+        </button>
         <p class="saved" :style="savedStyle">
-          <i v-if="isSaved" class="fa fa-check"></i>
-          <i v-else class="fa fa-spinner fa-spin"></i>
+          <i v-if="isSaved" class="fa fa-check fa-sm"></i>
+          <i v-else class="fa fa-spinner fa-spin fa-sm"></i>
           {{ savedText }}
         </p>
       </div>
@@ -166,6 +175,16 @@ export default {
         let group = this.$refs.groupList.getSelectedGroup() || null
         if (group === null) {
           let groupsRemaining = this.$refs.groupList.groups.filter(g => g.remaining !== 0)
+          // on range par remaining DECROISSANT
+          groupsRemaining.sort((a, b) => {
+            if (a.remaining < b.remaining) {
+              return 1
+            } else if (a.remaining > b.remaining) {
+              return -1
+            } else {
+              return 0
+            }
+          })
           if (groupsRemaining.length > 0) {
             group = groupsRemaining[0]
             this.$refs.groupList.select(group.id)

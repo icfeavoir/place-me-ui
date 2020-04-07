@@ -1,5 +1,7 @@
 @import 'variables';
 
+$header-height: 10vh;
+
 .event-plan-container {
     display: flex;
     flex-wrap: nowrap;
@@ -8,6 +10,8 @@
         width: 20%;
         min-width: 200px;
         border: 1px solid $light-grey;
+        border-top: 0;
+        border-bottom: 0;
         height: 100vh;
         overflow-y: scroll;
         overflow-x: hidden;
@@ -33,24 +37,34 @@
 
     .plan-container {
         width: fit-content;
+        height: fit-content;
         overflow: hidden;
+        flex: 1; // occupe tout l'espace restant
 
         .event-plan-header {
-            margin: 15px;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-evenly;
+            align-items: center;
+            height: $header-height;
+
             /deep/ .btn-lg {
                 font-size: 15px;
                 letter-spacing: 1px;
             }
 
-            .saved {
+            .saved, .generate {
                 background-color: $lighter-grey;
                 padding: 10px;
                 border-radius: 30px;
                 border: 0;
                 font-size: 15px;
                 letter-spacing: initial;
-                float: right;
-                margin-right: 100px;
+
+                &.saved {
+                    width: 150px;
+                    text-align: center;
+                }
 
                 i {
                     margin-right: 5px;
@@ -58,7 +72,9 @@
             }
         }
         .plan {
-            padding-bottom: 50px;
+            $padding-bottom: 50px;
+            padding-bottom: $padding-bottom;
+            height: calc(100vh - #{$header-height} - #{$padding-bottom});
             overflow: auto;
         }
     }

@@ -142,36 +142,30 @@ module.exports = {
             var plan = plans[p]
             for (var c in constraints) {
                 var constraint = constraints[c]
-                switch (constraint.name) {
-                    case 'p_rang':
-                        ConstraintSeat.bulkCreate([
-                            {
-                                plan_id: plan.id,
-                                constraint_id: constraint.id,
-                                line: 0,
-                                cell: 0,
-                            },
-                            {
-                                plan_id: plan.id,
-                                constraint_id: constraint.id,
-                                line: 0,
-                                cell: 1,
-                            },
-                            {
-                                plan_id: plan.id,
-                                constraint_id: constraint.id,
-                                line: 0,
-                                cell: 2,
-                            },
-                        ])
+                switch (constraint.id) {
+                    case 1:
+                        // PREMIER RANG
+                        let premierRang = []
+                        for (let i = 0; i < plan.width; i++) {
+                            premierRang.push(
+                                {
+                                    plan_id: plan.id,
+                                    constraint_id: constraint.id,
+                                    line: plan.height - 1,
+                                    cell: i,
+                                }
+                            )
+                        }
+                        ConstraintSeat.bulkCreate(premierRang)
                         break;
 
-                    case 'handic':
+                    case 2:
+                        // FAUTEUIL
                         ConstraintSeat.create({
                                 plan_id: plan.id,
                                 constraint_id: constraint.id,
-                                line: 0,
-                                cell: p.width - 1,
+                                line: plan.height - 1,
+                                cell: plan.width - 1,
                             })
                         break;
                 }

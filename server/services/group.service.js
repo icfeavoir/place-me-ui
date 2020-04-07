@@ -3,6 +3,7 @@ const Group = require('../models/group.model')
 const Event = require('../models/event.model')
 const Plan = require('../models/plan.model')
 const Constraint = require('../models/constraint.model')
+const ConstraintSeat = require('../models/constraintSeat.model')
 
 module.exports = {
     getAll (req, res) {
@@ -23,7 +24,20 @@ module.exports = {
         let params = req.body || req || []
         let eventId = params.eventId
         let planId = params.planId
-        Group.findAll({include: [Event, Plan], where: {event_id: eventId, plan_id: planId}})
+        Group.findAll({include: [
+            Event,
+            Plan,
+            {
+                model: Constraint,
+                required: false, // pas forcément de contraintes
+                include: [{
+                    model: ConstraintSeat,
+                    required: false, // dans le cas d'une contrainte sans sièges
+                    as: 'constraint_seats',
+                    where: {plan_id: planId} // que les contraintes sur ce plan
+                }]
+            }
+        ], where: {event_id: eventId, plan_id: planId}})
             .then(groups => {
                 this._handleResponse(groups, res)
             })

@@ -13,7 +13,7 @@
           :data="{
             title: group.name,
             number: group.number,
-            desc: group.event.name + ' en ' + group.plan.name,
+            desc: (group.event ? group.event.name : 'No event') + ' en ' + (group.plan ? group.plan.name : 'No plan'),
             obj: group
           }"
           @del='del'

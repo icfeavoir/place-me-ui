@@ -189,11 +189,13 @@ export default {
         // on met direct le nom du groupe sur le siège
         hasChanged = this.setSeat(seat, group) || hasChanged
       }
-      // let lineDirection = seat.line < (this.lineCount / 2) ? 1 : -1
-      let cellDirection = seat.cell < (this.cellCount / 2) ? 1 : -1
-      cellDirection = 1 // tjr vers la droite
 
-      // let lastLine = lineDirection === 1 ? this.lineCount - 1 : 0
+      const startCell = seat.cell
+
+      let lineDirection = 1 // toujours vers le bas
+      let cellDirection = 1 // toujours vers la droite
+
+      let lastLine = lineDirection === 1 ? this.lineCount - 1 : 0
       let lastCell = cellDirection === 1 ? this.cellCount - 1 : 0
 
       let currentLine = seat.line
@@ -205,24 +207,26 @@ export default {
         remaining = group.remaining
         currentCell += cellDirection
         currentSeat = this.findSeat(currentLine, currentCell)
-        stop = (cellDirection === 1 && currentCell > lastCell) ||
+        let changeLine = (cellDirection === 1 && currentCell > lastCell) ||
             (cellDirection === -1 && currentCell < lastCell) ||
+            currentSeat.isEmpty === false ||
+            currentSeat.isForbidden
+        if (changeLine) {
+          // bout de la ligne, on prend la ligne suivante
+          currentCell = startCell
+          currentLine += lineDirection
+          currentSeat = this.findSeat(currentLine, currentCell)
+        }
+        // on check si la cell de la ligne suivante est ok, sinon on continue
+        stop = (lineDirection === 1 && currentLine > lastLine) ||
+            (lineDirection === -1 && currentLine < lastLine) ||
             currentSeat.isEmpty === false ||
             currentSeat.isForbidden ||
             remaining === 0
-
+        // on regarde si on peut ajouter
         if (!stop) {
-          // si on arrive à mettre la personne ici, on fait +1
           hasChanged = this.setSeat(currentSeat, group) || hasChanged
         }
-        // let changeLine = currentCell > lastCell || this.findSeat(currentLine, currentLine).isEmpty === false
-        // if (changeLine) {
-        //   // bout de la ligne, on prend la ligne suivante
-        //   currentCell = cellDirection === 1 ? 0 : cellCount - 1
-        //   currentLine += lineDirection
-        // }
-        // // on check si la cell de la ligne suivante est ok, sinon on continue
-        // stop = currentLine > lastLine && currentCell > lastCell
       } while (stop === false)
 
       return hasChanged

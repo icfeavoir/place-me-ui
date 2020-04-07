@@ -48,7 +48,11 @@ export default {
       return this.isSelected ? 'dashed' : 'solid'
     },
     borderColor () {
-      return this.isSelected ? this.colors.lighterGrey : this.colors.lightGrey
+      if (this.isConstraintOk) {
+        return this.isSelected ? this.colors.lighterGrey : this.colors.lightGrey
+      } else {
+        return this.colors.lightRed
+      }
     },
     color () {
       return this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
@@ -71,6 +75,19 @@ export default {
     group () {
       return this.seat ? this.seat.group : null
     },
+    constraint () {
+      return this.group && this.group.constraint ? this.group.constraint : null
+    },
+    constraintSeats () {
+      return this.constraint && this.constraint.constraint_seats ? this.constraint.constraint_seats : []
+    },
+    line () {
+      return this.seat.line
+    },
+    cell () {
+      return this.seat.cell
+    },
+
     isForbidden () {
       return this.seat ? this.seat.isForbidden : true
     },
@@ -79,6 +96,20 @@ export default {
     },
     isSelected () {
       return this.seat.isSelected
+    },
+    isConstraintOk () {
+      if (this.constraint === null || this.constraintSeats.length === 0) {
+        return true
+      } else {
+        // on regarde si le siège fait partie des sièges de la contrainte
+        for (let i = 0; i < this.constraintSeats.length; i++) { // boucle pour break en faisant return
+          let cSeat = this.constraint.constraint_seats[i]
+          if (cSeat.line === this.line && cSeat.cell === this.cell) {
+            return true
+          }
+        }
+      }
+      return false
     }
   },
   methods: {
