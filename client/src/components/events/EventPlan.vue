@@ -1,9 +1,21 @@
 <template>
-<!-- TODO: gérer les contraintes sur le plan -->
+<!-- TODO: gérer les contraintes complexes sur le plan -->
 <!-- TODO: ctrl+z -->
-<!-- TODO: ctrl + clic => ouvre le profil -->
+<!-- TODO: ctrl + clic => ouvre le profil (popup ?) -->
+<!-- TODO: si trop de sieges (ex: 12 personnes placées puis modifs plus que 10) -->
+<!-- TODO: Faire un Model GroupLine -->
+<!-- TODO: Faire une liste des raccourcis et possibilités -->
   <div class="event-plan-container">
-    <GroupList ref="groupList" class="group-list" v-if="groups" :groups="groups" @select-group="selectGroup" @drag-start="groupDragStart" />
+    <GroupList
+      ref="groupList"
+      class="group-list"
+      v-if="groups"
+      :groups="groups"
+      @select-group="selectGroup"
+      @drag-start="groupDragStart"
+      @group-changed="groupChanged"
+    />
+
     <div class="plan-container">
       <div class="event-plan-header" v-if="event">
         <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">

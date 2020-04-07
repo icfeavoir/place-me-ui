@@ -1,6 +1,6 @@
 <template>
   <div class="form" @keydown.esc="init">
-    <h2 class="form-title">{{ this.group ? name : 'Nouveau groupe'}}</h2>
+    <h2 class="form-title">{{ group ? name : 'Nouveau groupe'}}</h2>
     <form class="add-form" @keydown.enter="submit">
       <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
       <input id="number" type="number" v-model="number" placeholder="Nombre" />
@@ -12,9 +12,7 @@
       </select>
       <div class="color-container" v-if="group">
         <label>Couleur</label>
-        <!-- <div class="input-color-container"> -->
-          <input id="color" type="color" name="color" v-model="color"/>
-        <!-- </div> -->
+        <input id="color" type="color" name="color" v-model="color"/>
       </div>
 
       <div class="constraint-container">
@@ -22,7 +20,7 @@
         <transition name="fade">
           <div class="constraint" v-if="showConstraint">
             <hr>
-            <p>Contrainte</p>
+            <button type="button" @click.prevent="removeConstraint" v-if="showConstraint"><i class="fa fa-minus-circle"></i> Supprimer la contrainte</button>
             <input type="constraint" id="constraint" v-model="constraint" list="constraintsNames" placeholder="Taper la contrainte" />
             <datalist id="constraintsNames">
               <option v-for="(constraint, key) in constraints" v-bind:key="key" :data-value="constraint.id" :value="constraint.name" />
@@ -81,17 +79,29 @@ export default {
   computed: {
   },
   mounted () {
-    const it = this
-    eventService.getAll().then((events) => {
-      it.events = events
-      it.event = events.length ? events[0].id : null
-    })
-    planService.getAll().then((plans) => {
-      it.plans = plans
-      it.plan = plans.length ? plans[0].id : null
-    })
-    constraintService.getAll().then((constraints) => {
-      it.constraints = constraints
+    let allRequests = [
+      eventService.getAll(),
+      planService.getAll(),
+      constraintService.getAll()
+    ]
+
+    Promise.all(allRequests).then(data => {
+      let events = data[0]
+      this.events = events
+      this.event = events.length ? events[0].id : null
+
+      let plans = data[1]
+      this.plans = plans
+      this.plan = plans.length ? plans[0].id : null
+
+      let constraints = data[2]
+      this.constraints = constraints
+
+      // quand tout est prêt, on init
+      if (this.group) {
+        // le group est déjà prêt, watch ne sera pas appelé
+        this.init()
+      }
     })
   },
   watch: {
@@ -119,6 +129,8 @@ export default {
             this.error = res.error
           } else {
             this.$toasted.success('Modifié !')
+            // on émet le groupe modifié
+            this.$emit('data-changed', res)
           }
         })
       } else {
@@ -139,10 +151,10 @@ export default {
 
       this.name = group.name || ''
       this.number = group.number || null
-      this.color = group.color || null
+      this.color = group.color || '#000000'
       this.event = group.event_id || (this.events.length ? this.events[0].id : null)
       this.plan = group.plan_id || (this.plans.length ? this.plans[0].id : null)
-      this.constraint = group.constraintText || ''
+      this.constraint = group.constraintText || (group.constraint && group.constraint.name) || ''
       this.constraintNumber = group.constraint_number || 0
       if (this.constraint) {
         this.showConstraint = true
@@ -153,7 +165,12 @@ export default {
       }
       this.error = ''
     },
-
+    removeConstraint () {
+      this.showConstraint = false
+      this.constraint = ''
+      this.constraintNumber = this.number
+      this.constraintForAll = true
+    },
     upperFirst: function () {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1)
     }

@@ -23,6 +23,6 @@ export default {
     socket.emit(room, msg)
   },
   handle (data) {
-    // console.log("socket: " + data)
+    // console.info("socket: " + data)
   }
 }

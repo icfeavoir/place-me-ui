@@ -10,6 +10,7 @@ import VuejsDialog from 'vuejs-dialog'
 import Toasted from 'vue-toasted'
 import Vuex from 'vuex'
 import VueDragDrop from 'vue-drag-drop'
+import VTooltip from 'v-tooltip'
 
 // Style
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
@@ -30,6 +31,7 @@ Vue.use(VuejsDialog)
 Vue.use(Toasted, {position: 'bottom-center', duration: 4000, iconPack: 'fontawesome', icon: 'check', theme: 'outline'})
 Vue.use(Vuex)
 Vue.use(VueDragDrop)
+Vue.use(VTooltip)
 
 // mixin
 Vue.mixin(utils)

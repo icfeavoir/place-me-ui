@@ -31,4 +31,5 @@ export default {
 
 <style lang="scss">
   @import './scss/main.scss';
+  @import './scss/tooltip.scss';
 </style>

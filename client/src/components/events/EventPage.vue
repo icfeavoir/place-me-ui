@@ -116,7 +116,6 @@ export default {
               }
             })
           })
-          .catch(function (e) { console.log(e) })
       }
     },
 

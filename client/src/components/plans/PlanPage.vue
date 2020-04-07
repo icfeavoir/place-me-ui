@@ -176,7 +176,7 @@ export default {
       var fseats = this.seats.filter((seat, i, arr) => { return seat.forbidden })
       forbiddenSeatService.update(this.planId, fseats).then(res => {
         if (res) {
-          console.log('UPDATED')
+          this.$toasted.success('Enregistré !')
         }
       })
     }

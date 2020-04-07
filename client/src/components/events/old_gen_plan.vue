@@ -45,7 +45,7 @@ export default {
       eventService.generate({
         eventId: this.event.id,
         planId: planId
-      }).then(data => console.log(data))
+      }).then(data => console.info(data))
     }
   }
 }

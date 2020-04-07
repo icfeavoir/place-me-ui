@@ -102,7 +102,6 @@ module.exports = {
             params.id = parseInt(params.id)
             var {result, params} = this.checkData(params)
         }
-
         if (result === true) {
             // on peut modifier
             this.getGroup(params.id).then(group => {
@@ -119,9 +118,12 @@ module.exports = {
                         }
                         group.update(params)
                             .then(updatedGroup => {
-                                result.success = true
-                                result.data = updatedGroup
-                                this._handleResponse(result, res)
+                                console.log(updatedGroup._changed)
+                                this._handleResponse({
+                                    success: true,
+                                    data: updatedGroup,
+                                    changes: updatedGroup._changed
+                                }, res)
                             })
                             .catch(e => {
                                 console.error("ERROR GROUP UPDATE: " + e)
@@ -175,7 +177,7 @@ module.exports = {
         if (!params.name || params.name.length < 4) {
             return {result: "Name too short (min = 4)", params: params}
         }
-        if (!params.number || params.number == 0) {
+        if (!params.number || params.number <= 0) {
             return {result: "Number should be > 0", params: params}
         }
         if (!params.event_id || params.event_id <= 0) {

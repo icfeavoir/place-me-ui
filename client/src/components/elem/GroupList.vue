@@ -1,10 +1,27 @@
 <template>
   <div class='group-list-container'>
+
+    <Modal
+      v-if="showModal && getSelectedGroup()"
+      @close-modal="showModal = false"
+      @valid-modal="addPlan"
+      :modal-style="modalStyle"
+      :closeBtn="false"
+      :validateBtn="false"
+    >
+      <GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged"/>
+    </Modal>
+
     <input type="text" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''"/>
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
       <!-- GROUP A FAIRE -->
-      <tr :class="group.isSelected ? 'selected group-data' : 'group-data'" v-for="group in groups.filter(g => g.remaining !== 0)" :key="group._id" :style="getStyle(group, 'bg')" @click="select(group.id)">
+      <tr
+        :class="group.isSelected ? 'selected group-data' : 'group-data'"
+        v-for="group in groups.filter(g => g.remaining !== 0)"
+        :key="group._id"
+        :style="getStyle(group, 'bg')"
+        @click="onClick(group.id)">
         <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
           <p class="name">
             <drag
@@ -39,24 +56,31 @@
 </template>
 
 <script>
+import Modal from '@/components/elem/Modal'
+import GroupForm from '@/components/groups/GroupForm'
+
 export default {
   name: 'GroupList',
   components: {
+    Modal,
+    GroupForm
   },
   props: {
     groups: []
   },
   data () {
     return {
+      isCtrlPressed: false,
+      showModal: false,
+      modalStyle: {
+        width: 'fit-content',
+        marginTop: 20
+      }
     }
   },
   created () {
-    const it = this
-    document.addEventListener('keyup', function (evt) {
-      if (evt.keyCode === 27) {
-        it.select(null)
-      }
-    })
+    window.addEventListener('keydown', this.keydown, true)
+    window.addEventListener('keyup', this.keyup, true)
   },
   mounted () {
     this.groups.forEach(group => {
@@ -84,7 +108,7 @@ export default {
       }[key]
     },
 
-    select: function (id, drag = false) {
+    select: function (id, data = {}) {
       if (id) {
         let group
         if (Number.isInteger(id)) {
@@ -99,11 +123,11 @@ export default {
           this.$set(group, 'isSelected', true)
         } else {
           // on a cliqué sur le même, on deselect (sauf si on a clique pour drag)
-          if (!drag) {
+          if (!data.drag && !data.force) {
             this.unselect()
           }
         }
-        if (!drag) {
+        if (!data.drag) {
           // on emet le groupe cliqué
           this.$emit('select-group', group)
         }
@@ -116,8 +140,58 @@ export default {
       this.groups.filter(g => g.isSelected).forEach(group => { group.isSelected = false })
     },
 
+    onGroupDataChanged (updatedGroup) {
+      // quand on modifie un groupe avec le CTRL+clic
+      let changes = updatedGroup.changes
+      console.log(changes, updatedGroup)
+      if (Object.entries(changes).length > 0) {
+        let group = this.groups.find(g => g.id === updatedGroup.data.id)
+        // on change chaque modif effectuée
+        if (group) {
+          Object.keys(changes).forEach(key => {
+            if (key !== 'updatedAt') {
+              group[key] = updatedGroup.data[key]
+            }
+          })
+          // on renvoie le group pour MAJ remaining
+          this.$emit('group-changed', { group: group, count: 0 })
+        }
+      }
+      // this.showModal = false
+      this.isCtrlPressed = false
+    },
     onDrag (group) {
-      this.select(group, true) // drag = true
+      this.select(group, {drag: true}) // drag = true
+    },
+    onClick (groupId) {
+      if (!this.isCtrlPressed) {
+        this.select(groupId)
+      } else {
+        // on force la sélection (pas de déselection)
+        this.select(groupId, {force: true})
+        this.showModal = true
+      }
+    },
+    keydown: function (event) {
+      switch (event.keyCode) {
+        case 17:
+          // CTRL
+          this.isCtrlPressed = true
+          break
+      }
+    },
+    keyup: function (event) {
+      switch (event.keyCode) {
+        case 17:
+          // CTRL
+          this.isCtrlPressed = false
+          break
+
+        case 27:
+          // ESC
+          this.select(null)
+          break
+      }
     }
   }
 }

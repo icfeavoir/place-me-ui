@@ -80,7 +80,6 @@ module.exports = {
                     Promise.all(allRequests).then(groupSeats => {
                         result.success = true
                         this._handleResponse(result, res)
-                        console.log('all done')
                     }).catch(e => {
                         console.error("ERROR GROUP SEAT UPDATE: ")
                         console.error(e)

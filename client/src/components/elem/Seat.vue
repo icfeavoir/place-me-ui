@@ -1,5 +1,5 @@
 <template>
-  <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''">
+  <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''" v-tooltip="tooltip">
     <drop class="drop" @drop="onDrop">
       <drag
         class="drag"
@@ -80,6 +80,14 @@ export default {
     },
     constraintSeats () {
       return this.constraint && this.constraint.constraint_seats ? this.constraint.constraint_seats : []
+    },
+    tooltip () {
+      return this.isConstraintOk ? null : {
+        content: '<b>' + this.group.name + '</b> doit être en <b>' + this.constraint.name + '</b>',
+        classes: ['tooltip-md'],
+        html: true,
+        delay: {show: 500}
+      }
     },
     line () {
       return this.seat.line
