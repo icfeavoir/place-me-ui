@@ -57,7 +57,7 @@ Vue.directive('focus', {
   }
 })
 
-axios.defaults.baseURL = 'http://localhost:3000'
+axios.defaults.baseURL = process.env.SERVER_API
 
 /* eslint-disable no-new */
 new Vue({

@@ -1,5 +1,5 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  SERVER_PORT: 3001
+  SERVER_API: '"http://pierre-leroy.fr:3001"'
 }

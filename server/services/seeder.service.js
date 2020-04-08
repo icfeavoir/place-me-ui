@@ -8,6 +8,8 @@ const ConstraintSeat = require('../models/constraintSeat.model')
 const ForbiddenSeat = require('../models/forbiddenSeat.model')
 const EventPlan = require('../models/eventPlan.model')
 
+const isProduction = process.env.NODE_ENV === "production"
+
 module.exports = {
     seedData (seed) {
         console.log('CREATING DB')
@@ -60,7 +62,9 @@ module.exports = {
                     })
                 })
             })
-            it.createGroups(events, plans.map(p => p.id))
+            if (!isProduction) {
+                it.createGroups(events, plans.map(p => p.id))
+            }
             it.createForbiddenSeats(plans)
             it.createConstraints(plans)
         })
