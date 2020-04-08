@@ -31,5 +31,4 @@ let server = http.createServer(app)
 socketService.start(server)
 
 const port = process.env.APP_PORT
-console.log(`Your port is ${port}`)
 server.listen(port, () => console.info(`Place-me app listening on port ${port}!`))

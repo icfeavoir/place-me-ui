@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const config = require('./index')
 
 let connection = `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:${process.env.DB_PORT}/${process.env.DB_NAME}`
 const sequelize = new Sequelize(connection, {logging: false})
