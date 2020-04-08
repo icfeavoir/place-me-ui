@@ -2,7 +2,7 @@
   <div>
     <header>
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "GroupAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
+      <router-link :to='{name: "GroupAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>

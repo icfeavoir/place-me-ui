@@ -7,7 +7,7 @@ const ConstraintSeat = require('../models/constraintSeat.model')
 
 module.exports = {
     getAll (req, res) {
-        Group.findAll({include: [Event, Plan]}).then(groups => {
+        Group.scope('orderByName').findAll({include: [Event, Plan]}).then(groups => {
             this._handleResponse(groups, res)
         })
     },
@@ -24,7 +24,7 @@ module.exports = {
         let params = req.body || req || []
         let eventId = params.eventId
         let planId = params.planId
-        Group.findAll({include: [
+        Group.scope('orderByName').findAll({include: [
             Event,
             Plan,
             {
@@ -118,7 +118,6 @@ module.exports = {
                         }
                         group.update(params)
                             .then(updatedGroup => {
-                                console.log(updatedGroup._changed)
                                 this._handleResponse({
                                     success: true,
                                     data: updatedGroup,
@@ -188,15 +187,15 @@ module.exports = {
         }
 
         if (!params.constraint_name) {
-            params.constraint_number = 0
+            params.constraint_number = 0 // personne en contrainte
         } else {
-            if (!params.constraint_number) {
-                params.constraint_number = 0
+            if (params.constraint_number <= 0 || params.constraint_number > params.number) {
+                return {result: "constraint number is wrong", params: params}
             } else {
                 try {
                     params.constraint_number = parseInt(params.constraint_number)
                 } catch (e) {
-                    params.constraint_number = 0
+                    return {result: "constraint number is wrong", params: params}
                 }
             }
         }

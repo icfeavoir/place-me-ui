@@ -1,0 +1,83 @@
+@import 'variables';
+
+.help {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    .help-container {
+        margin-right: 40px;
+        &:first-child {
+            flex: 4
+        }
+        &:last-child {
+            flex: 6
+        }
+    }
+
+    p.help-name {
+        color: $main-blue;
+        font-weight: 600;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        tr {
+            width: 100%;
+            border-bottom: 1px solid $light-grey;
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        
+        td {
+            color: $dark-grey;
+            padding: 10px 10px 10px 0;
+            text-align: left;
+            
+            &.name {
+                width: 70%;
+            }
+        }
+    }
+
+    /deep/ .keys-text {
+        font-size: 15px;
+        background-color: black;
+        text-align: center;
+        color: white;
+        width: fit-content;
+        padding: 4px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    /deep/ .main-btn {
+        font-size: 12px;
+        letter-spacing: initial;
+        height: fit-content;
+        padding: 3px;
+        border: 1px solid $bg-color;
+        color: $bg-color;
+        &:hover {
+            cursor: initial;
+        }
+        i {
+            margin-right: 2px;
+        }
+    }
+    
+    /deep/ .saved {
+        padding: 3px;
+        border-radius: 30px;
+        font-size: 13px;
+        width: fit-content;
+        color: $main-green;
+        border: 1px solid $main-green;
+        i {
+            margin-right: 2px;
+        }
+    }
+}

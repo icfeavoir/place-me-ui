@@ -67,8 +67,11 @@ Plan.hasMany(Group, {as: 'groups', foreignKey: 'plan_id'})
 Group.belongsTo(Constraint, {foreignKey: 'constraint_id'})
 Constraint.hasMany(Group, {as: 'groups', foreignKey: 'constraint_id'})
 
-Group.addScope('defaultScope', {
+Group.addScope('orderByCreation', {
     order: [['id', 'ASC']],
-}, { override: true })
+})
+Group.addScope('orderByName', {
+    order: [['name', 'ASC']],
+})
 
 module.exports = Group

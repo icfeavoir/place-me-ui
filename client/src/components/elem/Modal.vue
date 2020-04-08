@@ -4,12 +4,12 @@
       <div class="modal-wrapper">
         <div class="modal-container" @click.stop :style="compStyle">
 
-          <div v-if="title" class="modal-header">{{ title }}</div>
+          <div ref="header" v-if="title" class="modal-header">{{ title }}</div>
 
-          <div class="modal-body"><slot></slot></div>
+          <div class="modal-body" :style="{maxHeight: maxHeight + 'px'}"><slot></slot></div>
 
           <hr>
-          <div v-if="footer" class="modal-footer">
+          <div ref="footer" v-if="footer" class="modal-footer">
             <slot name="footer"></slot>
             <button v-if="closeBtn" class="dg-btn modal-button btn-modal-close" @click="$emit('close-modal')">Fermer</button>
             <button v-if="validateBtn" class="dg-btn modal-button btn-modal-valid" @click="$emit('valid-modal')">Valider</button>
@@ -33,10 +33,19 @@ export default {
     validateBtn: {
       type: Boolean,
       default: true
-    }
+    },
+    maxHeight: 0
   },
   created () {
-    window.addEventListener('keydown', this.keydown, true)
+    window.addEventListener('keydown', this.keydown)
+    window.addEventListener('resize', this.setHeight)
+  },
+  destroyed () {
+    window.addEventListener('keydown', this.keydown)
+    window.removeEventListener('resize', this.setHeight)
+  },
+  mounted () {
+    this.setHeight()
   },
   methods: {
     keydown: function (event) {
@@ -46,6 +55,9 @@ export default {
           this.$emit('close-modal')
           break
       }
+    },
+    setHeight () {
+      this.maxHeight = window.innerHeight - 2 * this.margin - this.$refs.header.offsetHeight - this.$refs.footer.offsetHeight - 50
     }
   },
   computed: {
@@ -59,12 +71,12 @@ export default {
       return this.style.width || '30%'
     },
     margin () {
-      return (this.style.marginTop || 100) + 'px auto'
+      return this.style.marginTop || 100
     },
     compStyle () {
       return {
         width: this.width,
-        margin: this.margin
+        margin: this.margin + 'px auto'
       }
     }
   }

@@ -83,6 +83,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * ce doit être LA SEULE méthode appelée
+     * @param data Object {seat, [auto, setSeat, fromAnotherSeat, del]}
+     * @param saved Boolean Faut-il enregistrer les modifs ?
+     */
     placeGroup: function (data, saved = true) {
       let hasChanged = true
       if (data.auto) {
@@ -428,14 +433,14 @@ export default {
           // on select les seats
           this.setSelectedSeatsWithSelector()
         }
-        this.isSelecting = false
-        this.selectorStyle.leftStart = 0
-        this.selectorStyle.topStart = 0
-        this.selectorStyle.left = 0
-        this.selectorStyle.top = 0
-        this.selectorStyle.width = 0
-        this.selectorStyle.height = 0
       }
+      this.isSelecting = false
+      this.selectorStyle.leftStart = 0
+      this.selectorStyle.topStart = 0
+      this.selectorStyle.left = 0
+      this.selectorStyle.top = 0
+      this.selectorStyle.width = 0
+      this.selectorStyle.height = 0
     }
   }
 }

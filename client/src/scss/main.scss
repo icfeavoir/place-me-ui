@@ -29,7 +29,7 @@ html {
     background-color: $bg-color;
 }
 
-.btn-lg {
+.main-btn {
     color: $bg-color;
     background-color: rgba(255,255,255,.7);
     padding: 10px;
@@ -38,9 +38,22 @@ html {
     font-size: 25px;
     letter-spacing: 3px;
     transition: background-color .5s;
+    position: relative;
+
+    &.little-info-btn {
+        width: 25px;
+        height: 25px;
+    }
     
     i {
         margin-right: 10px;
+        &.i-only-center {
+            margin: auto;
+            width: 100%;
+            top: 5px;
+            position: absolute;
+            left: 0;
+        }
     }
     
     &:hover {

@@ -2,7 +2,7 @@
   <div>
     <header>
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "PlanAdd"}'><button class="btn-lg"><i class="fa fa-plus-circle"></i>Nouveau plan</button></router-link>
+      <router-link :to='{name: "PlanAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouveau plan</button></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="plans && plans.length === 0">Aucun plan</p>

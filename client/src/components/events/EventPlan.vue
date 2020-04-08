@@ -1,46 +1,53 @@
 <template>
-<!-- TODO: gérer les contraintes complexes sur le plan -->
+<!-- TODO: gérer les contraintes complexes (.number) sur le plan -->
 <!-- TODO: ctrl+z -->
-<!-- TODO: ctrl + clic => ouvre le profil (popup ?) -->
-<!-- TODO: si trop de sieges (ex: 12 personnes placées puis modifs plus que 10) -->
-<!-- TODO: Faire un Model GroupLine -->
-<!-- TODO: Faire une liste des raccourcis et possibilités -->
-  <div class="event-plan-container">
-    <GroupList
-      ref="groupList"
-      class="group-list"
-      v-if="groups"
-      :groups="groups"
-      @select-group="selectGroup"
-      @drag-start="groupDragStart"
-      @group-changed="groupChanged"
-    />
+<!-- TODO: si trop de sieges (ex: 12 personnes placées puis modifs plus que 10) ? -->
+<!-- TODO: Search number = remaining -->
+  <div>
+    <Modal
+      v-if="showModalShortcuts"
+      @close-modal="showModalShortcuts = false"
+      :modal-style="modalShortcutsStyle"
+      :validateBtn="false"
+      title="Infos"
+    ><Shortcuts /></Modal>
 
-    <div class="plan-container">
-      <div class="event-plan-header" v-if="event">
-        <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
-          <button class="btn-lg">
-            <i class="fa fa-arrow-left"></i>Retour à <b>{{ event.name }}</b>
-          </button>
-        </router-link>
-        <button class="btn-lg" @click="autoFill">
-          <i class="fa fa-running"></i>Générer
-        </button>
-        <p class="saved" :style="savedStyle">
-          <i v-if="isSaved" class="fa fa-check fa-sm"></i>
-          <i v-else class="fa fa-spinner fa-spin fa-sm"></i>
-          {{ savedText }}
-        </p>
-      </div>
-      <Plan
-        ref="plan"
-        class="plan"
-        v-if="plan"
-        :plan="plan"
+    <div class="event-plan-container">
+      <GroupList
+        ref="groupList"
+        class="group-list"
+        v-if="groups"
+        :groups="groups"
+        @select-group="selectGroup"
+        @drag-start="groupDragStart"
         @group-changed="groupChanged"
-        @select-seat="selectSeat"
-        @save="saveGroups"
       />
+
+      <div class="plan-container">
+        <div class="event-plan-header" v-if="event">
+          <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
+            <button class="main-btn"><i class="fa fa-arrow-left"></i>Retour à <b>{{ event.name }}</b></button>
+          </router-link>
+          <button class="main-btn" @click="autoFill">
+            <i class="fa fa-running"></i>Générer
+          </button>
+          <p class="saved" :style="savedStyle">
+            <i v-if="isSaved" class="fa fa-check fa-sm"></i>
+            <i v-else class="fa fa-spinner fa-spin fa-sm"></i>
+            {{ savedText }}
+          </p>
+          <button class="main-btn little-info-btn" @click="showModalShortcuts = true"><i class="i-only-center fa fa-info"></i></button>
+        </div>
+        <Plan
+          ref="plan"
+          class="plan"
+          v-if="plan"
+          :plan="plan"
+          @group-changed="groupChanged"
+          @select-seat="selectSeat"
+          @save="saveGroups"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -54,11 +61,15 @@ import groupSeatService from '@/services/groupSeat.service'
 
 import GroupList from '@/components/elem/GroupList'
 import Plan from '@/components/elem/Plan'
+import Modal from '@/components/elem/Modal'
+import Shortcuts from '@/components/elem/Shortcuts'
 
 export default {
   components: {
     GroupList,
-    Plan
+    Plan,
+    Modal,
+    Shortcuts
   },
   data () {
     return {
@@ -66,7 +77,13 @@ export default {
       plan: null,
       groups: null,
       isSaved: true,
-      isSaving: false
+      isSaving: false,
+      // modal shortcuts
+      showModalShortcuts: false,
+      modalShortcutsStyle: {
+        width: '80%',
+        marginTop: 20
+      }
     }
   },
   mounted () {

@@ -11,7 +11,7 @@
     <hr>
     <header>
       <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <button @click="showModal = true" class="btn-lg"><i class="fa fa-plus-circle"></i>Ajouter un plan à cet événement</button>
+      <button @click="showModal = true" class="main-btn"><i class="fa fa-plus-circle"></i>Ajouter un plan à cet événement</button>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="plans && plans.length === 0">Aucun plan sur cet événement</p>

@@ -2,55 +2,35 @@
   <div class='group-list-container'>
 
     <Modal
-      v-if="showModal && getSelectedGroup()"
-      @close-modal="showModal = false"
-      @valid-modal="addPlan"
-      :modal-style="modalStyle"
+      v-if="showModalGroup && getSelectedGroup()"
+      @close-modal="showModalGroup = false"
+      :modal-style="modalGroupStyle"
       :closeBtn="false"
       :validateBtn="false"
-    >
-      <GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged"/>
-    </Modal>
+    ><GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged"/></Modal>
 
     <input type="text" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''"/>
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
-      <!-- GROUP A FAIRE -->
-      <tr
-        :class="group.isSelected ? 'selected group-data' : 'group-data'"
+      <GroupLine
         v-for="group in groups.filter(g => g.remaining !== 0)"
         :key="group._id"
-        :style="getStyle(group, 'bg')"
-        @click="onClick(group.id)">
-        <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
-          <p class="name">
-            <drag
-            class="draggable"
-            :style="getStyle(group, 'color')"
-            :draggable="group.remaining > 0"
-            :transfer-data="{group: group, auto: true}"
-            @drag="onDrag(group)"
-            >{{ group.name }}</drag>
-          </p>
-          <p v-if="group.constraint" class="constraint">{{ group.constraint.name }}</p>
-        </td>
-        <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
-        <td v-if="group.visible" :key="group_id + '_3'"><div class="number-container number-success"><p class="number">{{ group.done }}</p></div></td>
-        <td v-if="group.visible" :key="group_id + '_4'"><div :class="group.remaining ? 'number-container number-error' : 'number-container number-success'"><p class="number">{{ group.remaining }}</p></div></td>
-      </tr>
+        :group="group"
+        @group-click="onGroupClick"
+        @group-drag="onGroupDrag"
+      />
       <!-- SEPARATOR -->
-      <tr class="group-data group-done-separator"><td colspan="4">GROUPE FAIT</td></tr>
+      <tr class="around-separator"></tr>
+      <tr class="group-done-separator"><td colspan="4">GROUPE FAIT</td></tr>
+      <tr class="around-separator"></tr>
       <!-- GROUP DONE -->
-      <tr class="group-data" v-for="group in groups.filter(g => g.remaining === 0)" :key="group._id">
-        <td v-if="group.visible" :key="group_id + '_1'" class="name-container">
-          <p class="name">
-            <drag :transfer-data="group" class="draggable" :draggable="group.remaining > 0">{{ group.name }}</drag>
-          </p>
-        </td>
-        <td v-if="group.visible" :key="group_id + '_2'"><div class="number-container"><p class="number">{{ group.number }}</p></div></td>
-        <td v-if="group.visible" :key="group_id + '_3'"><div class="number-container number-success"><p class="number">{{ group.done }}</p></div></td>
-        <td v-if="group.visible" :key="group_id + '_4'"><div :class="group.remaining ? 'number-container number-error' : 'number-container number-success'"><p class="number">{{ group.remaining }}</p></div></td>
-      </tr>
+      <GroupLine
+        v-for="group in groups.filter(g => g.remaining === 0)"
+        :key="group._id"
+        :group="group"
+        @group-click="onGroupClick"
+        @group-drag="onGroupDrag"
+      />
     </table>
   </div>
 </template>
@@ -58,12 +38,14 @@
 <script>
 import Modal from '@/components/elem/Modal'
 import GroupForm from '@/components/groups/GroupForm'
+import GroupLine from '@/components/elem/GroupLine'
 
 export default {
   name: 'GroupList',
   components: {
     Modal,
-    GroupForm
+    GroupForm,
+    GroupLine
   },
   props: {
     groups: []
@@ -71,8 +53,8 @@ export default {
   data () {
     return {
       isCtrlPressed: false,
-      showModal: false,
-      modalStyle: {
+      showModalGroup: false,
+      modalGroupStyle: {
         width: 'fit-content',
         marginTop: 20
       }
@@ -81,6 +63,7 @@ export default {
   created () {
     window.addEventListener('keydown', this.keydown, true)
     window.addEventListener('keyup', this.keyup, true)
+    window.addEventListener('blur', this.onFocusLost, true)
   },
   mounted () {
     this.groups.forEach(group => {
@@ -99,13 +82,6 @@ export default {
     },
     getGroupById (id) {
       return this.groups.find(g => g.id === id)
-    },
-
-    getStyle (group, key) {
-      return {
-        bg: {backgroundColor: group.color || 'none'},
-        color: {color: this.shoulColorBeDark(group.color) ? this.colors.bgColor : this.colors.lighterGrey}
-      }[key]
     },
 
     select: function (id, data = {}) {
@@ -143,7 +119,6 @@ export default {
     onGroupDataChanged (updatedGroup) {
       // quand on modifie un groupe avec le CTRL+clic
       let changes = updatedGroup.changes
-      console.log(changes, updatedGroup)
       if (Object.entries(changes).length > 0) {
         let group = this.groups.find(g => g.id === updatedGroup.data.id)
         // on change chaque modif effectuée
@@ -157,22 +132,22 @@ export default {
           this.$emit('group-changed', { group: group, count: 0 })
         }
       }
-      // this.showModal = false
+      this.showModalGroup = false
       this.isCtrlPressed = false
     },
-    onDrag (group) {
+    onGroupDrag (group) {
       this.select(group, {drag: true}) // drag = true
     },
-    onClick (groupId) {
+    onGroupClick (group) {
       if (!this.isCtrlPressed) {
-        this.select(groupId)
+        this.select(group.id)
       } else {
         // on force la sélection (pas de déselection)
-        this.select(groupId, {force: true})
-        this.showModal = true
+        this.select(group.id, {force: true})
+        this.showModalGroup = true
       }
     },
-    keydown: function (event) {
+    keydown (event) {
       switch (event.keyCode) {
         case 17:
           // CTRL
@@ -180,7 +155,7 @@ export default {
           break
       }
     },
-    keyup: function (event) {
+    keyup (event) {
       switch (event.keyCode) {
         case 17:
           // CTRL
@@ -192,6 +167,9 @@ export default {
           this.select(null)
           break
       }
+    },
+    onFocusLost () {
+      this.isCtrlPressed = false
     }
   }
 }
