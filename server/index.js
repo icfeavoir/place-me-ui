@@ -1,9 +1,10 @@
 const http = require('http')
 const express = require('express')
 const app = express()
-const port = 3000
 const bodyParser = require('body-parser')
-const config = require('./config/index')
+const dotenv = require('dotenv');
+dotenv.config();
+
 const seederService = require('./services/seeder.service')
 const socketService = require('./services/socket.service')
 
@@ -22,11 +23,13 @@ app.use(corsConfig)
 const apiRoutes = require('./routes/api')
 app.use('/api', apiRoutes)
 
-if (config.createDB) {
-    seederService.seedData(config.seedData)
+if (process.env.CREATE_DB === 'true') {
+    seederService.seedData(process.env.SEED_DB === 'true')
 }
 
 let server = http.createServer(app)
 socketService.start(server)
 
+const port = process.env.APP_PORT
+console.log(`Your port is ${port}`)
 server.listen(port, () => console.info(`Place-me app listening on port ${port}!`))

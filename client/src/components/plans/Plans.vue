@@ -13,7 +13,7 @@
           :data="{
             title: plan.name,
             number: plan.total,
-            desc: '',
+            desc: 'places autorisées',
             obj: plan
           }"
           @del='deletePlan'

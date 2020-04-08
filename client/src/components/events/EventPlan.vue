@@ -2,7 +2,8 @@
 <!-- TODO: gérer les contraintes complexes (.number) sur le plan -->
 <!-- TODO: ctrl+z -->
 <!-- TODO: si trop de sieges (ex: 12 personnes placées puis modifs plus que 10) ? -->
-<!-- TODO: Search number = remaining -->
+<!-- TODO: Deploy pour faire tester -->
+<!-- TODO: Check les gens solo -->
   <div>
     <Modal
       v-if="showModalShortcuts"

@@ -9,11 +9,19 @@
       :validateBtn="false"
     ><GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged"/></Modal>
 
-    <input type="text" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''"/>
+    <input
+      type="text"
+      placeholder="Rechercher..."
+      v-model="search"
+      @keydown.esc="search = ''"
+      @focus="focus = true"
+      @blur="focus = false"
+      :style="searchStyle"
+    />
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
       <GroupLine
-        v-for="group in groups.filter(g => g.remaining !== 0)"
+        v-for="group in groups.filter(g => g.remaining !== 0 && g.isVisible)"
         :key="group._id"
         :group="group"
         @group-click="onGroupClick"
@@ -25,7 +33,7 @@
       <tr class="around-separator"></tr>
       <!-- GROUP DONE -->
       <GroupLine
-        v-for="group in groups.filter(g => g.remaining === 0)"
+        v-for="group in groups.filter(g => g.remaining === 0 && g.isVisible)"
         :key="group._id"
         :group="group"
         @group-click="onGroupClick"
@@ -52,6 +60,8 @@ export default {
   },
   data () {
     return {
+      search: '',
+      focus: false,
       isCtrlPressed: false,
       showModalGroup: false,
       modalGroupStyle: {
@@ -67,14 +77,20 @@ export default {
   },
   mounted () {
     this.groups.forEach(group => {
-      this.$set(group, 'visible', true)
+      this.$set(group, 'isVisible', true)
       this.$set(group, 'done', 0)
       this.$set(group, 'remaining', group.number)
     })
   },
   methods: {
     doSearch: function () {
-      this.groups.forEach(group => { group.visible = group.name.toLowerCase().includes(this.search.toLowerCase()) })
+      let search = this.search.toLowerCase()
+      if (Number.isNaN(parseInt(search))) {
+        this.groups.forEach(group => { group.isVisible = group.name.toLowerCase().includes(this.search.toLowerCase()) })
+      } else {
+        search = parseInt(search)
+        this.groups.forEach(group => { group.isVisible = group.remaining === search })
+      }
     },
 
     getSelectedGroup () {
@@ -170,6 +186,20 @@ export default {
     },
     onFocusLost () {
       this.isCtrlPressed = false
+    }
+  },
+  computed: {
+    searchStyle () {
+      let warn = this.focus === false && this.search.length > 0
+      return {
+        borderColor: warn ? this.colors.mainBlue : 'transparent',
+        borderWidth: warn ? '2px' : '0px'
+      }
+    }
+  },
+  watch: {
+    search: function (search, old) {
+      this.doSearch()
     }
   }
 }

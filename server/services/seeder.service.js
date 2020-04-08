@@ -76,9 +76,11 @@ module.exports = {
             while (color.length < 7) {
                 color += '0'
             }
+            const numbers = [1,1,1,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16,17,17,18,18,19,19,20,23,26,30]
+            let randomNumber = numbers[Math.floor(Math.random() * numbers.length)]
             groups.push({
                 name: faker.name.firstName() + ' ' + faker.name.lastName(),
-                number: faker.random.number({min: 1, max: 20}),
+                number: randomNumber,
                 color: color,
                 plan_id: plans[Math.floor(Math.random() * plans.length)],
                 event_id: events[Math.floor(Math.random() * events.length)],
