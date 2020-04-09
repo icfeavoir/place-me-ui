@@ -22,17 +22,20 @@
       <div class="plan-container">
         <div class="event-plan-header" v-if="event">
           <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
-            <button class="main-btn"><i class="fa fa-arrow-left"></i>Retour à <b>{{ event.name }}</b></button>
+            <button class="main-btn allow-small"><i class="fa fa-arrow-left"></i><a v-if="isLargeScreen">Retour à <b>{{ event.name }}</b></a></button>
           </router-link>
-          <button class="main-btn" @click="autoFill">
-            <i class="fa fa-running"></i>Générer
+          <button class="main-btn allow-small" @click="autoFill">
+            <i class="fa fa-running"></i><a v-if="isLargeScreen">Générer</a>
           </button>
-          <p class="saved" :style="savedStyle">
-            <i v-if="isSaved" class="fa fa-check fa-sm"></i>
-            <i v-else class="fa fa-spinner fa-spin fa-sm"></i>
-            {{ savedText }}
+          <p class="saved allow-small" :style="savedStyle">
+            <i v-if="isSaved" class="i-only-center fa fa-check fa-sm"></i>
+            <i v-else class="i-only-center fa fa-spinner fa-spin fa-sm"></i>
+            <a v-if="isLargeScreen">{{ savedText }}</a>
           </p>
-          <button class="main-btn little-info-btn" @click="showModalShortcuts = true"><i class="i-only-center fa fa-info"></i></button>
+          <button class="main-btn little-info-btn allow-small" @click="showModalShortcuts = true"><i class="i-only-center fa fa-info"></i></button>
+          <button v-if="this.isMobileAndTabletcheck()" class="main-btn suppr-groups" @click="supprSelectedGroups">
+            <i class="fa fa-trash-alt"></i><a>Suppr</a>
+          </button>
         </div>
         <Plan
           ref="plan"
@@ -49,11 +52,10 @@
 </template>
 
 <script>
-import eventService from '@/services/event.service'
-import planService from '@/services/plan.service'
 import forbiddenSeatService from '@/services/forbiddenSeat.service'
 import groupService from '@/services/group.service'
 import groupSeatService from '@/services/groupSeat.service'
+import eventPlanService from '@/services/eventPlan.service'
 
 import GroupList from '@/components/elem/GroupList'
 import Plan from '@/components/elem/Plan'
@@ -74,6 +76,7 @@ export default {
       groups: null,
       isSaved: true,
       isSaving: false,
+      isLargeScreen: false,
       // modal shortcuts
       showModalShortcuts: false,
       modalShortcutsStyle: {
@@ -82,22 +85,31 @@ export default {
       }
     }
   },
+  created () {
+    window.addEventListener('resize', this.resize)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.resize)
+  },
   mounted () {
-    let eventId = this.$route.params.eventId
-    let planId = this.$route.params.planId
-    eventService.findById(eventId).then(e => {
-      this.$set(this, 'event', e)
-    })
-    let promises = [planService.findById(planId), groupService.getByEventPlan(eventId, planId)]
-    Promise.all(promises).then(results => {
-      let plan = results[0]
-      let groups = results[1]
-      this.$set(this, 'groups', groups)
-      forbiddenSeatService.findByPlanId(plan.id).then(f => {
-        plan.forbiddenSeats = f
+    let eventPlanId = this.$route.params.eventPlanId
+    eventPlanService.findById(eventPlanId).then(eventPlan => {
+      // l'event
+      this.$set(this, 'event', eventPlan.event)
+
+      // le plan
+      let plan = eventPlan.plan
+      forbiddenSeatService.findByPlanId(plan.id).then(forbiddenSeats => {
+        plan.forbiddenSeats = forbiddenSeats || []
         this.$set(this, 'plan', plan)
+      })
+
+      // les groupes
+      groupService.getByEventPlanId(eventPlanId).then(groups => {
+        this.$set(this, 'groups', groups)
         // on place les gens avec les infos de la DB
-        groupSeatService.getByEventPlan(eventId, planId).then(groupSeats => {
+        groupSeatService.getByEventPlanId(eventPlanId).then(groupSeats => {
+          // on met les groupes sur les sièges
           groupSeats.forEach(gs => {
             if (gs.group_id) {
               let seat = this.$refs.plan.findSeat(gs.line, gs.cell)
@@ -112,6 +124,8 @@ export default {
         })
       })
     })
+
+    this.isLargeScreen = !this.isPortraitView() && !this.isSmallWidthScreen()
   },
   methods: {
     groupChanged: function (data) {
@@ -228,6 +242,16 @@ export default {
           shouldContinue = false
         }
       }
+    },
+    supprSelectedGroups () {
+      let deleted = this.$refs.plan.supprSelectedGroups()
+      if (deleted === 0) {
+        this.$toasted.info('Aucun siège sélectionné')
+      }
+    },
+
+    resize () {
+      this.isLargeScreen = !this.isPortraitView() && !this.isSmallWidthScreen()
     }
   },
   computed: {

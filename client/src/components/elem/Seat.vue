@@ -18,23 +18,22 @@ export default {
   name: 'Seat',
   data () {
     return {
+      foregroundColor: ''
     }
   },
   props: {
     seat: Object,
     size: Number
   },
+  mounted () {
+    this.foregroundColor = this.colors.lighterGrey
+  },
   computed: {
     style () {
       return {
-        minWidth: this.sizeComp + 'px',
-        width: this.sizeComp + 'px',
-        maxWidth: this.sizeComp + 'px',
-        height: this.sizeComp + 'px',
-        color: this.color || this.colors.lighterGrey,
+        color: this.foregroundColor,
         backgroundColor: this.bgColor || this.colors.bgColor,
         border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
-        fontSize: '10px',
         opacity: this.opacity
       }
     },
@@ -53,9 +52,6 @@ export default {
       } else {
         return this.colors.lightRed
       }
-    },
-    color () {
-      return this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
     },
     bgColor () {
       if (this.isForbidden) {
@@ -136,6 +132,9 @@ export default {
   watch: {
     group () {
       this.seat.isEmpty = this.group === null
+      if (this.group.color) {
+        this.foregroundColor = this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
+      }
     }
   }
 }

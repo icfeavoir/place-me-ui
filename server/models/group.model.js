@@ -1,6 +1,5 @@
 const {Sequelize, sequelize} = require('../config/db');
-const Event = require('./event.model')
-const Plan = require('./plan.model')
+const EventPlan = require('./eventPlan.model')
 const Constraint = require('./constraint.model')
 
 const Model = Sequelize.Model;
@@ -21,18 +20,10 @@ Group.init({
         allowNull: false,
         defaultValue: '#000000'
     },
-    event_id: {
+    event_plan_id: {
         type: Sequelize.INTEGER,
         references: {
-            model: Event,
-            key: 'id',
-        },
-        allowNull: false,
-    },
-    plan_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Plan,
+            model: EventPlan,
             key: 'id',
         },
         onDelete: 'SET NULL',
@@ -58,15 +49,17 @@ Group.init({
     // options
 });
 
-Group.belongsTo(Event, {foreignKey: 'event_id'})
-Event.hasMany(Group, {as: 'groups', foreignKey: 'event_id'});
-
-Group.belongsTo(Plan, {foreignKey: 'plan_id'})
-Plan.hasMany(Group, {as: 'groups', foreignKey: 'plan_id'})
+Group.belongsTo(EventPlan, {foreignKey: 'event_plan_id'});
+EventPlan.hasMany(Group, {as: 'group', foreignKey: 'event_plan_id'})
 
 Group.belongsTo(Constraint, {foreignKey: 'constraint_id'})
 Constraint.hasMany(Group, {as: 'groups', foreignKey: 'constraint_id'})
 
+Group.addScope('defaultScope', {
+    include: [{
+        model: EventPlan
+    }]
+})
 Group.addScope('orderByCreation', {
     order: [['id', 'ASC']],
 })

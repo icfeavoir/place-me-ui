@@ -31,6 +31,12 @@ form.add-form {
         flex-wrap: nowrap;
         justify-content: center;
         align-items: center;
+
+        @media (orientation: portrait) {
+            input#color {
+                width: 40px !important;
+            }
+        }
     }
 
     .constraint-container {
@@ -47,15 +53,11 @@ form.add-form {
             }
         }
 
-        #constraint {
-            width: 90%;
-        }
-
         .check-constraint {
             width: 100%;
             position: relative;
             
-            .special-checkbox {
+            .checkbox {
                 width: fit-content;
                 text-align: right;
                 .checkmark {
@@ -67,6 +69,10 @@ form.add-form {
                 width: 15%;
                 position: absolute;
                 top: -7px;
+
+                @media (orientation: portrait) {
+                    position: relative;
+                }
             }
         }
     }

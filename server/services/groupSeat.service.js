@@ -16,23 +16,21 @@ module.exports = {
         res.send(data)
     },
 
-    getByEventPlan (req, res) {
+    getByEventPlanId (req, res) {
         var params = req.body || req || []
-        if (!params.event_id || !params.plan_id) {
-            this._handleResponse({error: 'No event or plan'}, res)
+        if (!params.event_plan_id) {
+            this._handleResponse({error: 'No event plan id'}, res)
         }
         
-        this.getEventPlanId(params).then(ep => {
-            let eventPlanId = ep.id
-            GroupSeat.findAll({where: {event_plan_id: eventPlanId}})
-                .then(groupSeats => {
-                    this._handleResponse(groupSeats, res)
-                })
-                .catch(e => {
-                    console.error("ERROR GROUP SEAT GET BY EVENT PLAN: " + e)
-                    this._handleResponse({error: "Cannot get group seats"}, res)
-                })
-        })
+        let eventPlanId = params.event_plan_id
+        GroupSeat.findAll({where: {event_plan_id: eventPlanId}})
+            .then(groupSeats => {
+                this._handleResponse(groupSeats, res)
+            })
+            .catch(e => {
+                console.error("ERROR GROUP SEAT GET BY EVENT PLAN: " + e)
+                this._handleResponse({error: "Cannot get group seats"}, res)
+            })
     },
     
     setGroupSeat (req, res) {

@@ -1,9 +1,8 @@
 @import 'variables';
 
-$form-size: 500px;
-
 div.form {
-    width: $form-size;
+    width: 500px;
+    max-width: 90%;
     background-color: $dark-grey;
     margin: 10px auto;
     border-radius: 10px 10px 0 0;
@@ -20,6 +19,10 @@ div.form {
     padding: 20px 0;
     font-size: 25px;
     letter-spacing: 3px;
+
+    @media (orientation: portrait) {
+        letter-spacing: 1px;
+    }
 }
 
 input, select, button {
@@ -51,6 +54,10 @@ input, select, button {
         font-size: 14px;
         letter-spacing: normal;
     }
+
+    @media (orientation: portrait) {
+        width: 80% !important;
+    }
 }
 
 select {
@@ -67,6 +74,7 @@ select {
     option {
         color: $dark-grey;
         background-color: $light-grey;
+        width: fit-content;
     }
 }
 

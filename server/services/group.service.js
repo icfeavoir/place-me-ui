@@ -2,12 +2,13 @@ const {Sequelize, sequelize} = require('../config/db')
 const Group = require('../models/group.model')
 const Event = require('../models/event.model')
 const Plan = require('../models/plan.model')
+const EventPlan = require('../models/eventPlan.model')
 const Constraint = require('../models/constraint.model')
 const ConstraintSeat = require('../models/constraintSeat.model')
 
 module.exports = {
     getAll (req, res) {
-        Group.scope('orderByName').findAll({include: [Event, Plan]}).then(groups => {
+        Group.scope(['defaultScope', 'orderByName']).findAll().then(groups => {
             this._handleResponse(groups, res)
         })
     },
@@ -20,32 +21,22 @@ module.exports = {
                 this._handleResponse(group, res)
             })
     },
-    getByEventPlan (req, res) {
+    getByEventPlanId (req, res) {
         let params = req.body || req || []
-        let eventId = params.eventId
-        let planId = params.planId
-        Group.scope('orderByName').findAll({include: [
-            Event,
-            Plan,
-            {
-                model: Constraint,
-                required: false, // pas forcément de contraintes
-                include: [{
-                    model: ConstraintSeat,
-                    required: false, // dans le cas d'une contrainte sans sièges
-                    as: 'constraint_seats',
-                    where: {plan_id: planId} // que les contraintes sur ce plan
-                }]
-            }
-        ], where: {event_id: eventId, plan_id: planId}})
+        let eventPlanId = params.eventPlanId
+        Group.scope(['defaultScope', 'orderByName']).findAll({where: {event_plan_id: eventPlanId}})
             .then(groups => {
                 this._handleResponse(groups, res)
+            })
+            .catch(e => {
+                console.error("ERROR GROUP GET BY EVENT PLAN: " + e)
+                this._handleResponse({error: "Cannot get group"}, res)
             })
     },
     countGroupByEvent (req, res) {
         Group.findAll({
-            attributes: ['event_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
-            group : ['group.event_id'],
+            attributes: ['event_plan_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
+            group : ['group.event_plan_id'],
             raw: true,
         }).then(total => {
             this._handleResponse(total, res)
@@ -179,11 +170,8 @@ module.exports = {
         if (!params.number || params.number <= 0) {
             return {result: "Number should be > 0", params: params}
         }
-        if (!params.event_id || params.event_id <= 0) {
-            return {result: "no event", params: params}
-        }
-        if (!params.plan_id || params.plan_id <= 0) {
-            return {result: "no plan", params: params}
+        if (!params.event_plan_id || params.event_plan_id <= 0) {
+            return {result: "no event plan", params: params}
         }
 
         if (!params.constraint_name) {

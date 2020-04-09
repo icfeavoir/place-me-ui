@@ -10,14 +10,24 @@
     background: none;
     color: $lighter-grey;
     text-align: center;
+    @media (orientation: portrait) {
+        font-size: 25px;
+        letter-spacing: 1px;
+    }
   }
 }
 
 header {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: space-around;
+  align-items: baseline;
   margin: 10px 0 30px;
+
+  @media (orientation: portrait) {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
 
   .search {
     color: $bg-color;
@@ -29,6 +39,13 @@ header {
     background-color: rgba(255,255,255,.6);
     transition: background-color .5s;
 
+    @media (orientation: portrait) {
+        font-size: 15px;
+        letter-spacing: 1px;
+        margin-top: 20px;
+        width: 50%;
+    }
+
     &:hover, &:focus {
       background-color: rgba(255,255,255,.9);
     }
@@ -39,5 +56,8 @@ header {
   margin: 10px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: first baseline;
+
+  @media (orientation: portrait) {
+    justify-content: space-evenly;
+  }
 }

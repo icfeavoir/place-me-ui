@@ -1,7 +1,7 @@
 <template>
   <div>
     <header>
-      <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
+      <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <router-link :to='{name: "EventAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvel événement</button></router-link>
     </header>
     <div class='list'>
@@ -49,14 +49,18 @@ export default {
         this.$set(this, 'events', events)
       })
 
-    groupService.countGroupByEvent()
-      .then((data) => {
-        data.forEach(element => {
-          this.$set(this.events.find(e => e.id === element.event_id) || {}, 'total', element.total)
-        })
+    groupService.countGroupByEvent().then((data) => {
+      data.forEach(element => {
+        let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
+        let sum = parseInt(prevTotal) + parseInt(element.total)
+        this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
       })
+    })
   },
   mounted () {
+    if (this.isMobileAndTabletcheck() === false) {
+      this.$refs.search.focus()
+    }
   },
   methods: {
     del: function (event) {

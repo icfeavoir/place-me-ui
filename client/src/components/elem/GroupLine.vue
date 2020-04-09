@@ -13,7 +13,7 @@
         @drag="$emit('group-drag', group)"
         >{{ name }}</drag>
       </p>
-      <p v-if="group.constraint" class="constraint">{{ constraintText }}</p>
+      <p v-if="group && group.constraint" class="constraint">{{ constraintText }}</p>
     </td>
     <td><div class="number-container"><p class="number">{{ number }}</p></div></td>
     <td><div class="number-container number-success"><p class="number">{{ done }}</p></div></td>
@@ -89,8 +89,11 @@ export default {
     constraintNumber () {
       return this.group.constraint_number || 0
     },
+    constraint () {
+      return this.group.constraint
+    },
     constraintName () {
-      return this.group.constraint_name || ''
+      return this.group.constraint.name || this.group.constraint_name || ''
     },
     constraintText () {
       // on met le nombre de gens SI pas tout le monde

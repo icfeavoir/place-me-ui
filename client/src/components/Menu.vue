@@ -1,5 +1,13 @@
 <template>
-<sidebar-menu @toggle-collapse="$emit('onToggleCollapse', $event)" :menu="menu" :width="width" />
+<sidebar-menu
+  @toggle-collapse="$emit('onToggleCollapse', $event)"
+  :menu="menu"
+  :width="width"
+  :widthCollapsed="widthCollapsed"
+  :collapsed="isPortrait || isSmallWidth"
+  :disableHover="true"
+  :hideToggle="isPortrait"
+/>
 </template>
 
 <script>
@@ -27,8 +35,25 @@ export default {
           title: 'Plans',
           icon: 'fa fa-th'
         }
-      ],
-      width: '250px'
+      ]
+    }
+  },
+  props: {
+    isPortrait: {
+      type: Boolean,
+      default: false
+    },
+    isSmallWidth: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    width () {
+      return this.isPortrait ? '100%' : '250px'
+    },
+    widthCollapsed () {
+      return this.isPortrait ? '100%' : '50px'
     }
   }
 }

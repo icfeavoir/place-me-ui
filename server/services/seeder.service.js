@@ -34,7 +34,7 @@ module.exports = {
             }
         ])
         .then(e => {
-            it.createPlans(e.map(a => a.id))
+            it.createPlans(e)
         })
         .catch(e => console.error("EVENT ERROR: " + e))
     },
@@ -55,16 +55,17 @@ module.exports = {
         ])
         .then(plans => {
             plans.forEach(p => {
-                events.forEach(eventId => {
+                events.forEach(event => {
                     EventPlan.create({
-                        event_id: eventId,
+                        event_id: event.id,
                         plan_id: p.id
+                    }).then(eventPlan => {
+                        if (!isProduction) {
+                            it.createGroups(eventPlan)
+                        }
                     })
                 })
             })
-            if (!isProduction) {
-                it.createGroups(events, plans.map(p => p.id))
-            }
             it.createForbiddenSeats(plans)
             it.createConstraints(plans)
         })
@@ -72,8 +73,8 @@ module.exports = {
 
     },
 
-    createGroups (events, plans) {
-        const NB_GROUPS = 50
+    createGroups (eventPlan) {
+        const NB_GROUPS = 1 //faker.random.number({min:5, max:20})
         var groups = []
         for (var i=0; i<NB_GROUPS; i++) {
             let color = '#' + (Math.floor(Math.random()*16777215)).toString(16)
@@ -86,12 +87,11 @@ module.exports = {
                 name: faker.name.firstName() + ' ' + faker.name.lastName(),
                 number: randomNumber,
                 color: color,
-                plan_id: plans[Math.floor(Math.random() * plans.length)],
-                event_id: events[Math.floor(Math.random() * events.length)],
+                event_plan_id: eventPlan.id
             })
         }
 
-        Group.bulkCreate(groups).catch(e => console.error("GROUP ERROR: " + e))
+        Group.bulkCreate(groups)
     },
 
     createForbiddenSeats (plans) {

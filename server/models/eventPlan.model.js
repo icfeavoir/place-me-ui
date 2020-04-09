@@ -31,4 +31,8 @@ EventPlan.init({
 EventPlan.belongsTo(Event, {foreignKey: 'event_id'})
 EventPlan.belongsTo(Plan, {foreignKey: 'plan_id'})
 
+EventPlan.addScope('defaultScope', {
+    include: [Event, Plan]
+})
+
 module.exports = EventPlan

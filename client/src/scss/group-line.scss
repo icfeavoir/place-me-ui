@@ -4,6 +4,9 @@ tr.group-data {
     width: 100%;
     border-bottom: 1px solid $lighter-grey;
     opacity: 0.75;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 
     &:hover {
         background-color: $dark-grey;
@@ -20,15 +23,28 @@ tr.group-data {
     td {
         color: $lighter-grey;
         padding: 10px 0;
+        flex: 1;
+        justify-content: center;
+
+        @media only screen and (max-width: $small-width) {
+            padding: 0;
+        }
 
         &.name-container {
             overflow: hidden;
             margin-right: 10px;
+            flex: 7;
+
+            @media only screen and (max-width: $small-width) {
+                // on force le nom à prendre toute la place
+                flex-basis: 100%;
+                min-width: 100%;
+                margin: 0;
+            }
         }
 
         p.name {
             width: fit-content;
-            max-width: 100%;
             margin: 0 auto;
         }
         p.constraint {
@@ -42,10 +58,24 @@ tr.group-data {
             padding: 1px 4px;
             border-radius: 10px;
             border: 1px solid $bg-color;
+
+            @media only screen and (max-width: $small-width) {
+                display: none;
+            }
         }
 
         .number-container {
             margin: 0 auto;
+            width: 35px;
+            min-height: 35px;
+            p {
+                font-size: 12px;
+            }
+
+            @media only screen and (max-width: $small-width) {
+                width: 20px;
+                min-height: 20px;
+            }
         }
         .number-success {
             background-color: $main-green;

@@ -40,6 +40,12 @@ html {
     transition: background-color .5s;
     position: relative;
 
+    @media (orientation: portrait) {
+        font-size: 15px;
+        letter-spacing: 1px;
+        background-color: rgba(255,255,255,.9);
+    }
+
     &.little-info-btn {
         width: 25px;
         height: 25px;

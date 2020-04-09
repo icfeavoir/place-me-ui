@@ -1,7 +1,7 @@
 <template>
   <div>
     <header>
-      <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
+      <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <router-link :to='{name: "PlanAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouveau plan</button></router-link>
     </header>
     <div class='list'>
@@ -56,6 +56,9 @@ export default {
       })
   },
   mounted () {
+    if (this.isMobileAndTabletcheck() === false) {
+      this.$refs.search.focus()
+    }
   },
   methods: {
     deletePlan: function (plan) {

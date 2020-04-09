@@ -47,7 +47,7 @@ export default {
         {name: 'Si un groupe est sélectionné, cliquer sur un siège remplira le plan avec ce groupe de manière automatique à partir de ce siège.'},
         {name: 'Le bouton <span class="main-btn"><i class="fa fa-running"></i>Générer</span> assigne les groupes aux sièges en prenant les groupes par ordre de personnes à placer.'},
         {name: 'Utilisez la barre de recherche pour trouver un groupe. En entrant juste un nombre, par exemple 3, la liste montrera les groupes ayant 3 personnes à placer.'},
-        {name: 'L\'enregistrement se fait de manière automatique à chaque changement détecté. L\'enregistrement est terminé lorsque vous voyez ce symbole : <span class="saved"><i v-if="isSaved" class="fa fa-check fa-sm"></i>Sauvegardé</span>'}
+        {name: 'L\'enregistrement se fait de manière automatique à chaque changement détecté. L\'enregistrement est terminé lorsque vous voyez ce symbole : <div class="saved"><i v-if="isSaved" class="fa fa-check fa-sm"></i>Sauvegardé</div>'}
       ]
     }
   },

@@ -3,9 +3,10 @@
     <template v-if='plan'>
       <div class='plan-name'>
         <h2>{{ plan.name }}<br>{{ plan.width }} x {{ plan.height }}</h2>
-        <button @click="forbid">Forbid</button>
-        <button @click="allow">Allow</button>
-        <button @click="save">Save</button>
+        <p>Cette page est fonctionnelle, son design par contre pas encore !</p>
+        <button class="main-btn" @click="forbid">Forbid</button>
+        <button class="main-btn" @click="allow">Allow</button>
+        <button class="main-btn" @click="save">Save</button>
         <v-stage
           ref="stage"
           :config="configKonva"
@@ -185,18 +186,8 @@ export default {
 </script>
 
 <style>
-.plan-firstName .is-editing {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 8px;
-  display: inline-block;
-  min-width: 600px;
-}
-.add-new-list .is-editing {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 8px;
-  margin: 0;
+h2, p {
+  color: white;
 }
 
 </style>

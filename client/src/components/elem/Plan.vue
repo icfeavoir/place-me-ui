@@ -216,6 +216,7 @@ export default {
             (cellDirection === -1 && currentCell < lastCell) ||
             currentSeat.isEmpty === false ||
             currentSeat.isForbidden
+        changeLine = false
         if (changeLine) {
           // bout de la ligne, on prend la ligne suivante
           currentCell = startCell
@@ -332,6 +333,16 @@ export default {
       }
     },
 
+    supprSelectedGroups () {
+      let count = 0
+      this.getSelectedSeats().forEach(s => {
+        this.placeGroup({seat: s, del: true})
+        count++
+      })
+      this.unselectAll()
+      return count
+    },
+
     keydown: function (event) {
       if (event.ctrlKey) {
         // CTRL
@@ -364,10 +375,7 @@ export default {
 
         case 46:
           // SUPPR
-          this.getSelectedSeats().forEach(s => {
-            this.placeGroup({seat: s, del: true})
-          })
-          this.unselectAll()
+          this.supprSelectedGroups()
           break
       }
     },

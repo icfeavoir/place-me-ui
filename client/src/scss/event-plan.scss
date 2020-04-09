@@ -23,15 +23,11 @@ $header-height: 10vh;
             display: none;
         }
         
-        /deep/ div.number-container {
-            width: 35px;
-            min-height: 35px;
-            p {
-            font-size: 12px;
-            }
+        @media only screen and (max-width: $small-width) {
+            min-width: 70px;
         }
-        /deep/ td.name-container {
-            max-width: 90px;
+        @media (orientation: portrait) {
+            height: calc(100vh - 50px); // le menu en haut
         }
     }
 
@@ -40,6 +36,10 @@ $header-height: 10vh;
         height: fit-content;
         overflow: hidden;
         flex: 1; // occupe tout l'espace restant
+        
+        @media (orientation: portrait) {
+            max-height: calc(100vh - 50px); // le menu en haut
+        }
 
         .event-plan-header {
             display: flex;
@@ -68,6 +68,37 @@ $header-height: 10vh;
 
                 i {
                     margin-right: 5px;
+                }
+            }
+
+            .suppr-groups {
+                color: $main-red;
+                border: 1px solid $main-red;
+                font-size: 12px;
+                letter-spacing: initial;
+                &:disabled {
+                    background-color: rgba(255, 255, 255, .6);
+                    &:hover {
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+            @media only screen and (max-width: $small-width) {
+                .allow-small {
+                    position: relative;
+                    width: 25px !important;
+                    height: 25px !important;
+                    i {
+                        margin: auto;
+                        width: 100%;
+                        top: 5px;
+                        position: absolute;
+                        left: 0;
+                    }
+                }
+                .saved {
+                    padding: 0 !important;
                 }
             }
         }

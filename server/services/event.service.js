@@ -112,25 +112,6 @@ module.exports = {
                 this._handleResponse(result, res)
             })
     },
-    
-    getBook (req, res) {
-        Group.findAll({
-            where: {event_id: req.params.eventId},
-            attributes: ['event_id', 'plan_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
-            group : ['group.plan_id'],
-            raw: true,
-        }).then(data => {
-            let result = []
-            let count = 0
-            data.forEach(d => {
-                d.total = parseInt(d.total)
-                result[d.plan_id] = d
-                count += d.total
-            })
-            result[0] = count   // on met le total en plan 0
-            this._handleResponse(result, res)
-        })
-    },
 
     generate (req, res) {
         var eventId = req.body.eventId

@@ -1,6 +1,6 @@
 <template id="all">
-  <div id='app' :style="{paddingLeft: paddingLeft + 'px'}">
-    <Menu @onToggleCollapse="onToggleCollapse" />
+  <div id='app' :style="{paddingLeft: paddingLeft + 'px', paddingTop: paddingTop + 'px'}">
+    <Menu @onToggleCollapse="onToggleCollapse" :isPortrait="isPortrait" :isSmallWidth="isSmallWidth"/>
     <div class="container"><router-view/></div>
   </div>
 </template>
@@ -14,12 +14,41 @@ export default {
   },
   data () {
     return {
-      paddingLeft: 250
+      paddingLeft: 250,
+      isPortrait: false,
+      isSmallWidth: false
     }
   },
+  created () {
+    window.addEventListener('resize', this.resize)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.resize)
+  },
+  mounted () {
+    this.resize()
+  },
   methods: {
+    resize () {
+      this.isPortrait = this.isPortraitView()
+      this.isSmallWidth = this.isSmallWidthScreen()
+    },
     onToggleCollapse: function (collapse) {
-      this.paddingLeft = collapse ? 50 : 250
+      if (this.isPortrait) {
+        this.paddingLeft = 0
+        this.paddingTop = 50
+      } else {
+        this.paddingLeft = collapse ? 50 : 250
+        this.paddingTop = 0
+      }
+    }
+  },
+  watch: {
+    isPortrait () {
+      this.onToggleCollapse(this.isPortrait)
+    },
+    isSmallWidth () {
+      this.onToggleCollapse(this.isSmallWidth)
     }
   }
 }

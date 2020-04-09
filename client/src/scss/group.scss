@@ -8,4 +8,8 @@
     border-radius: 10px;
     margin: 40px auto;
     font-size: 14px;
+
+    @media (orientation: portrait) {
+        margin: 20px;
+    }
 }

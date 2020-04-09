@@ -42,10 +42,9 @@
 </template>
 
 <script>
-import eventService from '@/services/event.service'
 import constraintService from '@/services/constraint.service'
 import groupService from '@/services/group.service'
-import planService from '@/services/plan.service'
+import eventPlanService from '@/services/eventPlan.service'
 
 import Checkbox from '@/components/elem/Checkbox'
 
@@ -59,6 +58,7 @@ export default {
   },
   data () {
     return {
+      eventPlans: [],
       events: [],
       plans: [],
       constraints: [],
@@ -77,37 +77,33 @@ export default {
     }
   },
   computed: {
+    eventPlanId () {
+      let selectedEP = this.eventPlans.find(ep => ep.event.id === this.event && ep.plan.id === this.plan)
+      return selectedEP ? selectedEP.id : null
+    }
   },
   mounted () {
     let allRequests = [
-      eventService.getAll(),
-      planService.getAll(),
+      eventPlanService.getAll(),
       constraintService.getAll()
     ]
 
     Promise.all(allRequests).then(data => {
-      let events = data[0]
-      this.events = events
-      this.event = events.length ? events[0].id : null
+      this.eventPlans = data[0]
 
-      let plans = data[1]
-      this.plans = plans
-      this.plan = plans.length ? plans[0].id : null
+      this.events = []
+      this.eventPlans.map(ep => ep.event).forEach(event => {
+        if (this.events.find(e => e.id === event.id) === undefined) {
+          this.events.push(event)
+        }
+      })
+      this.events.sort((a, b) => { return a.date < b.date ? -1 : 1 }) // par date
 
-      let constraints = data[2]
+      let constraints = data[1]
       this.constraints = constraints
 
-      // quand tout est prêt, on init
-      if (this.group) {
-        // le group est déjà prêt, watch ne sera pas appelé
-        this.init()
-      }
-    })
-  },
-  watch: {
-    group: function (newGroup, oldGroup) {
       this.init()
-    }
+    })
   },
   methods: {
     submit: function () {
@@ -115,8 +111,7 @@ export default {
         name: this.name,
         number: this.number,
         color: this.color,
-        event_id: this.event,
-        plan_id: this.plan,
+        event_plan_id: this.eventPlanId,
         constraint_name: this.constraint,
         constraint_number: this.constraintForAll ? this.number : this.constraintNumber
       }
@@ -148,12 +143,10 @@ export default {
 
     init: function () {
       let group = this.group || {}
-
       this.name = group.name || ''
       this.number = group.number || null
       this.color = group.color || '#000000'
-      this.event = group.event_id || (this.events.length ? this.events[0].id : null)
-      this.plan = group.plan_id || (this.plans.length ? this.plans[0].id : null)
+      this.event = group.event_plan ? group.event_plan.event.id : (this.events.length ? this.events[0].id : null)
       this.constraint = group.constraintText || (group.constraint && group.constraint.name) || ''
       this.constraintNumber = group.constraint_number || 0
       if (this.constraint) {
@@ -173,6 +166,21 @@ export default {
     },
     upperFirst: function () {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1)
+    }
+  },
+  watch: {
+    group: function (newGroup, oldGroup) {
+      this.init()
+    },
+    event () {
+      this.plans = []
+      this.eventPlans.filter(ep => ep.event.id === this.event).map(ep => ep.plan).forEach(plan => {
+        if (this.plans.find(p => p.id === plan.id) === undefined) {
+          this.plans.push(plan)
+        }
+      })
+      this.plans.sort((a, b) => { return a.name < b.name ? -1 : 1 }) // par nom
+      this.plan = this.group && this.group.event_plan ? this.group.event_plan.plan.id : (this.plans.length ? this.plans[0].id : null)
     }
   }
 }

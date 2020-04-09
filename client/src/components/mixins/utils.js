@@ -34,6 +34,27 @@ export const utils = {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
       } : null
+    },
+    isPortraitView () {
+      return window.innerWidth < window.innerHeight
+    },
+    isSmallWidthScreen () {
+      return window.innerWidth < 1000
+    },
+    isMobileAndTabletcheck () {
+      const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+      ]
+
+      return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem)
+      })
     }
   }
 }

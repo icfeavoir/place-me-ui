@@ -68,7 +68,7 @@ export default {
       return this.modalStyle || {}
     },
     width () {
-      return this.style.width || '30%'
+      return this.style.width || (this.isPortraitView() ? '90%' : '30%')
     },
     margin () {
       return this.style.marginTop || 100

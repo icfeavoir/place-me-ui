@@ -10,20 +10,20 @@
     </div>
     <hr>
     <header>
-      <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
+      <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <button @click="showModal = true" class="main-btn"><i class="fa fa-plus-circle"></i>Ajouter un plan à cet événement</button>
     </header>
     <div class='list'>
-      <p class="bloc-info" v-if="plans && plans.length === 0">Aucun plan sur cet événement</p>
-      <div class="plan" v-for='plan in plans' :key='plan.total'>
+      <p class="bloc-info" v-if="eventPlans && eventPlans.length === 0">Aucun plan sur cet événement</p>
+      <div class="plan" v-for='eventPlan in eventPlans' :key='eventPlan._id'>
         <Card
           url="EventPlan"
-          :params="{eventId: event.id, planId: plan.id}"
+          :params="{eventPlanId: eventPlan.id}"
           :data="{
-            title: plan.name,
-            number: plan.total,
-            desc: 'réservations sur ce plan pour ' + event.name,
-            obj: plan
+            title: eventPlan.plan.name,
+            number: eventPlan.total,
+            desc: 'réservations sur ce plan pour ' + eventPlan.plan.name,
+            obj: eventPlan.plan
           }"
           @del='deletePlanFromEvent'
         />
@@ -34,6 +34,8 @@
 
 <script>
 import eventService from '@/services/event.service'
+import groupService from '@/services/group.service'
+import eventPlanService from '@/services/eventPlan.service'
 
 import Card from '@/components/elem/Card'
 import EventAddPlan from '@/components/events/EventAddPlan'
@@ -48,8 +50,8 @@ export default {
   },
   data () {
     return {
-      allPlans: [],
-      plans: null,
+      allEventPlans: [],
+      eventPlans: null,
       event: null,
 
       search: '',
@@ -64,25 +66,25 @@ export default {
     })
     this.refreshPlans(eventId)
   },
+  mounted () {
+    if (this.isMobileAndTabletcheck() === false) {
+      this.$refs.search.focus()
+    }
+  },
   methods: {
     refreshPlans: function (eventId) {
-      eventService.getPlans(eventId).then((data) => {
-        let plans = []
-        data.forEach(d => {
-          plans.push(d.plan)
-        })
-        this.$set(this, 'allPlans', plans)
-        this.$set(this, 'plans', plans)
-
+      eventPlanService.getByEventId(eventId).then((eventPlans) => {
+        this.$set(this, 'allEventPlans', eventPlans)
+        this.$set(this, 'eventPlans', eventPlans)
         // quand on rafraichit les plan, on refait le comptage
         this.countBook(eventId)
       })
     },
     countBook: function (eventId) {
-      eventService.countBook(eventId).then((data) => {
+      groupService.countGroupByEvent().then((data) => {
         data.forEach(element => {
-          if (this.plans && element) {
-            this.$set(this.plans.find(p => p.id === element.plan_id) || {}, 'total', element.total)
+          if (this.eventPlans && element && element['event_plan.event.id'] === this.event.id) {
+            this.$set(this.eventPlans.find(p => p.plan.id === element['event_plan.plan.id']) || {}, 'total', element.total)
           }
         })
       })
@@ -154,7 +156,7 @@ export default {
     },
 
     doSearch: function () {
-      this.plans = this.allPlans.filter((plan) => plan.name.toLowerCase().includes(this.search.toLowerCase()))
+      this.eventPlans = this.allEventPlans.filter((ep) => ep.plan.name.toLowerCase().includes(this.search.toLowerCase()))
     }
   }
 }

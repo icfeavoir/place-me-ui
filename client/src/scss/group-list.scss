@@ -9,6 +9,10 @@
         border: 1px solid $bg-color;
         border-radius: 10px;
         width: 90%;
+
+        @media (orientation: portrait) {
+            display: none;
+        }
     }
 
     table.list {

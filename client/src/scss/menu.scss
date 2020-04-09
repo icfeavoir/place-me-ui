@@ -27,3 +27,26 @@
   border-radius: 15px;
   margin-bottom: 10px;
 }
+
+// mode portrait
+@media (orientation: portrait) {
+  .v-sidebar-menu.vsm_collapsed {
+    height: 50px;
+
+    .vsm--scroll-wrapper {
+      width: 100%;
+      display: flex;
+      overflow: hidden;
+
+      .vsm--list {
+        display: flex;
+        justify-content: space-evenly;
+       
+        .vsm--item {
+          width: fit-content !important;
+        }
+
+      }
+    }
+  }
+}

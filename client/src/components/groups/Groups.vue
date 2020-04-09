@@ -1,7 +1,7 @@
 <template>
   <div>
     <header>
-      <input v-focus type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
+      <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
       <router-link :to='{name: "GroupAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
     </header>
     <div class='list'>
@@ -13,7 +13,7 @@
           :data="{
             title: group.name,
             number: group.number,
-            desc: (group.event ? group.event.name : 'No event') + ' en ' + (group.plan ? group.plan.name : 'No plan'),
+            desc: group.event_plan ? (group.event_plan.event.name + ' en ' + group.event_plan.plan.name) : 'Non placé !',
             obj: group
           }"
           @del='del'
@@ -44,6 +44,9 @@ export default {
         this.$set(this, 'allGroups', groups)
         this.$set(this, 'groups', groups)
       })
+    if (this.isMobileAndTabletcheck() === false) {
+      this.$refs.search.focus()
+    }
   },
   methods: {
     del: function (group) {

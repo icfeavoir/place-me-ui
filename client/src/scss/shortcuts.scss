@@ -2,11 +2,12 @@
 
 .help {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
 
     .help-container {
         margin-right: 40px;
+        min-width: 250px;
         &:first-child {
             flex: 4
         }
