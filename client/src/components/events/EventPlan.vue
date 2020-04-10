@@ -16,7 +16,8 @@
         :groups="groups"
         @select-group="selectGroup"
         @drag-start="groupDragStart"
-        @group-changed="groupChanged"
+        @group-changed="groupSeatChanged"
+        @group-line-changed="groupLineChanged"
       />
 
       <div class="plan-container">
@@ -24,7 +25,7 @@
           <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
             <button class="main-btn allow-small"><i class="fa fa-arrow-left"></i><a v-if="isLargeScreen">Retour à <b>{{ event.name }}</b></a></button>
           </router-link>
-          <button class="main-btn allow-small" @click="autoFill">
+          <button class="main-btn allow-small" @click="generate">
             <i class="fa fa-running"></i><a v-if="isLargeScreen">Générer</a>
           </button>
           <p class="saved allow-small" :style="savedStyle">
@@ -42,7 +43,7 @@
           class="plan"
           v-if="plan"
           :plan="plan"
-          @group-changed="groupChanged"
+          @group-changed="groupSeatChanged"
           @select-seat="selectSeat"
           @save="saveGroups"
         />
@@ -71,6 +72,7 @@ export default {
   },
   data () {
     return {
+      eventPlanId: null,
       event: null,
       plan: null,
       groups: null,
@@ -93,6 +95,7 @@ export default {
   },
   mounted () {
     let eventPlanId = this.$route.params.eventPlanId
+    this.eventPlanId = eventPlanId
     eventPlanService.findById(eventPlanId).then(eventPlan => {
       // l'event
       this.$set(this, 'event', eventPlan.event)
@@ -108,37 +111,60 @@ export default {
       groupService.getByEventPlanId(eventPlanId).then(groups => {
         this.$set(this, 'groups', groups)
         // on place les gens avec les infos de la DB
-        groupSeatService.getByEventPlanId(eventPlanId).then(groupSeats => {
-          // on met les groupes sur les sièges
-          groupSeats.forEach(gs => {
-            if (gs.group_id) {
-              let seat = this.$refs.plan.findSeat(gs.line, gs.cell)
-              let group = this.$refs.groupList.getGroupById(gs.group_id)
-              this.$refs.plan.placeGroup({
-                setSeat: true, // mode simple
-                group: group,
-                seat: seat
-              }, false) // on sauve pas ce qu'on vient de recup
-            }
-          })
-        })
+        this.setGroupSeats(eventPlanId)
       })
     })
 
     this.isLargeScreen = !this.isPortraitView() && !this.isSmallWidthScreen()
   },
   methods: {
-    groupChanged: function (data) {
+    setGroupSeats (eventPlanId, groupId = null) {
+      let request = groupId ? groupSeatService.getByEventPlanIdAndGroupId(eventPlanId, groupId) : groupSeatService.getByEventPlanId(eventPlanId)
+      if (groupId) {
+        // on enlève les places du groupes avant de les remettre
+        this.$refs.plan.placeGroup({
+          delGroup: true,
+          groupId: groupId
+        }, false)
+      }
+      request.then(groupSeats => {
+        // on met les groupes sur les sièges
+        groupSeats.forEach(gs => {
+          if (gs.group_id) {
+            let seat = this.$refs.plan.findSeat(gs.line, gs.cell)
+            let group = this.$refs.groupList.getGroupById(gs.group_id)
+            this.$refs.plan.placeGroup({
+              setSeat: true, // mode simple
+              group: group,
+              seat: seat
+            }, false) // on sauve pas ce qu'on vient de recup
+          }
+        })
+      })
+    },
+
+    groupLineChanged (group) { // appelée UNE FOIS quand on bouge un groupe
+      this.$refs.plan.checkGroupErrors(group)
+    },
+    groupSeatChanged: function (data) { // appelée pour CHAQUE siège qui change
       // permet de recalculer les groups
       let group = data.group
-      let count = data.count
-
-      let realGroup = this.groups.find(g => g.id === group.id)
+      let realGroup = this.groups.find(g => g.id === group.id) // l'obj group
       if (realGroup) {
-        let done = realGroup.done ? realGroup.done + count : count
-        this.$set(this.groups.find(g => g.id === group.id), 'done', done)
-        let remaining = realGroup.number - realGroup.done
-        this.$set(this.groups.find(g => g.id === group.id), 'remaining', remaining)
+        if (data.refreshPlan) {
+          this.setGroupSeats(this.eventPlanId, realGroup.id)
+        }
+        if (data.changeEventPlan) {
+          // le groupe est changé d'event plan, on l'enlève de la liste
+          this.$refs.groupList.removeGroup(realGroup.id)
+        } else {
+          // on remet à jour les compteurs
+          let count = data.count || 0
+          let done = realGroup.done ? realGroup.done + count : count
+          this.$set(this.groups.find(g => g.id === group.id), 'done', done)
+          let remaining = realGroup.number - realGroup.done
+          this.$set(this.groups.find(g => g.id === group.id), 'remaining', remaining)
+        }
       }
     },
     saveGroups () {
@@ -159,19 +185,23 @@ export default {
       }
     },
 
-    selectSeat (seat) {
+    selectSeat (seat, fromGenerate = false) {
       // quand on clique sur un siège, on check si on a un groupe de select
       let group = this.$refs.groupList.getSelectedGroup()
       if (group) {
-        this.$refs.plan.placeGroup({
-          auto: true, // mode auto
-          group: group,
-          seat: seat
-        })
-        this.$refs.plan.unselectAll()
-        // si le groupe est vidé on l'unselect
-        if (group.remaining === 0) {
-          this.$refs.groupList.unselect()
+        // uniquement si seat select est différent du group
+        if (!(seat.group && seat.group.id === group.id)) {
+          this.$refs.plan.placeGroup({
+            auto: true, // mode auto
+            group: group,
+            seat: seat,
+            allowChangeLine: fromGenerate
+          })
+          this.$refs.plan.unselectAll()
+          // si le groupe est vidé on l'unselect
+          if (group.remaining === 0) {
+            this.$refs.groupList.unselect()
+          }
         }
       }
     },
@@ -208,7 +238,7 @@ export default {
       return groupSeatService.setGroupSeat(data)
     },
 
-    autoFill () {
+    generate () {
       let shouldContinue = true
       while (shouldContinue) {
         let group = this.$refs.groupList.getSelectedGroup() || null
@@ -234,7 +264,7 @@ export default {
           let emptySeats = this.$refs.plan.getEmptySeats()
           if (emptySeats.length > 0) {
             let seat = emptySeats[0]
-            this.selectSeat(seat)
+            this.selectSeat(seat, true) // fromGenerate = true
           } else {
             shouldContinue = false
           }

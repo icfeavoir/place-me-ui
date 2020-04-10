@@ -29,7 +29,7 @@ export default new Router({
       component: Group
     },
     {
-      path: '/groups_add/',
+      path: '/groupsAdd/',
       name: 'GroupAdd',
       component: GroupForm
     },
@@ -45,17 +45,17 @@ export default new Router({
       component: Event
     },
     {
-      path: '/events_add/',
+      path: '/eventsAdd/',
       name: 'EventAdd',
       component: EventForm
     },
     {
-      path: '/events_plan_add/',
+      path: '/eventsPlanAdd/',
       name: 'EventPlanAdd',
       component: EventForm
     },
     {
-      path: '/events_plan/:eventPlanId',
+      path: '/eventsPlan/:eventPlanId',
       name: 'EventPlan',
       component: EventPlan
     },
@@ -71,7 +71,7 @@ export default new Router({
       component: Plan
     },
     {
-      path: '/plans_add/',
+      path: '/plansAdd/',
       name: 'PlanAdd',
       component: PlanForm
     }

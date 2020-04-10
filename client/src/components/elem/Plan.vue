@@ -1,5 +1,4 @@
 <template>
-<!-- TODO: ne pas faire selector si group -->
   <div ref="plan" class='event-plan' v-if="seats">
     <div class="plan-selector" :style="selectorStyle"></div>
     <table class="seats" ref="seatsTable">
@@ -10,6 +9,7 @@
           :key="line + '_' + cell"
           :seat="seats.find(s => s.line === (line - 1) && s.cell === (cell - 1))"
           @place-group="placeGroup"
+          @group-dropped="checkGroupErrors"
           @seat-click="seatClick"
         />
       </tr>
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import constraintService from '@/services/constraint.service'
+
 import Line from '@/components/elem/Line'
 import Seat from '@/components/elem/Seat'
 
@@ -35,6 +37,8 @@ export default {
       seats: [],
       lineCount: 0,
       cellCount: 0,
+      // constraints
+      allConstraints: [],
       // select with shift
       isShiftPressed: false,
       firstSelectedSeat: null,
@@ -62,6 +66,13 @@ export default {
     window.addEventListener('mousedown', this.mouseDown, true)
     window.addEventListener('mouseup', this.mouseUp, true)
   },
+  deleted () {
+    window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('keyup', this.keyup)
+    window.removeEventListener('mousemove', this.mouseMove)
+    window.removeEventListener('mousedown', this.mouseDown)
+    window.removeEventListener('mouseup', this.mouseUp)
+  },
   mounted () {
     if (this.plan) {
       this.lineCount = this.plan.height
@@ -76,23 +87,26 @@ export default {
             line: line,
             cell: cell,
             isSelected: false,
-            forbidden: false
+            isIsolated: false,
+            constraint: null
           })
         }
       }
     }
+    constraintService.getAll().then(constraints => this.$set(this, 'allConstraints', constraints))
   },
   methods: {
     /**
      * ce doit être LA SEULE méthode appelée
-     * @param data Object {seat, [auto, setSeat, fromAnotherSeat, del]}
+     * @param data Object {seat, [auto, setSeat, fromAnotherSeat, del, delGroup]}
      * @param saved Boolean Faut-il enregistrer les modifs ?
      */
     placeGroup: function (data, saved = true) {
       let hasChanged = true
       if (data.auto) {
         // essaie de placer les gens en auto
-        hasChanged = this.placeGroupAuto(data)
+        let allowChangeLine = this.isShiftPressed || data.allowChangeLine
+        hasChanged = this.placeGroupAuto(data, allowChangeLine)
       } else if (data.setSeat) {
         // mode simple : group vers seat
         if (!data.seat.isEmpty && data.seat.group.id === data.group.id) {
@@ -123,6 +137,12 @@ export default {
           data.group = null
           this.emptySeat(data.seat)
         }
+      } else if (data.delGroup) {
+        if (data.groupId) {
+          this.getGroupSeats(data.groupId).forEach(seat => {
+            this.placeGroup({del: true, seat: seat}, saved)
+          })
+        }
       }
 
       if (saved && hasChanged) {
@@ -142,6 +162,9 @@ export default {
     },
     getEmptySeats () {
       return this.seats.filter(s => s.isEmpty && !s.isForbidden)
+    },
+    getGroupSeats (groupId) { // retourne tous les sièges de ce groupe
+      return this.seats.filter(s => !s.isEmpty && s.group && s.group.id === groupId)
     },
     selectSeat (seat, cell = null) {
       if (cell !== null) {
@@ -183,7 +206,7 @@ export default {
       return false
     },
 
-    placeGroupAuto: function (data) {
+    placeGroupAuto: function (data, allowChangeLine = false) {
       let group = data.group
       let seat = data.seat
       let remaining = 'remaining' in group ? group.remaining : group.number
@@ -212,11 +235,11 @@ export default {
         remaining = group.remaining
         currentCell += cellDirection
         currentSeat = this.findSeat(currentLine, currentCell)
-        let changeLine = (cellDirection === 1 && currentCell > lastCell) ||
+        let changeLine = allowChangeLine &&
+            ((cellDirection === 1 && currentCell > lastCell) ||
             (cellDirection === -1 && currentCell < lastCell) ||
             currentSeat.isEmpty === false ||
-            currentSeat.isForbidden
-        changeLine = false
+            currentSeat.isForbidden)
         if (changeLine) {
           // bout de la ligne, on prend la ligne suivante
           currentCell = startCell
@@ -226,6 +249,7 @@ export default {
         // on check si la cell de la ligne suivante est ok, sinon on continue
         stop = (lineDirection === 1 && currentLine > lastLine) ||
             (lineDirection === -1 && currentLine < lastLine) ||
+            !currentSeat ||
             currentSeat.isEmpty === false ||
             currentSeat.isForbidden ||
             remaining === 0
@@ -331,6 +355,50 @@ export default {
           this.selectSeveralSeats(seats[0], seats[1])
         }
       }
+    },
+
+    checkGroupErrors (group) {
+      this.checkGroupAlone(group)
+      this.checkGroupConstraints(group)
+    },
+    checkGroupConstraints (group) {
+      if (group && group.constraint) {
+        // on prend chaque place de ce groupe
+        console.log(this.allConstraints)
+        this.getGroupSeats(group.id).forEach(seat => {
+        })
+      }
+    },
+    checkGroupAlone (group) {
+      if (group) {
+        // on prend chaque place de ce groupe
+        this.getGroupSeats(group.id).forEach(seat => {
+          let isolated = this.isSeatIsolated(seat)
+          seat.isIsolated = isolated
+        })
+      }
+    },
+    isSeatIsolated (seat) { // prend un siège et regarde autour de lui
+      if (seat.group.number === 1) {
+        // le group est une seule personne, normal qu'il soit seul
+        return false
+      } else {
+        let toTest = [
+          // {line: seat.line - 1, cell: seat.cell}, // au dessus
+          // {line: seat.line + 1, cell: seat.cell}, // en dessous
+          {line: seat.line, cell: seat.cell - 1}, // à gauche
+          {line: seat.line, cell: seat.cell + 1} // à droite
+        ]
+        for (let i = 0; i < toTest.length; i++) {
+          let data = toTest[i]
+          let seatTested = this.findSeat(data.line, data.cell)
+          if (seatTested && seatTested.group && seatTested.group.id === seat.group.id) {
+            return false
+          }
+        }
+      }
+      // on a pas trouvé de gens autour
+      return true
     },
 
     supprSelectedGroups () {

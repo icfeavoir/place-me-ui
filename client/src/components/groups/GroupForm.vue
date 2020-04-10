@@ -1,7 +1,7 @@
 <template>
   <div class="form" @keydown.esc="init">
     <h2 class="form-title">{{ group ? name : 'Nouveau groupe'}}</h2>
-    <form class="add-form" @keydown.enter="submit">
+    <form class="add-form" @keydown.enter.prevent="submit">
       <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
       <input id="number" type="number" v-model="number" placeholder="Nombre" />
       <select id="event" v-model.number="event">

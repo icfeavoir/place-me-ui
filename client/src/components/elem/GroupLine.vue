@@ -114,6 +114,9 @@ export default {
         this.group.constraint_name = ''
         this.group.constraint_number = 0
       }
+    },
+    remaining () {
+      this.$emit('group-line-changed', this.group)
     }
   }
 }

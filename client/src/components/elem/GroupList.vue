@@ -26,6 +26,7 @@
         :group="group"
         @group-click="onGroupClick"
         @group-drag="onGroupDrag"
+        @group-line-changed="group => $emit('group-line-changed', group)"
       />
       <!-- SEPARATOR -->
       <tr class="around-separator"></tr>
@@ -99,6 +100,9 @@ export default {
     getGroupById (id) {
       return this.groups.find(g => g.id === id)
     },
+    removeGroup (groupId) {
+      this.groups = this.groups.filter(g => g.id !== groupId)
+    },
 
     select: function (id, data = {}) {
       if (id) {
@@ -144,8 +148,13 @@ export default {
               group[key] = updatedGroup.data[key]
             }
           })
+
+          let data = {group: group}
+          // si on a supprimé des places alors que tout le groupe était placé.
+          data.refreshPlan = updatedGroup.refreshPlan || false
+          data.changeEventPlan = updatedGroup.changeEventPlan || false
           // on renvoie le group pour MAJ remaining
-          this.$emit('group-changed', { group: group, count: 0 })
+          this.$emit('group-changed', data)
         }
       }
       this.showModalGroup = false

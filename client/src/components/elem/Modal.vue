@@ -57,7 +57,9 @@ export default {
       }
     },
     setHeight () {
-      this.maxHeight = window.innerHeight - 2 * this.margin - this.$refs.header.offsetHeight - this.$refs.footer.offsetHeight - 50
+      let header = this.$refs.header ? this.$refs.header.offsetHeight : 0
+      let footer = this.$refs.footer ? this.$refs.footer.offsetHeight : 0
+      this.maxHeight = window.innerHeight - 2 * this.margin - header - footer - 50
     }
   },
   computed: {

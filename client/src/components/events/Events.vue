@@ -42,7 +42,7 @@ export default {
       search: ''
     }
   },
-  created: function () {
+  mounted () {
     eventService.getAll()
       .then((events) => {
         this.$set(this, 'allEvents', events)
@@ -51,13 +51,13 @@ export default {
 
     groupService.countGroupByEvent().then((data) => {
       data.forEach(element => {
-        let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
-        let sum = parseInt(prevTotal) + parseInt(element.total)
-        this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
+        if (element) {
+          let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
+          let sum = parseInt(prevTotal) + parseInt(element.total)
+          this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
+        }
       })
     })
-  },
-  mounted () {
     if (this.isMobileAndTabletcheck() === false) {
       this.$refs.search.focus()
     }

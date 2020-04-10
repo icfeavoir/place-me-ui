@@ -18,12 +18,27 @@ module.exports = {
 
     getByEventPlanId (req, res) {
         var params = req.body || req || []
-        if (!params.event_plan_id) {
+        if (!params.eventPlanId) {
             this._handleResponse({error: 'No event plan id'}, res)
         }
-        
-        let eventPlanId = params.event_plan_id
-        GroupSeat.findAll({where: {event_plan_id: eventPlanId}})
+        GroupSeat.findAll({where: {event_plan_id: params.eventPlanId}})
+            .then(groupSeats => {
+                this._handleResponse(groupSeats, res)
+            })
+            .catch(e => {
+                console.error("ERROR GROUP SEAT GET BY EVENT PLAN: " + e)
+                this._handleResponse({error: "Cannot get group seats"}, res)
+            })
+    },
+    getByEventPlanIdAndGroupId (req, res) {
+        var params = req.body || req || []
+        if (!params.eventPlanId) {
+            this._handleResponse({error: 'No event plan id'}, res)
+        }
+        if (!params.groupId) {
+            this._handleResponse({error: 'No group id'}, res)
+        }
+        GroupSeat.findAll({where: {event_plan_id: params.eventPlanId, group_id: params.groupId}})
             .then(groupSeats => {
                 this._handleResponse(groupSeats, res)
             })

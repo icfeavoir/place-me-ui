@@ -56,9 +56,10 @@ Group.belongsTo(Constraint, {foreignKey: 'constraint_id'})
 Constraint.hasMany(Group, {as: 'groups', foreignKey: 'constraint_id'})
 
 Group.addScope('defaultScope', {
-    include: [{
-        model: EventPlan
-    }]
+    include: [EventPlan, Constraint],
+})
+Group.addScope('eventPlanOnly', {
+    include: [EventPlan],
 })
 Group.addScope('orderByCreation', {
     order: [['id', 'ASC']],

@@ -24,6 +24,7 @@ router.get("/groupSeats/:groupSeatId", groupSeatService.getById.bind(groupSeatSe
 // router.post("/groupSeats/getByEventPlan", groupSeatService.getByEventPlan.bind(groupSeatService))
 router.post("/groupSeats/setGroupSeat", groupSeatService.setGroupSeat.bind(groupSeatService))
 router.post("/groupSeats/getByEventPlanId", groupSeatService.getByEventPlanId.bind(groupSeatService))
+router.post("/groupSeats/getByEventPlanIdAndGroupId", groupSeatService.getByEventPlanIdAndGroupId.bind(groupSeatService))
 
 router.get("/groups", groupService.getAll.bind(groupService))
 router.get("/groups/:groupId", groupService.getById.bind(groupService))

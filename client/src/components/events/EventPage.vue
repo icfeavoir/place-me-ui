@@ -59,14 +59,13 @@ export default {
       dataEventAddPlan: null
     }
   },
-  created: function () {
+  mounted () {
     let eventId = this.$route.params.eventId
     eventService.findById(eventId).then(e => {
       this.$set(this, 'event', e)
     })
     this.refreshPlans(eventId)
-  },
-  mounted () {
+
     if (this.isMobileAndTabletcheck() === false) {
       this.$refs.search.focus()
     }

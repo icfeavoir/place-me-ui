@@ -44,7 +44,7 @@ export default {
         {name: 'Un clic sur un siège le sélectionne, un second clic sur le même siège le déselectionne.'},
         {name: 'Pour sélectioner plusieurs sièges, il est possible de cliquer sur chaque siège, de cliquer sur un siège puis sur un second avec la touche <span class="keys-text">shift</span> enfoncée ou de cliquer sur un siège et bouger la souris en relachant le clic sur un second siège.'},
         {name: 'Si des sièges sont sélectionnés, cliquer sur un groupe assignera ce groupe aux sièges.'},
-        {name: 'Si un groupe est sélectionné, cliquer sur un siège remplira le plan avec ce groupe de manière automatique à partir de ce siège.'},
+        {name: 'Si un groupe est sélectionné, cliquer sur un siège remplira le plan avec ce groupe de manière automatique à partir de ce siège jusqu\'à la fin de la rangée. Si la touche <span class="keys-text">shift</span> est enfoncée, le remplissage continuera sur la ligne suivante.'},
         {name: 'Le bouton <span class="main-btn"><i class="fa fa-running"></i>Générer</span> assigne les groupes aux sièges en prenant les groupes par ordre de personnes à placer.'},
         {name: 'Utilisez la barre de recherche pour trouver un groupe. En entrant juste un nombre, par exemple 3, la liste montrera les groupes ayant 3 personnes à placer.'},
         {name: 'L\'enregistrement se fait de manière automatique à chaque changement détecté. L\'enregistrement est terminé lorsque vous voyez ce symbole : <div class="saved"><i v-if="isSaved" class="fa fa-check fa-sm"></i>Sauvegardé</div>'}

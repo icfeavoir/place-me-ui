@@ -43,4 +43,8 @@ Plan.hasMany(ConstraintSeat, {as: 'constraint_seats', foreignKey: 'plan_id'})
 ConstraintSeat.belongsTo(Constraint, {foreignKey: 'constraint_id'});
 Constraint.hasMany(ConstraintSeat, {as: 'constraint_seats', foreignKey: 'constraint_id'})
 
+ConstraintSeat.addScope('defaultScope', {
+    include: [Plan],
+})
+
 module.exports = ConstraintSeat

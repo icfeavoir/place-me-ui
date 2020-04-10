@@ -1,4 +1,4 @@
-const EventPlan = require('../models/EventPlan.model')
+const EventPlan = require('../models/eventPlan.model')
 
 module.exports = {
     getAll (req, res) {
@@ -16,7 +16,6 @@ module.exports = {
             })
     },
     getByEventId (req, res) {
-        console.log('several')
         EventPlan.findAll({where: {event_id: req.params.eventId}}).then(eventPlans => {
             this._handleResponse(eventPlans, res)
         })

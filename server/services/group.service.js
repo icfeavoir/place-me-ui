@@ -1,10 +1,7 @@
 const {Sequelize, sequelize} = require('../config/db')
 const Group = require('../models/group.model')
-const Event = require('../models/event.model')
-const Plan = require('../models/plan.model')
-const EventPlan = require('../models/eventPlan.model')
+const GroupSeat = require('../models/groupSeat.model')
 const Constraint = require('../models/constraint.model')
-const ConstraintSeat = require('../models/constraintSeat.model')
 
 module.exports = {
     getAll (req, res) {
@@ -34,7 +31,7 @@ module.exports = {
             })
     },
     countGroupByEvent (req, res) {
-        Group.findAll({
+        Group.scope('eventPlanOnly').findAll({
             attributes: ['event_plan_id', [sequelize.fn('sum', sequelize.col('number')), 'total']],
             group : ['group.event_plan_id'],
             raw: true,
@@ -109,11 +106,35 @@ module.exports = {
                         }
                         group.update(params)
                             .then(updatedGroup => {
-                                this._handleResponse({
-                                    success: true,
-                                    data: updatedGroup,
-                                    changes: updatedGroup._changed
-                                }, res)
+                                let request
+                                let changeEventPlan = false
+                                if ('event_plan_id' in updatedGroup._changed) {
+                                    changeEventPlan = true
+                                    // on a change l'événement ou le plan de ce groupe, il faut le suppr du plan actuel
+                                    request = GroupSeat.findAll({where: {group_id: updatedGroup.id}})
+                                } else {
+                                    request = GroupSeat.findAll({
+                                        where: {group_id: updatedGroup.id},
+                                        offset: parseInt(updatedGroup.number),
+                                        order: [['line'], ['cell']] // on ordonne dans l'ordre pour le offset
+                                    })
+                                }
+                                // on recup les groups Seats à suppr
+                                let refreshPlan = false
+                                request.then(groupSeats => {
+                                    groupSeats.forEach(groupSeat => {
+                                        refreshPlan = true
+                                        GroupSeat.destroy({where: {id: groupSeat.id}})
+                                    })
+                                    // on renvoie le groupe
+                                    this._handleResponse({
+                                        success: true,
+                                        data: updatedGroup,
+                                        changes: updatedGroup._changed,
+                                        refreshPlan: refreshPlan,
+                                        changeEventPlan: changeEventPlan
+                                    }, res)
+                                })
                             })
                             .catch(e => {
                                 console.error("ERROR GROUP UPDATE: " + e)
