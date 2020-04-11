@@ -66,6 +66,7 @@ module.exports = {
                     Group.create(params)
                         .then(group => {
                             result.success = true
+                            group.dataValues.constraint = constraint
                             result.data = group
                             this._handleResponse(result, res)
                         })

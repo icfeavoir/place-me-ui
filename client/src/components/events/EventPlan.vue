@@ -14,9 +14,12 @@
         class="group-list"
         v-if="groups"
         :groups="groups"
+        :eventId="event ? event.id : null"
+        :planId="plan ? plan.id : null"
         @select-group="selectGroup"
         @drag-start="groupDragStart"
         @group-changed="groupSeatChanged"
+        @new-group="newGroup"
         @group-line-changed="groupLineChanged"
       />
 
@@ -164,6 +167,14 @@ export default {
           this.$set(this.groups.find(g => g.id === group.id), 'remaining', realGroup.number - realGroup.done)
         }
       }
+    },
+    newGroup (group) {
+      let newGroup = group.data
+      // VALEURS PAR DÉFAUT
+      newGroup.isVisible = true
+      newGroup.done = 0
+      newGroup.remaining = newGroup.number
+      this.groups.push(newGroup)
     },
     saveGroups () {
       // on save que si on est pas déjà en train de save

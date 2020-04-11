@@ -372,23 +372,33 @@ export default {
           let respect = this.isSeatRespectingConstraint(seat, constraintSeats)
           if (respect) {
             count++
+            if (seat.constraint) {
+              // si une erreur était enregistrée, on l'annule
+              seat.constraint.isRespected = true
+              seat.constraint.text = ''
+            }
           } else {
             seatsInError.push(seat)
           }
         })
-        // si c'est pas pour tout le monde, on regarde si le compte est suffisant
-        if (!forAll && count >= group.constraint_number) {
-          seatsInError = []
-        }
         // on met à jour les seats in error
         seatsInError.forEach(seat => {
+          // d'abord on vérifie l'objet constrainte
           if (seat.constraint === null) {
             seat.constraint = {}
           }
-          seat.constraint.isRespected = false
-          seat.constraint.text = forAll
-            ? 'Le groupe <b>' + group.name + '</b> doit être en place <b>' + group.constraint_name + '</b>'
-            : 'Le groupe <b>' + group.name + '</b> doit avoir au moins ' + group.constraint_number + ' personnes en place <b>' + group.constraint_name + '</b>'
+          let isOk = forAll ? false : count >= group.constraint_number
+          // si le seat est en error mais que la constrainte est respéctée (count enough)
+          if (isOk) {
+            // on annule la constrainte
+            seat.constraint = null
+          } else {
+            // on met la contrainte
+            seat.constraint.isRespected = false
+            seat.constraint.text = forAll
+              ? 'Le groupe <b>' + group.name + '</b> doit être en place <b>' + group.constraint_name + '</b>'
+              : 'Le groupe <b>' + group.name + '</b> doit avoir au moins ' + group.constraint_number + ' personnes en place <b>' + group.constraint_name + '</b>'
+          }
         })
       }
     },

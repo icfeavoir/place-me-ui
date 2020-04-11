@@ -3,15 +3,18 @@
 .group-list-container {
     text-align: center;
 
-    input {
-        background-color: $lighter-grey;
-        color: $bg-color;
-        border: 1px solid $bg-color;
-        border-radius: 10px;
-        width: 90%;
-
-        @media (orientation: portrait) {
-            display: none;
+    .input-container {
+        width: 100%;
+        input {
+            background-color: $lighter-grey;
+            color: $bg-color;
+            border: 1px solid $bg-color;
+            border-radius: 10px;
+            width: 80%;
+            
+            @media (orientation: portrait) {
+                display: none;
+            }
         }
     }
 

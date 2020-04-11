@@ -3,7 +3,7 @@
     <template v-if='plan'>
       <div class='plan-name'>
         <h2>{{ plan.name }}<br>{{ plan.width }} x {{ plan.height }}</h2>
-        <p>Cette page est fonctionnelle, son design par contre pas encore !</p>
+        <p>Cette page est fonctionnelle, son design par contre ne l'est pas encore !</p>
         <button class="main-btn" @click="forbid">Forbid</button>
         <button class="main-btn" @click="allow">Allow</button>
         <button class="main-btn" @click="save">Save</button>

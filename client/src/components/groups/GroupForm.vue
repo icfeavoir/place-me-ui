@@ -4,10 +4,10 @@
     <form class="add-form" @keydown.enter.prevent="submit">
       <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
       <input id="number" type="number" v-model="number" placeholder="Nombre" />
-      <select id="event" v-model.number="event">
+      <select v-if="!selectedEvent" id="event" v-model.number="event">
         <option v-for="(item, key) in events" v-bind:key="key" :value="item.id">{{item.name}}</option>
       </select>
-      <select id="plan" v-model.number="plan">
+      <select v-if="!selectedPlan" id="plan" v-model.number="plan">
         <option v-for="(item, key) in plans" v-bind:key="key" :value="item.id">{{item.name}}</option>
       </select>
       <div class="color-container" v-if="group">
@@ -54,7 +54,15 @@ export default {
     Checkbox
   },
   props: {
-    group: Object
+    group: Object,
+    selectedEvent: {
+      type: Number,
+      default: null
+    },
+    selectedPlan: {
+      type: Number,
+      default: null
+    }
   },
   data () {
     return {
@@ -74,12 +82,6 @@ export default {
       showConstraint: false,
       constraintForAll: true,
       error: ''
-    }
-  },
-  computed: {
-    eventPlanId () {
-      let selectedEP = this.eventPlans.find(ep => ep.event.id === this.event && ep.plan.id === this.plan)
-      return selectedEP ? selectedEP.id : null
     }
   },
   mounted () {
@@ -136,6 +138,8 @@ export default {
           } else {
             this.$toasted.success('Enregistré !')
             this.init()
+            // on émet le groupe créé
+            this.$emit('data-changed', res)
           }
         })
       }
@@ -146,8 +150,17 @@ export default {
       this.name = group.name || ''
       this.number = group.number || null
       this.color = group.color || '#000000'
-      this.event = group.event_plan ? group.event_plan.event.id : (this.events.length ? this.events[0].id : null)
-      this.plan = group.event_plan ? group.event_plan.plan.id : (this.plans.length ? this.plans[0].id : null)
+      // event & plan
+      if (group && group.event_plan) {
+        this.event = group.event_plan.event.id
+        this.plan = group.event_plan.plan.id
+      } else if (this.selectedEvent && this.selectedPlan) {
+        this.event = this.selectedEvent
+        this.plan = this.selectedPlan
+      } else {
+        this.event = this.events.length ? this.events[0].id : null
+        this.plan = this.plans.length ? this.plans[0].id : null
+      }
       this.constraint = group.constraintText || (group.constraint && group.constraint.name) || ''
       this.constraintNumber = group.constraint_number || 0
       if (this.constraint) {
@@ -169,6 +182,12 @@ export default {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1)
     }
   },
+  computed: {
+    eventPlanId () {
+      let selectedEP = this.eventPlans.find(ep => ep.event.id === this.event && ep.plan.id === this.plan)
+      return selectedEP ? selectedEP.id : null
+    }
+  },
   watch: {
     group: function (newGroup, oldGroup) {
       this.init()
@@ -184,7 +203,6 @@ export default {
       this.plans.sort((a, b) => { return a.name < b.name ? -1 : 1 }) // par nom
     },
     plans () {
-      console.log('plans renew')
       // quand la liste des plans est regénérée, on regarde si le plan select est null et dans ce cas on en met un par défaut
       if (!this.plan) {
         this.plan = this.plans.length ? this.plans[0].id : null

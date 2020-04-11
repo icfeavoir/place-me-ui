@@ -29,41 +29,32 @@ export default {
   components: {
   },
   props: {
-    group: {
-      type: Object,
-      default: () => {
-        return {
-          isSelected: false,
-          number: 0,
-          done: 0,
-          remaining: 0,
-          name: 'No name',
-          constraint_id: null,
-          constraint_number: 0,
-          constraint_name: '',
-          constraint: null,
-          color: '#000000'
-        }
-      }
-    }
+    group: Object
   },
   data () {
     return {
       interval: null
     }
   },
-  created () {
+  mounted () {
+    if (this.group) {
+      if (this.group.constraint && this.group.constraint.name) {
+        this.group.constraint_name = this.group.constraint.name
+      }
+    }
+    // on envoie la MAJ (notamment pour vérifier les erreurs) que si le groupe est terminé
+    // car s'il est déjà terminé, le watcher n'est pas appelé
+    if (this.group && this.isAllDone) {
+      this.$emit('group-line-changed', this.group)
+    }
   },
   destroyed () {
     // quand un group passe de pas fait à fait ou inversement
-    // on envoie la MAJ (notamment pour vérifier les erreurs)
-    this.$emit('group-line-changed', this.group)
-    // on détruit le group
-    this.group = null
-  },
-  mounted () {
-    if (this.group && this.group.constraint && this.group.constraint.name) {
-      this.group.constraint_name = this.group.constraint.name
+    // on envoie la MAJ (notamment pour vérifier les erreurs) que si le groupe est entamé (bug init sinon)
+    if (this.group && !this.isAllRemaining) {
+      this.$emit('group-line-changed', this.group)
+      // on détruit le group
+      this.group = null
     }
   },
   methods: {
@@ -77,6 +68,12 @@ export default {
   computed: {
     isSelected () {
       return this.group.isSelected || false
+    },
+    isAllRemaining () {
+      return this.remaining === this.number
+    },
+    isAllDone () {
+      return this.done === this.number && this.done > 0
     },
     number () {
       return this.group ? this.group.number : 0
@@ -127,7 +124,9 @@ export default {
     },
     done (n, o) {
       // on envoie la MAJ (notamment pour vérifier les erreurs)
-      this.$emit('group-line-changed', this.group)
+      if (this.group) {
+        this.$emit('group-line-changed', this.group)
+      }
     }
   }
 }

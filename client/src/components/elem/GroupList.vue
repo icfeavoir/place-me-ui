@@ -2,22 +2,25 @@
   <div class='group-list-container'>
 
     <Modal
-      v-if="showModalGroup && getSelectedGroup()"
+      v-if="showModalGroup"
       @close-modal="showModalGroup = false"
       :modal-style="modalGroupStyle"
       :closeBtn="false"
       :validateBtn="false"
-    ><GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged"/></Modal>
+    ><GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged" :selectedEvent="eventId" :selectedPlan="planId" /></Modal>
 
-    <input
-      type="text"
-      placeholder="Rechercher..."
-      v-model="search"
-      @keydown.esc="search = ''"
-      @focus="focus = true"
-      @blur="focus = false"
-      :style="searchStyle"
-    />
+    <div class="input-container">
+      <input
+        type="text"
+        placeholder="Rechercher..."
+        v-model="search"
+        @keydown.esc="search = ''"
+        @focus="focus = true"
+        @blur="focus = false"
+        :style="searchStyle"
+      />
+      <button class="main-btn little-info-btn allow-small" @click="createGroup"><i class="i-only-center fa fa-user-plus"></i></button>
+    </div>
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
       <GroupLine
@@ -57,7 +60,9 @@ export default {
     GroupLine
   },
   props: {
-    groups: []
+    groups: Array,
+    eventId: Number,
+    planId: Number
   },
   data () {
     return {
@@ -77,6 +82,7 @@ export default {
     window.addEventListener('blur', this.onFocusLost, true)
   },
   mounted () {
+    // VALEURS PAR DÉFAUT
     this.groups.forEach(group => {
       this.$set(group, 'isVisible', true)
       this.$set(group, 'done', 0)
@@ -137,25 +143,30 @@ export default {
     },
 
     onGroupDataChanged (updatedGroup) {
-      // quand on modifie un groupe avec le CTRL+clic
-      let changes = updatedGroup.changes
-      if (Object.entries(changes).length > 0) {
-        let group = this.groups.find(g => g.id === updatedGroup.data.id)
-        // on change chaque modif effectuée
-        if (group) {
-          Object.keys(changes).forEach(key => {
-            if (key !== 'updatedAt') {
-              group[key] = updatedGroup.data[key]
-            }
-          })
+      if (updatedGroup.changes) {
+        // quand on modifie un groupe avec le CTRL+clic
+        let changes = updatedGroup.changes
+        if (Object.entries(changes).length > 0) {
+          let group = this.groups.find(g => g.id === updatedGroup.data.id)
+          // on change chaque modif effectuée
+          if (group) {
+            Object.keys(changes).forEach(key => {
+              if (key !== 'updatedAt') {
+                group[key] = updatedGroup.data[key]
+              }
+            })
 
-          let data = {group: group}
-          // si on a supprimé des places alors que tout le groupe était placé.
-          data.refreshPlan = updatedGroup.refreshPlan || false
-          data.changeEventPlan = updatedGroup.changeEventPlan || false
-          // on renvoie le group pour MAJ remaining
-          this.$emit('group-changed', data)
+            let data = {group: group}
+            // si on a supprimé des places alors que tout le groupe était placé.
+            data.refreshPlan = updatedGroup.refreshPlan || false
+            data.changeEventPlan = updatedGroup.changeEventPlan || false
+            // on renvoie le group pour MAJ remaining
+            this.$emit('group-changed', data)
+          }
         }
+      } else {
+        // NOUVEAU GROUPE
+        this.$emit('new-group', updatedGroup)
       }
       this.showModalGroup = false
       this.isCtrlPressed = false
@@ -171,6 +182,11 @@ export default {
         this.select(group.id, {force: true})
         this.showModalGroup = true
       }
+    },
+    createGroup () {
+      // on unselect pour ne pas modifier un autre groupe
+      this.unselect()
+      this.showModalGroup = true
     },
     keydown (event) {
       switch (event.keyCode) {
