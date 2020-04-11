@@ -47,6 +47,7 @@ form.add-form {
             background-color: $light-grey;
             border: none;
             color: $bg-color;
+            display: block;
 
             &:hover {
                 cursor: pointer;
