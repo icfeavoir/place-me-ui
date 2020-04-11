@@ -1,9 +1,11 @@
 <template>
-  <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''" v-tooltip="tooltip">
+  <td :style="style" @click="onClick" :class="isForbidden ? 'forbidden' : ''" v-tooltip="isDragged ? null : tooltip">
     <drop class="drop" @drop="onDrop">
       <drag
         class="drag"
         v-if="group"
+        @dragstart="onDragStart"
+        @dragend="onDragEnd"
         :draggable="draggable"
         :transfer-data="group ? {group: group, fromAnotherSeat: true, prevSeat: seat} : null"
       >
@@ -18,7 +20,8 @@ export default {
   name: 'Seat',
   data () {
     return {
-      foregroundColor: ''
+      foregroundColor: '',
+      isDragged: false
     }
   },
   props: {
@@ -32,7 +35,7 @@ export default {
     style () {
       return {
         color: this.foregroundColor,
-        backgroundColor: this.bgColor || this.colors.bgColor,
+        background: this.bgColor || this.colors.bgColor,
         border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
         opacity: this.opacity
       }
@@ -47,17 +50,29 @@ export default {
       return this.isSelected ? 'dashed' : 'solid'
     },
     borderColor () {
-      if (!this.isError) {
-        return this.isSelected ? this.colors.lighterGrey : this.colors.lightGrey
-      } else {
-        return this.colors.lightRed
-      }
+      return this.isSelected ? this.colors.lighterGrey : this.colors.lightGrey
     },
     bgColor () {
       if (this.isForbidden) {
         return this.colors.mainRed
       } else if (this.group) {
-        return this.group.color
+        if (this.isError) {
+          let errorColor = this.shoulColorBeDark(this.group.color) ? this.colors.mainRed : this.colors.lightRed
+          return 'repeating-linear-gradient(45deg, ' +
+          this.group.color + ' 0%, ' +
+          this.group.color + ' 8%, ' +
+          errorColor + ' 10%, ' +
+          errorColor + ' 15%, ' +
+          this.group.color + ' 17%, ' +
+          this.group.color + ' 83%, ' +
+          errorColor + ' 85%, ' +
+          errorColor + ' 90%, ' +
+          this.group.color + ' 92%, ' +
+          this.group.color + ' 100% ' +
+          ')'
+        } else {
+          return this.group.color
+        }
       } else if (this.isSelected) {
         return this.colors.darkGrey
       } else {
@@ -133,7 +148,14 @@ export default {
         drop.seat = this.seat
         this.$emit('place-group', drop)
         this.$emit('group-dropped', this.seat.group)
+        this.isDragged = false
       }
+    },
+    onDragStart () {
+      this.isDragged = true
+    },
+    onDragEnd () {
+      this.isDragged = false
     }
   },
   watch: {
@@ -141,7 +163,7 @@ export default {
       this.seat.isEmpty = this.group === null
       if (this.group) {
         if (this.group.color) {
-          this.foregroundColor = this.shoulColorBeDark(this.bgColor) ? this.colors.bgColor : this.colors.lighterGrey
+          this.foregroundColor = this.shoulColorBeDark(this.group.color) ? this.colors.bgColor : this.colors.lighterGrey
         }
       }
     }

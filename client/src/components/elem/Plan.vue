@@ -357,6 +357,9 @@ export default {
       }
     },
 
+    /**
+     * Peut être appelée par EventPlan ou par un Groupline
+     */
     checkGroupErrors (group) {
       this.checkGroupAlone(group)
       this.checkGroupConstraints(group)
