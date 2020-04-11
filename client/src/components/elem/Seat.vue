@@ -72,14 +72,16 @@ export default {
       return this.seat ? this.seat.group : null
     },
     constraint () {
-      return this.seat ? this.seat.constraint : null
+      return this.seat && this.group ? this.seat.constraint : null
+    },
+    isContraintRespected () {
+      return this.constraint ? this.constraint.isRespected : true
     },
     constraintText () {
       return this.constraint ? this.constraint.text : ''
     },
     tooltip () {
-      // TODO: add isolated
-      if (this.constraint) {
+      if (!this.isContraintRespected) {
         return {
           content: this.constraintText,
           classes: ['tooltip-md'],
@@ -116,22 +118,8 @@ export default {
     isIsolated () {
       return this.seat && this.seat.group ? this.seat.isIsolated : false
     },
-    // isConstraintOk () {
-    //   if (this.constraint === null || this.constraintSeats.length === 0) {
-    //     return true
-    //   } else {
-    //     // on regarde si le siège fait partie des sièges de la contrainte
-    //     for (let i = 0; i < this.constraintSeats.length; i++) { // boucle pour break en faisant return
-    //       let cSeat = this.constraint.constraint_seats[i]
-    //       if (cSeat.line === this.line && cSeat.cell === this.cell) {
-    //         return true
-    //       }
-    //     }
-    //   }
-    // return false
-    // },
     isError () {
-      return this.constraint || this.isIsolated
+      return !this.isContraintRespected || this.isIsolated
     }
   },
   methods: {

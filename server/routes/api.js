@@ -43,6 +43,7 @@ router.delete("/plans/delete", planService.delete.bind(planService))
 
 router.get("/constraints", constraintService.getAll.bind(constraintService))
 router.get("/constraints/:constraintId", constraintService.getById.bind(constraintService))
+router.get("/constraintSeats/getByPlan/:planId", constraintService.getByPlan.bind(constraintService))
 
 router.get("/forbiddenSeats", forbiddenSeatService.getAll.bind(forbiddenSeatService))
 router.get("/forbiddenSeats/:forbiddenSeatId", forbiddenSeatService.getById.bind(forbiddenSeatService))

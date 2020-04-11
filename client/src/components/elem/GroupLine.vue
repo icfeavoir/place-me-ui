@@ -49,7 +49,17 @@ export default {
   },
   data () {
     return {
+      interval: null
     }
+  },
+  created () {
+  },
+  destroyed () {
+    // quand un group passe de pas fait à fait ou inversement
+    // on envoie la MAJ (notamment pour vérifier les erreurs)
+    this.$emit('group-line-changed', this.group)
+    // on détruit le group
+    this.group = null
   },
   mounted () {
     if (this.group && this.group.constraint && this.group.constraint.name) {
@@ -69,13 +79,13 @@ export default {
       return this.group.isSelected || false
     },
     number () {
-      return this.group.number || 0
+      return this.group ? this.group.number : 0
     },
     done () {
-      return this.group.done || 0
+      return this.group ? this.group.done : 0
     },
     remaining () {
-      return this.group.remaining || 0
+      return this.group ? this.group.remaining : 0
     },
     name () {
       return this.group.name || 'No name'
@@ -111,11 +121,12 @@ export default {
       } else {
         // suppr de la contrainte
         this.group.constraint = null
-        this.group.constraint_name = ''
+        this.group.constraint_name = 'pas trouvé'
         this.group.constraint_number = 0
       }
     },
-    remaining () {
+    done (n, o) {
+      // on envoie la MAJ (notamment pour vérifier les erreurs)
       this.$emit('group-line-changed', this.group)
     }
   }

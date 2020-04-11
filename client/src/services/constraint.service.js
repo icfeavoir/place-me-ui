@@ -6,5 +6,8 @@ export default {
   },
   findById (id) {
     return axios.get('/api/constraints/' + id).then(res => res.data)
+  },
+  getByPlan (planId) {
+    return axios.get('/api/constraintSeats/getByPlan/' + planId).then(res => res.data)
   }
 }

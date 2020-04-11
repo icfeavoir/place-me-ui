@@ -93,7 +93,7 @@ export default {
         }
       }
     }
-    constraintService.getAll().then(constraints => this.$set(this, 'allConstraints', constraints))
+    constraintService.getByPlan(this.plan.id).then(constraintSeats => this.$set(this, 'allConstraints', constraintSeats))
   },
   methods: {
     /**
@@ -364,10 +364,43 @@ export default {
     checkGroupConstraints (group) {
       if (group && group.constraint) {
         // on prend chaque place de ce groupe
-        console.log(this.allConstraints)
+        const forAll = group.constraint_number === group.number
+        const constraintSeats = this.allConstraints.filter(cs => cs.constraint_id === group.constraint_id)
+        let seatsInError = []
+        let count = 0
         this.getGroupSeats(group.id).forEach(seat => {
+          let respect = this.isSeatRespectingConstraint(seat, constraintSeats)
+          if (respect) {
+            count++
+          } else {
+            seatsInError.push(seat)
+          }
+        })
+        // si c'est pas pour tout le monde, on regarde si le compte est suffisant
+        if (!forAll && count >= group.constraint_number) {
+          seatsInError = []
+        }
+        // on met à jour les seats in error
+        seatsInError.forEach(seat => {
+          if (seat.constraint === null) {
+            seat.constraint = {}
+          }
+          seat.constraint.isRespected = false
+          seat.constraint.text = forAll
+            ? 'Le groupe <b>' + group.name + '</b> doit être en place <b>' + group.constraint_name + '</b>'
+            : 'Le groupe <b>' + group.name + '</b> doit avoir au moins ' + group.constraint_number + ' personnes en place <b>' + group.constraint_name + '</b>'
         })
       }
+    },
+    isSeatRespectingConstraint (seat, constraintSeats) {
+      // on regarde si le siège fait partie des sièges de la contrainte
+      for (let i = 0; i < constraintSeats.length; i++) { // boucle pour break en faisant return
+        let cSeat = constraintSeats[i]
+        if (cSeat.line === seat.line && cSeat.cell === seat.cell) {
+          return true
+        }
+      }
+      return false
     },
     checkGroupAlone (group) {
       if (group) {

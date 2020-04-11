@@ -35,10 +35,10 @@
       <!-- GROUP DONE -->
       <GroupLine
         v-for="group in groups.filter(g => g.remaining === 0 && g.isVisible)"
-        :key="group._id"
+        :key="'done_' + group._id"
         :group="group"
         @group-click="onGroupClick"
-        @group-drag="onGroupDrag"
+        @group-line-changed="group => $emit('group-line-changed', group)"
       />
     </table>
   </div>

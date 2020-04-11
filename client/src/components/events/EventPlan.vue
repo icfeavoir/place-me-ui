@@ -160,10 +160,8 @@ export default {
         } else {
           // on remet à jour les compteurs
           let count = data.count || 0
-          let done = realGroup.done ? realGroup.done + count : count
-          this.$set(this.groups.find(g => g.id === group.id), 'done', done)
-          let remaining = realGroup.number - realGroup.done
-          this.$set(this.groups.find(g => g.id === group.id), 'remaining', remaining)
+          this.$set(this.groups.find(g => g.id === group.id), 'done', realGroup.done ? realGroup.done + count : count)
+          this.$set(this.groups.find(g => g.id === group.id), 'remaining', realGroup.number - realGroup.done)
         }
       }
     },

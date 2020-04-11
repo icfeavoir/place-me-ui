@@ -147,6 +147,7 @@ export default {
       this.number = group.number || null
       this.color = group.color || '#000000'
       this.event = group.event_plan ? group.event_plan.event.id : (this.events.length ? this.events[0].id : null)
+      this.plan = group.event_plan ? group.event_plan.plan.id : (this.plans.length ? this.plans[0].id : null)
       this.constraint = group.constraintText || (group.constraint && group.constraint.name) || ''
       this.constraintNumber = group.constraint_number || 0
       if (this.constraint) {
@@ -173,6 +174,7 @@ export default {
       this.init()
     },
     event () {
+      // quand on select un event, on met à jour la liste des plans
       this.plans = []
       this.eventPlans.filter(ep => ep.event.id === this.event).map(ep => ep.plan).forEach(plan => {
         if (this.plans.find(p => p.id === plan.id) === undefined) {
@@ -180,7 +182,13 @@ export default {
         }
       })
       this.plans.sort((a, b) => { return a.name < b.name ? -1 : 1 }) // par nom
-      this.plan = this.group && this.group.event_plan ? this.group.event_plan.plan.id : (this.plans.length ? this.plans[0].id : null)
+    },
+    plans () {
+      console.log('plans renew')
+      // quand la liste des plans est regénérée, on regarde si le plan select est null et dans ce cas on en met un par défaut
+      if (!this.plan) {
+        this.plan = this.plans.length ? this.plans[0].id : null
+      }
     }
   }
 }
