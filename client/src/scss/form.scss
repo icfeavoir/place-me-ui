@@ -104,3 +104,39 @@ input[type=button] {
 .form-lg-container {
     width: 100%;
 }
+
+// light mode
+.form.light {
+    background-color: $light-grey;
+    color: $bg-color;
+
+    form {
+        border: 1px solid $bg-color;
+        border-top: none;
+    }
+
+    .form-title {
+        border: 1px solid $bg-color;
+        border-bottom: none;
+    }
+    
+    input, select, button {
+        border: 1px solid $bg-color;
+        color: $bg-color;
+        &.dark {
+            border: 1px solid $bg-color;
+            background: none;
+            color: $bg-color;
+        }
+        &::placeholder {
+            color: $light-grey;
+        }
+    }
+    input[type=button] {
+        background: $light-grey;
+        color: $bg-color;
+        &:hover {
+            background-color: $lighter-grey;
+        }
+    }
+}

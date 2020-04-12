@@ -1,9 +1,10 @@
 <template>
   <router-link :to='{name: url, params: params}'>
-    <div class='card'>
+    <div class='card' @click="$emit('click')">
       <p class="title">{{ title }}</p>
-      <div class="number-container"><p class="number">{{ number }}</p></div>
+      <div v-if="number >= 0" class="number-container"><p class="number">{{ number }}</p></div>
       <p v-if="data.desc" class="desc">{{ data.desc }}</p>
+      <div v-if="$slots.default" class="slot"><slot></slot></div>
       <button class="del" @click.stop.prevent="$emit('del', data.obj)"><i class="fa fa-trash"></i></button>
     </div>
   </router-link>
@@ -32,11 +33,10 @@ export default {
       }
     },
     number: function () {
-      if (this.data && this.data.number) {
-        var num = '' + this.data.number
-        return num.length <= 3 ? num : num.substring(0, 3)
+      if (this.data && !Number.isNaN(this.data.number)) {
+        return this.data.number > 999 ? '+999' : this.data.number
       } else {
-        return '0'
+        return null
       }
     }
   }

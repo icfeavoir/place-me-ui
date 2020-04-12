@@ -9,5 +9,17 @@ export default {
   },
   getByPlan (planId) {
     return axios.get('/api/constraintSeats/getByPlan/' + planId).then(res => res.data)
+  },
+  create (data) {
+    return axios.post('/api/constraints/create', data).then(res => res.data)
+  },
+  update (data) {
+    return axios.post('/api/constraints/update', data).then(res => res.data)
+  },
+  delete (id) {
+    return axios.delete('/api/constraints/delete', {data: {id: id}}).then(res => res.data)
+  },
+  fusion (data) {
+    return axios.post('/api/constraints/fusion', data).then(res => res.data)
   }
 }

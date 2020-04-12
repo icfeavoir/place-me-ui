@@ -4,7 +4,7 @@
     <Modal
       v-if="showModalGroup"
       @close-modal="showModalGroup = false"
-      :modal-style="modalGroupStyle"
+      :modal-style="{width: 'fit-content', marginTop: 20}"
       :closeBtn="false"
       :validateBtn="false"
     ><GroupForm :group="getSelectedGroup()" @data-changed="onGroupDataChanged" :selectedEvent="eventId" :selectedPlan="planId" /></Modal>
@@ -69,11 +69,7 @@ export default {
       search: '',
       focus: false,
       isCtrlPressed: false,
-      showModalGroup: false,
-      modalGroupStyle: {
-        width: 'fit-content',
-        marginTop: 20
-      }
+      showModalGroup: false
     }
   },
   created () {

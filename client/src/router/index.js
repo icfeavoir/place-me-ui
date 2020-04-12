@@ -14,6 +14,10 @@ import Plans from '@/components/plans/Plans'
 import Plan from '@/components/plans/PlanPage'
 import PlanForm from '@/components/plans/PlanForm'
 
+import Constraints from '@/components/constraints/Constraints'
+import ConstraintForm from '@/components/constraints/ConstraintForm'
+import ConstraintFusion from '@/components/constraints/ConstraintFusion'
+
 Vue.use(Router)
 
 export default new Router({
@@ -74,6 +78,22 @@ export default new Router({
       path: '/plansAdd/',
       name: 'PlanAdd',
       component: PlanForm
+    },
+
+    {
+      path: '/constraints',
+      name: 'Constraints',
+      component: Constraints
+    },
+    {
+      path: '/constraintsAdd/',
+      name: 'ConstraintAdd',
+      component: ConstraintForm
+    },
+    {
+      path: '/constraintsFusion/',
+      name: 'ConstraintFusion',
+      component: ConstraintFusion
     }
   ]
 })

@@ -21,7 +21,7 @@
           :params="{eventPlanId: eventPlan.id}"
           :data="{
             title: eventPlan.plan.name,
-            number: eventPlan.total,
+            number: eventPlan.total || 0,
             desc: 'réservations sur ce plan pour ' + eventPlan.plan.name,
             obj: eventPlan.plan
           }"

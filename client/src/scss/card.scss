@@ -8,7 +8,6 @@ a {
 
 .card {
     width: $card-size;
-    height: $card-size;
     background-color: $dark-grey;
     margin: 10px 20px;
     border-radius: 10px 10px 0 0;
@@ -25,8 +24,14 @@ a {
         font-size: 18px;
     }
 
-    p.desc {
-        font-size: 12px;
+    p.desc, div.slot {
+        padding-bottom: 35px;
+        &.desc {
+            font-size: 12px;
+        }
+        &.slot {
+            margin-top: 10px;
+        }
     }
 
     button.del {
