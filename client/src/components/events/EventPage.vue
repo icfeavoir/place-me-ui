@@ -113,7 +113,7 @@ export default {
                 it.refreshPlans(eventId)
                 it.$toasted.success('Plan supprimé de cet événement !')
               } else {
-                it.$toasted.error(res.error)
+                it.$toasted.error(res.error, {icon: 'ban'})
               }
             })
           })
@@ -130,7 +130,7 @@ export default {
           it.showModal = false
           it.refreshPlans(eventId)
         } else {
-          it.$toasted.error(res.error)
+          it.$toasted.error(res.error, {icon: 'ban'})
         }
       })
     },
@@ -148,7 +148,7 @@ export default {
             this.error = res.error
             this.$toasted.error(res.error)
           } else {
-            this.$toasted.success('Le nom a été modifié !')
+            this.$toasted.success('Le nom a été modifié !', {icon: 'ban'})
           }
         })
       }

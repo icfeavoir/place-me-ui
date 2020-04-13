@@ -151,26 +151,17 @@ module.exports = {
 
     delete (req, res) {
         let params = req.body || req || []
-        let result = {}
-        if (!params.id) {
-            result.error = "No group id"
+        let del = {}
+        if (params.id) {
+            del = {id: params.id}
         }
-
-        if (!result.error) {
-            // on supprime
-            Group.destroy({where: {id: params.id}})
-                .then(() => {
-                    result.success = true
-                    this._handleResponse(result, res)
-                })
-                .catch(e => {
-                    console.error("ERROR GROUP DELETE: " + e)
-                    result.error = "Cannot delete group"
-                    this._handleResponse(result, res)
-                })
-        } else {
-            this._handleResponse(result, res)
-        }
+        // on supprime
+        Group.destroy({where: del}).then(() => {
+            this._handleResponse({success: true}, res)
+        }).catch(e => {
+            console.error("ERROR GROUP DELETE: " + e)
+            this._handleResponse({error: 'Cannot delete group'}, res)
+        })
     },
 
     _handleResponse (data, res) {

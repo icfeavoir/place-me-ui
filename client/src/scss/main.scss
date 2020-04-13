@@ -46,6 +46,10 @@ html {
         font-size: 15px;
         letter-spacing: initial;
     }
+    &.del-btn {
+        border: 1px solid $main-red;
+        color: $main-red;
+    }
 
     @media (orientation: portrait) {
         font-size: 15px;

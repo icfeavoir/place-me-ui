@@ -34,6 +34,11 @@ export default {
           href: '/plans',
           title: 'Plans',
           icon: 'fa fa-th'
+        },
+        {
+          href: '/settings',
+          title: 'Paramètres',
+          icon: 'fa fa-cog'
         }
       ]
     }

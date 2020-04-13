@@ -1,0 +1,29 @@
+@import 'variables';
+
+.settings {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    .settings-bloc {
+        width: fit-content;
+        min-width: 250px;
+        height: fit-content;
+        min-height: 100px;
+        text-align: center;
+        margin: 10px 30px;
+        padding: 10px;
+        background-color: $light-grey;
+        color: $bg-color;
+
+        p.title {
+            font-size: 25px;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+    }
+}

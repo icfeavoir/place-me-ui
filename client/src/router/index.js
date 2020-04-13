@@ -18,6 +18,8 @@ import Constraints from '@/components/constraints/Constraints'
 import ConstraintForm from '@/components/constraints/ConstraintForm'
 import ConstraintFusion from '@/components/constraints/ConstraintFusion'
 
+import Settings from '@/components/Settings'
+
 Vue.use(Router)
 
 export default new Router({
@@ -94,6 +96,11 @@ export default new Router({
       path: '/constraintsFusion/',
       name: 'ConstraintFusion',
       component: ConstraintFusion
+    },
+    {
+      path: '/settings/',
+      name: 'Settings',
+      component: Settings
     }
   ]
 })

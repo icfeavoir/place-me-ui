@@ -12,7 +12,7 @@
           :params="{eventId: event.id}"
           :data="{
             title: event.name,
-            number: event.total,
+            number: event.total || 0,
             desc: 'réservations',
             obj: event
           }"
@@ -87,7 +87,7 @@ export default {
                 })
                 it.$toasted.success('Supprimé !')
               } else {
-                it.$toasted.error('Error')
+                it.$toasted.error('Error', {icon: 'ban'})
               }
             })
           })

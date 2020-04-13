@@ -285,7 +285,7 @@ export default {
     supprSelectedGroups () {
       let deleted = this.$refs.plan.supprSelectedGroups()
       if (deleted === 0) {
-        this.$toasted.info('Aucun siège sélectionné')
+        this.$toasted.info('Aucun siège sélectionné', {icon: 'ban'})
       }
     },
 

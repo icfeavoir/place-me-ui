@@ -118,7 +118,7 @@ export default {
         if (!seat.isEmpty && seat.group.id === 0) {
           if (!auto) {
             // on indique pourquoi on peut pas
-            this.$toasted.error('Cette place est interdite. Veuillez enlever l\'interdiction avant de mettre la contrainte.')
+            this.$toasted.error('Cette place est interdite. Veuillez enlever l\'interdiction avant de mettre la contrainte.', {icon: 'ban'})
             seat.isSelected = false
           }
         } else {
@@ -152,7 +152,7 @@ export default {
       })
 
       // puis on affiche sur le plan les sièges concernés (SAUF POUR FORBID car déjà présent)
-      if (selected && constraint.id > 0) {
+      if (selected && constraint && constraint.id > 0) {
         let constraintSeats = constraint.seats || []
         // on ajoute direct sur le plan
         constraintSeats.forEach(constraintSeat => {
@@ -167,7 +167,7 @@ export default {
       // puis on sélectionne / déselectionne tous les sièges concernés
       this.$refs.plan.getAllSeats().forEach(seat => {
         // selected : Boolean indiquant sélection ou non
-        if (selected && seat.group && 'id' in seat.group && seat.group.id === constraint.id) {
+        if (selected && constraint && seat.group && 'id' in seat.group && seat.group.id === constraint.id) {
           seat.isSelected = true
         } else {
           seat.isSelected = false
@@ -178,7 +178,7 @@ export default {
     onSeatClick (seat) {
       if (seat === null) {
         // mode non selectable
-        this.$toasted.error('Aucune contrainte sélectionnée')
+        this.$toasted.error('Aucune contrainte sélectionnée', {icon: 'ban'})
         return
       }
 
@@ -222,7 +222,7 @@ export default {
       Promise.all(requests).then(data => {
         this.$toasted.success('Enregistré !')
       }).catch(e => {
-        this.$toasted.error('Erreur !')
+        this.$toasted.error('Erreur !', {icon: 'ban'})
         console.error(e)
       })
     }

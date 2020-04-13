@@ -74,7 +74,7 @@ module.exports = {
     },
 
     createGroups (eventPlan) {
-        const NB_GROUPS = 1 //faker.random.number({min:5, max:20})
+        const NB_GROUPS = faker.random.number({min:5, max:20})
         var groups = []
         for (var i=0; i<NB_GROUPS; i++) {
             let color = '#' + (Math.floor(Math.random()*16777215)).toString(16)

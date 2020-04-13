@@ -85,6 +85,7 @@ export default {
     unselect: function () {
       // on enlève la selection aux autres (en théorie max 1 autre mais bon)
       this.constraints.filter(c => c.isSelected).forEach(constraint => { constraint.isSelected = false })
+      this.$emit('constraint-clicked', null, false)
     },
 
     onConstraintClick (constraint) {

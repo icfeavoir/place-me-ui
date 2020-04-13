@@ -153,27 +153,18 @@ module.exports = {
     },
 
     delete (req, res) {
-        var params = req.body || req || []
-        var result = {}
-        if (!params.id) {
-            result.error = "No constraint id"
+        let params = req.body || req || []
+        let del = {}
+        if (params.id) {
+            del = {id: params.id}
         }
-
-        if (!result.error) {
-            // on supprime
-            Constraint.destroy({where: {id: params.id}})
-                .then(() => {
-                    result.success = true
-                    this._handleResponse(result, res)
-                })
-                .catch(e => {
-                    console.error("ERROR CONSTRAINT DELETE: " + e)
-                    result.error = "Cannot delete constraint"
-                    this._handleResponse(result, res)
-                })
-        } else {
-            this._handleResponse(result, res)
-        }
+        // on supprime
+        Constraint.destroy({where: del}).then(() => {
+            this._handleResponse({success: true}, res)
+        }).catch(e => {
+            console.error("ERROR CONSTRAINT DELETE: " + e)
+            this._handleResponse({error: 'Cannot delete constraint'}, res)
+        })
     },
 
     checkData (params) {
