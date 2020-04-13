@@ -1,0 +1,51 @@
+@import 'variables';
+
+$controls-height: 120px;
+
+div.plan-page-main {
+    display: flex;
+
+    .constraint-list {
+        width: 20%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .plan-container {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        height: fit-content;
+        .plan-controls {
+            width: 100%;
+            height: $controls-height;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            div {
+                width: 50%;
+                p {
+                    color: $lighter-grey;
+                    &.plan-infos {
+                        font-size: 25px;
+                        letter-spacing: 2px;
+                        margin: 10px 0;
+                    }
+                }
+            }
+            button {
+                font-size: 20px;
+                letter-spacing: 1px;
+            }
+        }
+        
+        .plan {
+            $padding-bottom: 50px;
+            padding-bottom: $padding-bottom;
+            height: calc(100vh - #{$controls-height} - #{$padding-bottom});
+            overflow: auto;
+        }
+    }
+}

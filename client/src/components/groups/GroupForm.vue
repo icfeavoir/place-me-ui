@@ -21,6 +21,7 @@
           <div class="constraint" v-if="showConstraint">
             <hr>
             <button type="button" @click.prevent="removeConstraint" v-if="showConstraint"><i class="fa fa-minus-circle"></i> Supprimer la contrainte</button>
+            <p>Choississez une contrainte de la liste, ou entrez-en une nouvelle pour l'enregistrer</p>
             <input type="constraint" id="constraint" v-model="constraint" list="constraintsNames" placeholder="Taper la contrainte" />
             <datalist id="constraintsNames">
               <option v-for="(constraint, key) in constraints" v-bind:key="key" :data-value="constraint.id" :value="constraint.name" />

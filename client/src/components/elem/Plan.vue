@@ -79,7 +79,7 @@ export default {
       this.cellCount = this.plan.width
       for (var line = 0; line < this.lineCount; line++) {
         for (var cell = 0; cell < this.cellCount; cell++) {
-          let isForbidden = this.plan.forbiddenSeats.filter(fs => fs.line === line && fs.cell === cell).length > 0
+          let isForbidden = this.plan.forbiddenSeats && this.plan.forbiddenSeats.filter(fs => fs.line === line && fs.cell === cell).length > 0
           this.seats.push({
             group: null,
             isEmpty: true,

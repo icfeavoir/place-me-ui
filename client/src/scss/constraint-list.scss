@@ -1,0 +1,89 @@
+@import 'variables';
+
+.constraint-list-container {
+    text-align: center;
+    .input-container {
+        width: 100%;
+        input {
+            background-color: $lighter-grey;
+            color: $bg-color;
+            border: 1px solid $bg-color;
+            border-radius: 10px;
+            width: 80%;
+            @media (orientation: portrait) {
+                display: none;
+            }
+        }
+    }
+
+    table.list {
+        border-collapse: collapse;
+        width: 100%;
+        // not selectable
+        user-select: none; /* CSS3 (little to no support) */
+        -ms-user-select: none; /* IE 10+ */
+        -moz-user-select: none; /* Gecko (Firefox) */
+        -webkit-user-select: none; /* Webkit (Safari, Chrome) */
+
+        tr.constraint-data {
+            width: 100%;
+            background-color: $main-green;
+            border-bottom: 1px solid $lighter-grey;
+            opacity: 0.75;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        
+            &:hover {
+                cursor: pointer;
+            }
+            &.selected {
+                font-weight: 700;
+                opacity: 1;
+                border-left: none;
+                border-right: none;
+            }
+            &.constraint-forbid {
+                background-color: $main-red;
+            }
+        
+            td {
+                color: $lighter-grey;
+                padding: 10px 0;
+                flex: 1;
+                justify-content: center;
+                @media only screen and (max-width: $small-width) {
+                    padding: 0;
+                }
+                &.name-container {
+                    overflow: hidden;
+                    margin-right: 10px;
+                    flex: 7;
+                    @media only screen and (max-width: $small-width) {
+                        // on force le nom à prendre toute la place
+                        flex-basis: 100%;
+                        min-width: 100%;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+        tr.group-done-separator {
+            width: 100%;
+            height: fit-content;
+            padding: 100px 0;
+            td {
+                width: 100%;
+                padding: 10px 0;
+                font-size: 12px;
+                color: $lighter-grey;
+                background-color: $main-blue;
+            }
+        }
+
+        tr.around-separator {
+            height: 5px;
+        }
+    }
+}

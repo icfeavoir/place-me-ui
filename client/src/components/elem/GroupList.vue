@@ -77,6 +77,11 @@ export default {
     window.addEventListener('keyup', this.keyup, true)
     window.addEventListener('blur', this.onFocusLost, true)
   },
+  destroyed () {
+    window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('keyup', this.keyup)
+    window.removeEventListener('blur', this.onFocusLost)
+  },
   mounted () {
     // VALEURS PAR DÉFAUT
     this.groups.forEach(group => {
