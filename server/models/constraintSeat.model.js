@@ -30,11 +30,18 @@ ConstraintSeat.init({
     cell: {
         type: Sequelize.INTEGER,
         allowNull: false,
-    }
+    },
+    createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW')
+    },
+    updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW')
+    },
 }, {
     sequelize,
     modelName: 'constraint_seat'
-    // options
 });
 
 ConstraintSeat.belongsTo(Plan, {foreignKey: 'plan_id'});

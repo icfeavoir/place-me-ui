@@ -8,6 +8,7 @@
           ref="seats"
           :key="line + '_' + cell"
           :seat="seats.find(s => s.line === (line - 1) && s.cell === (cell - 1))"
+          :isSelectable="isSelectable"
           @place-group="placeGroup"
           @group-dropped="checkGroupErrors"
           @seat-click="seatClick"
@@ -30,7 +31,15 @@ export default {
     Seat
   },
   props: {
-    plan: Object
+    plan: Object,
+    isSelectable: {
+      type: Boolean,
+      default: true
+    },
+    multipleSelect: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
@@ -98,7 +107,7 @@ export default {
   methods: {
     /**
      * ce doit être LA SEULE méthode appelée
-     * @param data Object {seat, [auto, setSeat, fromAnotherSeat, del, delGroup]}
+     * @param data Object {seat: Object, group: Object, [auto, setSeat, fromAnotherSeat, del, delGroup]}
      * @param saved Boolean Faut-il enregistrer les modifs ?
      */
     placeGroup: function (data, saved = true) {
@@ -154,6 +163,9 @@ export default {
     findSeat: function (line, cell) {
       return this.seats.find(s => s.line === line && s.cell === cell)
     },
+    getAllSeats () {
+      return this.seats
+    },
     getSelectedSeats () {
       return this.seats.filter(s => s.isSelected)
     },
@@ -167,6 +179,9 @@ export default {
       return this.seats.filter(s => !s.isEmpty && s.group && s.group.id === groupId)
     },
     selectSeat (seat, cell = null) {
+      if (!this.isSelectable) {
+        return
+      }
       if (cell !== null) {
         // line, cell
         seat = this.findSeat(seat, cell)
@@ -176,6 +191,9 @@ export default {
       }
     },
     selectAll () {
+      if (!this.multipleSelect) {
+        return
+      }
       this.specialSelect = true
       this.seats.forEach(s => this.selectSeat(s))
     },
@@ -263,6 +281,9 @@ export default {
     },
 
     selectSeveralSeats (firstSeat, lastSeat) {
+      if (!this.multipleSelect) {
+        return
+      }
       this.unselectAll()
       let lineDirection = -(firstSeat.line - lastSeat.line)
       if (lineDirection >= 0) lineDirection = 1
@@ -321,9 +342,9 @@ export default {
             this.firstSelectedSeat = null
           }
         }
-        // on envoie pour faire le lien avec grouplist
-        this.$emit('select-seat', seat)
+        // on envoie pour faire le lien avec le parent du plan
       }
+      this.$emit('select-seat', seat)
     },
 
     setSelectedSeatsWithSelector () {

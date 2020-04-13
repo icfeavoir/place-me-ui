@@ -26,7 +26,11 @@ export default {
   },
   props: {
     seat: Object,
-    size: Number
+    size: Number,
+    isSelectable: {
+      type: Boolean,
+      default: true
+    }
   },
   mounted () {
     this.foregroundColor = this.colors.lighterGrey
@@ -139,6 +143,10 @@ export default {
   },
   methods: {
     onClick: function (e) {
+      if (!this.isSelectable) {
+        this.$emit('seat-click', null)
+        return
+      }
       this.seat.isSelected = !this.isSelected && !this.isForbidden
       this.$emit('seat-click', this.seat)
     },

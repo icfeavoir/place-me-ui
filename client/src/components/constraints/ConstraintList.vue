@@ -36,7 +36,12 @@ export default {
   components: {
   },
   props: {
-    constraints: Array
+    constraints: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
   },
   data () {
     return {
@@ -50,18 +55,6 @@ export default {
     window.removeEventListener('keyup', this.keyup)
   },
   mounted () {
-    // on ajoute la contrainte "INTERDIRE"
-    this.constraints.push({
-      id: 0,
-      name: 'Interdit',
-      isVisible: true,
-      isSelected: false
-    })
-    // VALEURS PAR DÉFAUT
-    this.constraints.forEach(constraint => {
-      this.$set(constraint, 'isVisible', true)
-      this.$set(constraint, 'isSelected', false)
-    })
   },
   methods: {
     doSearch: function () {
@@ -72,6 +65,7 @@ export default {
       return this.constraints.find(c => c.isSelected)
     },
     select: function (id) {
+      let selected
       if (id !== null) {
         let constraint = this.constraints.find(c => c.id === id)
         // on remet la selection au nouveau (sauf s'il était déjà select dans ce cas on unselect)
@@ -79,11 +73,14 @@ export default {
           // on unselect l'ancien
           this.unselect()
           constraint.isSelected = true
+          selected = true
         } else {
           // on a cliqué sur le même, on deselect (sauf si on a clique pour drag)
           this.unselect()
+          selected = false
         }
       }
+      return selected
     },
     unselect: function () {
       // on enlève la selection aux autres (en théorie max 1 autre mais bon)
@@ -91,7 +88,8 @@ export default {
     },
 
     onConstraintClick (constraint) {
-      this.select(constraint.id)
+      let selected = this.select(constraint.id)
+      this.$emit('constraint-clicked', constraint, selected)
     },
     keyup (event) {
       switch (event.keyCode) {

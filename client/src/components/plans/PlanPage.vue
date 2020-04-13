@@ -1,6 +1,11 @@
 <template>
   <div class="plan-page-main">
-    <ConstraintList class="constraint-list" v-if="constraints" :constraints="constraints" />
+    <ConstraintList
+      ref="constraintList"
+      class="constraint-list"
+      :constraints="constraints"
+      @constraint-clicked="onConstraintClicked"
+    />
     <div class="plan-container" v-if="plan">
       <div class="plan-controls">
         <div>
@@ -8,9 +13,10 @@
           <p>Cliquez sur une des contraintes à gauche, puis sur les sièges concernés par cette contrainte, avant de sauvegarder.</p>
         </div>
         <button class="main-btn" @click="save"><i class="fa fa-save"></i>Enregistrer</button>
+        <button class="main-btn" @click="init"><i class="fa fa-undo-alt"></i>Annuler</button>
       </div>
 
-      <Plan class="plan" :plan="plan" />
+      <Plan ref="plan" class="plan" :plan="plan" :isSelectable="planSelectable" :multipleSelect="false" @select-seat="onSeatClick" />
     </div>
   </div>
 </template>
@@ -33,8 +39,8 @@ export default {
     return {
       planId: this.$route.params.planId,
       plan: null,
-      constraints: null,
-      forbidden: null
+      constraints: [],
+      planSelectable: false
     }
   },
   created () {
@@ -46,30 +52,178 @@ export default {
     window.removeEventListener('keyup', this.keyup)
   },
   mounted () {
+    // LE PLAN
     planService.findById(this.planId).then(plan => {
       plan.forbiddenSeats = []
       this.$set(this, 'plan', plan)
-      forbiddenSeatService.findByPlanId(plan.id).then(forbiddenSeats => {
-        this.$set(this, 'forbidden', forbiddenSeats || [])
-      })
     })
-    constraintService.getAll().then((constraints) => {
-      this.$set(this, 'constraints', constraints)
-    })
+    this.init()
   },
   methods: {
-    // TODO: interdire la sélection du plan + gérer les seats quand on choisit une contrainte
-    onConstraintClicked (id) {
-      if (id === 0) {
+    init () {
+      this.constraints = []
+      // on enlève tous les sièges
+      if (this.$refs.plan) {
+        this.$refs.plan.unselectAll()
+        this.$refs.plan.getAllSeats().forEach(seat => {
+          this.removeConstraintToPlan(seat)
+        })
+      }
+      // FORBID
+      this.planSelectable = false
+      forbiddenSeatService.findByPlanId(this.planId).then(forbiddenSeats => {
+        // on ajoute comme une contrainte
+        let forbiddenConstraint = {
+          id: 0,
+          name: 'Interdit',
+          seats: forbiddenSeats,
+          color: this.colors.mainRed,
+          remaining: 1,
+          isVisible: true,
+          isSelected: false
+        }
+        this.constraints.push(forbiddenConstraint)
+        // on ajoute direct sur le plan
+        forbiddenSeats.forEach(forbidden => {
+          // on prend tous les sièges
+          let seat = this.$refs.plan.findSeat(forbidden.line, forbidden.cell)
+          this.addConstraintToPlan(forbiddenConstraint, seat, true)
+        })
+      })
+
+      // LES CONTRAINTES
+      constraintService.getAll().then((constraints) => {
+        constraints.forEach(constraint => {
+          // on récupère les seats
+          constraintService.getByConstraintAndPlan(constraint.id, this.planId).then(constraintSeats => {
+            let constraintToAdd = {
+              id: constraint.id,
+              name: constraint.name,
+              seats: constraintSeats,
+              color: this.colors.mainGreen,
+              remaining: 1,
+              isVisible: true,
+              isSelected: false
+            }
+            this.constraints.push(constraintToAdd)
+          })
+        })
+      })
+    },
+
+    addConstraintToPlan (constraint, seat, auto = false) {
+      let accepted = false
+      if (constraint && seat) {
+        // si le siege est déjà pris par FORBID, on met pas
+        if (!seat.isEmpty && seat.group.id === 0) {
+          if (!auto) {
+            // on indique pourquoi on peut pas
+            this.$toasted.error('Cette place est interdite. Veuillez enlever l\'interdiction avant de mettre la contrainte.')
+            seat.isSelected = false
+          }
+        } else {
+          this.$refs.plan.placeGroup({
+            setSeat: true, // mode simple
+            seat: seat,
+            group: constraint
+          })
+          accepted = true
+        }
+      }
+      return accepted
+    },
+    removeConstraintToPlan (seat, force = false) {
+      if (seat) {
+        // si le siege est déjà pris par FORBID, on met pas
+        if (force || (!seat.isEmpty && seat.group.id !== 0)) {
+          this.$refs.plan.placeGroup({
+            del: true, // mode suppr
+            seat: seat
+          })
+        }
+      }
+    },
+
+    onConstraintClicked (constraint, selected) {
+      this.planSelectable = selected
+      // d'abord on enlève tous les sièges (sauf FORBID)
+      this.$refs.plan.getAllSeats().forEach(seat => {
+        this.removeConstraintToPlan(seat)
+      })
+
+      // puis on affiche sur le plan les sièges concernés (SAUF POUR FORBID car déjà présent)
+      if (selected && constraint.id > 0) {
+        let constraintSeats = constraint.seats || []
+        // on ajoute direct sur le plan
+        constraintSeats.forEach(constraintSeat => {
+          // on prend tous les sièges
+          let seat = this.$refs.plan.findSeat(constraintSeat.line, constraintSeat.cell)
+          if (seat) {
+            this.addConstraintToPlan(constraint, seat, true)
+          }
+        })
+      }
+
+      // puis on sélectionne / déselectionne tous les sièges concernés
+      this.$refs.plan.getAllSeats().forEach(seat => {
+        // selected : Boolean indiquant sélection ou non
+        if (selected && seat.group && 'id' in seat.group && seat.group.id === constraint.id) {
+          seat.isSelected = true
+        } else {
+          seat.isSelected = false
+        }
+      })
+    },
+
+    onSeatClick (seat) {
+      if (seat === null) {
+        // mode non selectable
+        this.$toasted.error('Aucune contrainte sélectionnée')
+        return
+      }
+
+      // Permet d'ajouter / supprimer une contrainte à un siège
+      let selectedConstraint = this.$refs.constraintList.getSelectedConstraint()
+      if (selectedConstraint) {
+        // on récupère si le seat est déjà avec cette constraint
+        if (seat.group && seat.group.id === selectedConstraint.id) {
+          // on veut l'enlever
+          this.removeConstraintToPlan(seat, true) // on force
+          // on l'enlève aux constraintSeats
+          selectedConstraint.seats = selectedConstraint.seats.filter(s => !(s.line === seat.line && s.cell === seat.cell))
+        } else {
+          // on veut l'ajouter
+          let accepted = this.addConstraintToPlan(selectedConstraint, seat, false)
+          if (accepted) {
+            // on l'ajoute aux constraintSeats
+            selectedConstraint.seats.push({
+              line: seat.line,
+              cell: seat.cell
+            })
+            // si la contrainte ajoutée est FORBID, il faut retirer ce seat de toutes les autres contraintes
+            if (selectedConstraint.id === 0) {
+              this.constraints.filter(c => c.id > 0).forEach(constraint => {
+                constraint.seats = constraint.seats.filter(s => !(s.line === seat.line && s.cell === seat.cell))
+              })
+            }
+          }
+        }
       }
     },
 
     save: function () {
-      var fseats = this.seats.filter((seat, i, arr) => { return seat.forbidden })
-      forbiddenSeatService.update(this.planId, fseats).then(res => {
-        if (res) {
-          this.$toasted.success('Enregistré !')
-        }
+      var fseats = this.constraints.find(c => c.id === 0)
+      let requests = [forbiddenSeatService.update(this.planId, fseats.seats)]
+
+      this.constraints.filter(c => c.id > 0).forEach(constraint => {
+        requests.push(constraintService.updateConstraintSeat(this.planId, constraint.id, constraint.seats))
+      })
+
+      Promise.all(requests).then(data => {
+        this.$toasted.success('Enregistré !')
+      }).catch(e => {
+        this.$toasted.error('Erreur !')
+        console.error(e)
       })
     }
   },

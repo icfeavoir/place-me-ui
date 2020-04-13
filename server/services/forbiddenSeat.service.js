@@ -23,7 +23,6 @@ module.exports = {
         if (!params.planId) {
             result = "No plan id"
         } else {
-            // on check tout
             params.planId = parseInt(params.planId)
             result = true
         }

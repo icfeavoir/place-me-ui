@@ -17,6 +17,16 @@ module.exports = {
                 this._handleResponse(constraint, res)
             })
     },
+    getAllConstraintSeats (req, res) {
+        ConstraintSeat.findAll().then(constraintSeats => {
+            this._handleResponse(constraintSeats, res)
+        })
+    },
+    getByConstraintAndPlan (req, res) {
+        ConstraintSeat.findAll({where: {constraint_id: req.params.constraintId, plan_id: req.params.planId}}).then(constraintSeats => {
+            this._handleResponse(constraintSeats, res)
+        })
+    },
     getByPlan (req, res) {
         ConstraintSeat.findAll({where: {plan_id: req.params.planId}}).then(constraintSeats => {
             this._handleResponse(constraintSeats, res)
@@ -39,6 +49,48 @@ module.exports = {
                 this._handleResponse({success: true, deletedId: params.constraintId}, res)
             })
         })
+    },
+    updateConstraintSeat (req, res) {
+        // on vérifie le plan associé et la contrainte
+        var params = req.body || req || []
+        var result = ''
+        if (!params.planId) {
+            result = "No plan id"
+        } else if (!params.constraintId) {
+            result = "No constraint id"
+        } else {
+            params.planId = parseInt(params.planId)
+            params.constraintId = parseInt(params.constraintId)
+            result = true
+        }
+
+        if (result === true) {
+            // on supprime tous les ConstraintSeat de ce plan puis on les rajoute
+            ConstraintSeat.destroy({where: {plan_id: params.planId, constraint_id: params.constraintId}})
+                .then(() => {
+                    // on rajoute tous les sièges donnés
+                    var cseats = []
+                    if (params.seats) {
+                        params.seats.forEach(cseat => {
+                            cseats.push({
+                                plan_id: params.planId,
+                                constraint_id: params.constraintId,
+                                line: cseat.line,
+                                cell: cseat.cell
+                            })
+                        })
+                        ConstraintSeat.bulkCreate(cseats)
+                            .then(cseats => {
+                                result.success = true
+                                result.data = cseats
+                                this._handleResponse(result, res)
+                            })
+                    }
+                })
+        } else {
+            this._handleResponse({error: result}, res)
+        }
+
     },
 
     _handleResponse (data, res) {

@@ -134,7 +134,6 @@ export default {
     fusionDone (deletedConstraintId) {
       this.showModalConstraint = false
       this.constraintClicked = null
-      console.log(deletedConstraintId)
       if (deletedConstraintId) {
         this.allConstraints = this.allConstraints.filter(c => c.id !== deletedConstraintId)
         this.doSearch()
