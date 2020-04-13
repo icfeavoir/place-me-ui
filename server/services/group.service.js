@@ -21,7 +21,7 @@ module.exports = {
     getByEventPlanId (req, res) {
         let params = req.body || req || []
         let eventPlanId = params.eventPlanId
-        Group.scope(['defaultScope', 'orderByName']).findAll({where: {event_plan_id: eventPlanId}})
+        Group.scope(['defaultScope', 'orderByNumber']).findAll({where: {event_plan_id: eventPlanId}})
             .then(groups => {
                 this._handleResponse(groups, res)
             })

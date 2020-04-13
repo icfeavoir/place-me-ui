@@ -67,5 +67,8 @@ Group.addScope('orderByCreation', {
 Group.addScope('orderByName', {
     order: [['name', 'ASC']],
 })
+Group.addScope('orderByNumber', {
+    order: [['number', 'DESC']],
+})
 
 module.exports = Group

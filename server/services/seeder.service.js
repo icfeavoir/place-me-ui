@@ -49,8 +49,8 @@ module.exports = {
             },
             {
                 name: "Chaises",
-                width: 16,
-                height: 10
+                width: 21,
+                height: 7
             }
         ])
         .then(plans => {
@@ -112,7 +112,7 @@ module.exports = {
         })
 
         Plan.findOne({where: {name: 'Chaises'}}).then(plan => {
-            let cells = [7, 8]
+            let cells = [10]
             for (let line = 0; line < plan.height; line++) {
                 cells.forEach(cell => {
                     forbidden.push({

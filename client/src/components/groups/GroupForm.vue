@@ -2,7 +2,7 @@
   <div class="form" @keydown.esc="init">
     <h2 class="form-title">{{ group ? name : 'Nouveau groupe'}}</h2>
     <form class="add-form" @keydown.enter.prevent="submit">
-      <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
+      <input v-focus ref="name" id="name" @change="upperFirst" v-model="name" placeholder="Nom de la réservation">
       <input id="number" type="number" v-model="number" placeholder="Nombre" />
       <select v-if="!selectedEvent" id="event" v-model.number="event">
         <option v-for="(item, key) in events" v-bind:key="key" :value="item.id">{{item.name}}</option>
@@ -159,8 +159,8 @@ export default {
         this.event = this.selectedEvent
         this.plan = this.selectedPlan
       } else {
-        this.event = this.events.length ? this.events[0].id : null
-        this.plan = this.plans.length ? this.plans[0].id : null
+        this.event = this.event || (this.events.length ? this.events[0].id : null)
+        this.plan = this.plan || (this.plans.length ? this.plans[0].id : null)
       }
       this.constraint = group.constraintText || (group.constraint && group.constraint.name) || ''
       this.constraintNumber = group.constraint_number || 0
@@ -172,6 +172,7 @@ export default {
         this.constraintForAll = true
       }
       this.error = ''
+      this.$refs.name.focus()
     },
     removeConstraint () {
       this.showConstraint = false
