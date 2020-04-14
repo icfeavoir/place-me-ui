@@ -42,21 +42,18 @@ export default {
       search: ''
     }
   },
-  created: function () {
-    planService.getAll()
-      .then((plans) => {
-        this.$set(this, 'allPlans', plans)
-        this.$set(this, 'plans', plans)
-      })
+  mounted () {
+    planService.getAll().then((plans) => {
+      this.$set(this, 'allPlans', plans)
+      this.$set(this, 'plans', plans)
 
-    planService.countSeats()
-      .then((data) => {
+      planService.countSeats().then((data) => {
         data.forEach(element => {
-          this.$set(this.plans.find(p => p.id === element.id) || {}, 'total', element.total)
+          this.$set(plans.find(p => p.id === element.id) || {}, 'total', element.total)
         })
       })
-  },
-  mounted () {
+    })
+
     if (this.isMobileAndTabletcheck() === false) {
       this.$refs.search.focus()
     }

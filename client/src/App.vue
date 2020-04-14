@@ -1,6 +1,6 @@
 <template id="all">
   <div id='app' :style="{paddingLeft: paddingLeft + 'px', paddingTop: paddingTop + 'px'}">
-    <Menu @onToggleCollapse="onToggleCollapse" :isPortrait="isPortrait" :isSmallWidth="isSmallWidth"/>
+    <Menu ref="menu" @onToggleCollapse="onToggleCollapse" :isPortrait="isPortrait" :isSmallWidth="isSmallWidth"/>
     <div class="container"><router-view/></div>
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
   },
   mounted () {
     this.resize()
+    this.checkErrors()
   },
   methods: {
     resize () {
@@ -41,6 +42,11 @@ export default {
         this.paddingLeft = collapse ? 50 : 250
         this.paddingTop = 0
       }
+    },
+    checkErrors () {
+      if (this.$refs.menu) {
+        this.$refs.menu.checkErrors()
+      }
     }
   },
   watch: {
@@ -49,6 +55,9 @@ export default {
     },
     isSmallWidth () {
       this.onToggleCollapse(this.isSmallWidth)
+    },
+    $route (to, from) {
+      this.checkErrors()
     }
   }
 }

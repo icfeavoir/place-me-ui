@@ -12,7 +12,7 @@
           <p v-if="$refs.plan" class="plan-infos">{{ plan.name }} : {{ plan.width * plan.height - (forbiddenSeats.length) }} places</p>
           <p>Cliquez sur une des contraintes à gauche, puis sur les sièges concernés par cette contrainte, avant de sauvegarder.</p>
         </div>
-        <button class="main-btn" @click="save"><i class="fa fa-save"></i>Enregistrer</button>
+        <SaverInfo :isSaved="isSaved" :isSaving="isSaving" :auto="false" @click="save"/>
         <button class="main-btn" @click="init"><i class="fa fa-undo-alt"></i>Annuler</button>
       </div>
 
@@ -27,12 +27,14 @@ import forbiddenSeatService from '@/services/forbiddenSeat.service'
 import constraintService from '@/services/constraint.service'
 
 import Plan from '@/components/elem/Plan'
+import SaverInfo from '@/components/elem/SaverInfo'
 import ConstraintList from '@/components/constraints/ConstraintList'
 
 export default {
   name: 'PlanPage',
   components: {
     Plan,
+    SaverInfo,
     ConstraintList
   },
   data () {
@@ -40,7 +42,9 @@ export default {
       planId: this.$route.params.planId,
       plan: null,
       constraints: [],
-      planSelectable: false
+      planSelectable: false,
+      isSaved: true,
+      isSaving: false
     }
   },
   created () {
@@ -191,6 +195,7 @@ export default {
           this.removeConstraintToPlan(seat, true) // on force
           // on l'enlève aux constraintSeats
           selectedConstraint.seats = selectedConstraint.seats.filter(s => !(s.line === seat.line && s.cell === seat.cell))
+          this.isSaved = false
         } else {
           // on veut l'ajouter
           let accepted = this.addConstraintToPlan(selectedConstraint, seat, false)
@@ -200,6 +205,7 @@ export default {
               line: seat.line,
               cell: seat.cell
             })
+            this.isSaved = false
             // si la contrainte ajoutée est FORBID, il faut retirer ce seat de toutes les autres contraintes
             if (selectedConstraint.id === 0) {
               this.constraints.filter(c => c.id > 0).forEach(constraint => {
@@ -212,6 +218,7 @@ export default {
     },
 
     save: function () {
+      this.isSaving = true
       let forbiddenSeats = []
       // on récupère depuis le plan car il est important que le nombre de F Seats soit exact (moins grave pour constraints)
       this.forbiddenSeats.forEach(seat => {
@@ -229,15 +236,26 @@ export default {
 
       Promise.all(requests).then(data => {
         this.$toasted.success('Enregistré !')
+        this.isSaved = true
       }).catch(e => {
         this.$toasted.error('Erreur !', {icon: 'ban'})
         console.error(e)
+      }).finally(() => {
+        this.isSaving = false
       })
     }
   },
   computed: {
     forbiddenSeats () {
       return this.$refs.plan ? this.$refs.plan.getGroupSeats(0) : []
+    }
+  },
+
+  beforeRouteLeave (to, from, next) {
+    if (!this.isSaved) {
+      this.$toasted.error('Vous n\'avez pas enregistré', {icon: 'ban'})
+    } else {
+      next()
     }
   }
 }

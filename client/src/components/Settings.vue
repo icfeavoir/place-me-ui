@@ -1,20 +1,32 @@
 <template>
   <div class="settings">
-    <div class="settings-bloc">
-      <p class="title">GROUPES</p>
-      <button @click="truncateGroups" class="main-btn del-btn">TOUT SUPPRIMER</button>
+    <div class="settings-group">
+      <p class="group-title">Notifications</p>
+      <p v-if="constraintErrors && constraintErrors.length === 0" class="no-notif">Aucune notifications</p>
+      <p class="constraint-error-line"
+        v-for="constraint in constraintErrors"
+        :key="constraint._id"
+      >La contrainte <b>{{ constraint.name }}</b> n'est définie sur aucun plan. Vous pouvez la définir <router-link class="main-btn small-btn" :to="{name: 'Plans'}" >ici</router-link> ou, si cette contrainte existe déjà sous un autre nom, les fusionner <router-link class="main-btn small-btn" :to="{name: 'Constraints'}" >ici</router-link>.</p>
     </div>
-    <div class="settings-bloc">
-      <p class="title">PLANS</p>
-      <button @click="truncatePlans" class="main-btn del-btn">TOUT SUPPRIMER</button>
-    </div>
-    <div class="settings-bloc">
-      <p class="title">ÉVÈNEMENTS</p>
-      <button @click="truncateEvents" class="main-btn del-btn">TOUT SUPPRIMER</button>
-    </div>
-    <div class="settings-bloc">
-      <p class="title">CONTRAINTES</p>
-      <button @click="truncateConstraints" class="main-btn del-btn">TOUT SUPPRIMER</button>
+
+    <div class="settings-group flex-group truncate-group">
+      <p class="group-title">Zone dangereuse</p>
+      <div class="truncate-bloc">
+        <p class="title">GROUPES</p>
+        <button @click="truncateGroups" class="main-btn del-btn">TOUT SUPPRIMER</button>
+      </div>
+      <div class="truncate-bloc">
+        <p class="title">PLANS</p>
+        <button @click="truncatePlans" class="main-btn del-btn">TOUT SUPPRIMER</button>
+      </div>
+      <div class="truncate-bloc">
+        <p class="title">ÉVÈNEMENTS</p>
+        <button @click="truncateEvents" class="main-btn del-btn">TOUT SUPPRIMER</button>
+      </div>
+      <div class="truncate-bloc">
+        <p class="title">CONTRAINTES</p>
+        <button @click="truncateConstraints" class="main-btn del-btn">TOUT SUPPRIMER</button>
+      </div>
     </div>
   </div>
 </template>
@@ -29,8 +41,15 @@ export default {
   name: 'Settings',
   data () {
     return {
+      constraintErrors: null
     }
   },
+  mounted () {
+    constraintService.getEmptyConstraints().then(emptyConstraints => {
+      this.$set(this, 'constraintErrors', emptyConstraints)
+    })
+  },
+
   methods: {
     truncateGroups () {
       const it = this

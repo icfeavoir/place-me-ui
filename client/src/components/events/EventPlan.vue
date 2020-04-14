@@ -30,11 +30,7 @@
           <button class="main-btn allow-small" @click="generate">
             <i class="fa fa-running"></i><a v-if="isLargeScreen">Générer</a>
           </button>
-          <p class="saved allow-small" :style="savedStyle">
-            <i v-if="isSaved" class="i-only-center fa fa-check fa-sm"></i>
-            <i v-else class="i-only-center fa fa-spinner fa-spin fa-sm"></i>
-            <a v-if="isLargeScreen">{{ savedText }}</a>
-          </p>
+          <SaverInfo :isSaved="isSaved" />
           <button class="main-btn little-info-btn allow-small" @click="showModalShortcuts = true"><i class="i-only-center fa fa-info"></i></button>
           <button v-if="this.isMobileAndTabletcheck()" class="main-btn suppr-groups" @click="supprSelectedGroups">
             <i class="fa fa-trash-alt"></i><a>Suppr</a>
@@ -64,6 +60,7 @@ import constraintService from '@/services/constraint.service'
 
 import GroupList from '@/components/elem/GroupList'
 import Plan from '@/components/elem/Plan'
+import SaverInfo from '@/components/elem/SaverInfo'
 import Modal from '@/components/elem/Modal'
 import Shortcuts from '@/components/elem/Shortcuts'
 
@@ -71,6 +68,7 @@ export default {
   components: {
     GroupList,
     Plan,
+    SaverInfo,
     Modal,
     Shortcuts
   },
@@ -387,14 +385,13 @@ export default {
 
   },
   computed: {
-    savedStyle () {
-      return {
-        color: this.isSaved ? this.colors.mainGreen : this.colors.bgColor,
-        border: this.isSaved ? '1px solid ' + this.colors.mainGreen : 'none'
-      }
-    },
-    savedText () {
-      return this.isSaved ? 'Sauvegardé' : 'Sauvegarde...'
+  },
+
+  beforeRouteLeave (to, from, next) {
+    if (!this.isSaved) {
+      this.$toasted.error('Enregistrement en cours...', {icon: 'ban'})
+    } else {
+      next()
     }
   }
 }

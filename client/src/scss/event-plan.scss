@@ -53,18 +53,13 @@ $header-height: 10vh;
                 letter-spacing: 1px;
             }
 
-            .saved, .generate {
+            .generate {
                 background-color: $lighter-grey;
                 padding: 10px;
                 border-radius: 30px;
                 border: 0;
                 font-size: 15px;
                 letter-spacing: initial;
-
-                &.saved {
-                    width: 150px;
-                    text-align: center;
-                }
 
                 i {
                     margin-right: 5px;

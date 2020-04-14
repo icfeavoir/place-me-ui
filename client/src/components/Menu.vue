@@ -11,10 +11,29 @@
 </template>
 
 <script>
+import constrainService from '@/services/constraint.service'
+
 export default {
   data () {
     return {
-      menu: [
+      error: false
+    }
+  },
+  props: {
+    isPortrait: {
+      type: Boolean,
+      default: false
+    },
+    isSmallWidth: {
+      type: Boolean,
+      default: false
+    }
+  },
+  mounted () {
+  },
+  computed: {
+    menu () {
+      return [
         {
           header: true,
           title: 'Menu',
@@ -38,27 +57,31 @@ export default {
         {
           href: '/settings',
           title: 'Paramètres',
-          icon: 'fa fa-cog'
+          icon: 'fa fa-cog',
+          class: this.error ? 'settings-error' : ''
         }
       ]
-    }
-  },
-  props: {
-    isPortrait: {
-      type: Boolean,
-      default: false
     },
-    isSmallWidth: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
+    settingsClass () {
+      return this.errors() ? 'settings-error' : ''
+    },
     width () {
       return this.isPortrait ? '100%' : '250px'
     },
     widthCollapsed () {
       return this.isPortrait ? '100%' : '50px'
+    }
+  },
+  methods: {
+    checkErrors () {
+      constrainService.getEmptyConstraints().then(emptyConstraints => {
+        // on check si des contraintes sont vides
+        if (emptyConstraints.length > 0) {
+          this.error = true
+        } else {
+          this.error = false
+        }
+      })
     }
   }
 }

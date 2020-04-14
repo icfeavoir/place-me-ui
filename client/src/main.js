@@ -48,9 +48,8 @@ const store = new Vuex.Store({
 // directives
 Vue.directive('focus', {
   // Enregistrer une directive globale appelée `v-focus`
-  // Quand l'élément lié est inséré dans le DOM...
   inserted: function (el) {
-    // L'élément prend le focus
+    // Quand l'élément lié est inséré dans le DOM, l'élément prend le focus
     el.focus()
   }
 })

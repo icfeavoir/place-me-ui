@@ -2,28 +2,81 @@
 
 .settings {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    .settings-bloc {
-        width: fit-content;
-        min-width: 250px;
-        height: fit-content;
-        min-height: 100px;
-        text-align: center;
-        margin: 10px 30px;
-        padding: 10px;
-        background-color: $light-grey;
-        color: $bg-color;
 
-        p.title {
-            font-size: 25px;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
+    .settings-group {
+        width: 100%;
+        margin-bottom: 50px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+        &.flex-group {
+            display: flex;
+            flex-wrap: wrap;
         }
 
-        button {
-            font-size: 15px;
-            letter-spacing: 2px;
+        p.group-title {
+            width: 100%;
+            text-align: center;
+            color: $bg-color;
+            background-color: $light-grey;
+            font-size: 25px;
+            letter-spacing: 3px;
+            padding: 10px 0;
+            color: $bg-color;
+        }
+        p.no-notif {
+            color: $bg-color;
+            background-color: $main-green;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 30px;
+            font-size: 20px;
+        }
+
+        p.constraint-error-line {
+            color: $lighter-grey;
+            width: 50%;
+            margin: 15px auto;
+            border: 1px solid $main-red;
+            padding: 5px;
+            border-radius: 5px;
+            @media only screen and (max-width: $small-width) {
+                width: 90%;
+            }
+
+            .main-btn {
+                color: $bg-color;
+                text-decoration: none;
+            }
+        }
+
+        &.truncate-group {
+            p.group-title {
+                color: $main-red;
+                border: 3px solid $main-red;
+            }
+
+            .truncate-bloc {
+                width: fit-content;
+                min-width: 250px;
+                height: fit-content;
+                min-height: 100px;
+                text-align: center;
+                margin: 10px 30px;
+                padding: 10px;
+                background-color: $light-grey;
+                color: $bg-color;
+                p.title {
+                    font-size: 25px;
+                    letter-spacing: 2px;
+                    margin-bottom: 30px;
+                }
+                
+                button {
+                    font-size: 15px;
+                    letter-spacing: 2px;
+                }
+            }
         }
     }
 }

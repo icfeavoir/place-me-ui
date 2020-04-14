@@ -35,5 +35,25 @@ export default {
       seats: cseats
     }
     return axios.post('/api/constraints/updateConstraintSeat', data).then(res => res.data)
+  },
+
+  /**
+   * Retourne toutes les contraintes qui n'ont aucun sièges sur aucun plans
+   */
+  getEmptyConstraints () {
+    return new Promise((resolve, reject) => {
+      let errorConstraints = []
+      this.getAll().then(constraints => {
+        this.getAllConstraintSeats().then(cSeats => {
+          constraints.forEach(constraint => {
+            let isConstraintSetOnce = cSeats.find(cs => cs.constraint_id === constraint.id)
+            if (!isConstraintSetOnce) {
+              errorConstraints.push(constraint)
+            }
+          })
+          resolve(errorConstraints)
+        })
+      })
+    })
   }
 }

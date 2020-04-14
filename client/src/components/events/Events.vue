@@ -43,21 +43,21 @@ export default {
     }
   },
   mounted () {
-    eventService.getAll()
-      .then((events) => {
-        this.$set(this, 'allEvents', events)
-        this.$set(this, 'events', events)
-      })
+    eventService.getAll().then((events) => {
+      this.$set(this, 'allEvents', events)
+      this.$set(this, 'events', events)
 
-    groupService.countGroupByEvent().then((data) => {
-      data.forEach(element => {
-        if (element) {
-          let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
-          let sum = parseInt(prevTotal) + parseInt(element.total)
-          this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
-        }
+      groupService.countGroupByEvent().then((data) => {
+        data.forEach(element => {
+          if (element) {
+            let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
+            let sum = parseInt(prevTotal) + parseInt(element.total)
+            this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
+          }
+        })
       })
     })
+
     if (this.isMobileAndTabletcheck() === false) {
       this.$refs.search.focus()
     }
