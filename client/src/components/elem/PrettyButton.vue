@@ -3,7 +3,7 @@
     class="pretty-btn"
     :class="{hoverable: isClickable, 'allow-small': allowSmall, classes}"
     :style="style"
-    @click.stop.prevent="isClickable ? $emit('click') : null"
+    @click.stop="isClickable ? $emit('click') : null"
   >
     <i v-if="icon" :class="'fa fa-' + icon"></i>
     <a v-if="showText"><slot></slot></a>

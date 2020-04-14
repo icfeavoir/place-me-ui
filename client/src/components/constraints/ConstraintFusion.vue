@@ -41,20 +41,39 @@ export default {
   },
   methods: {
     submit: function () {
+      let constraint = this.constraints.find(c => c.id === this.constraint)
       var data = {
         mainConstraintId: this.mainConstraint.id,
-        constraintId: this.constraint
+        constraintId: constraint.id
       }
-      // Fusion
-      constraintService.fusion(data).then(res => {
-        if (res.error) {
-          this.error = res.error
-        } else {
-          this.$toasted.success('Enregistré !')
-          this.init()
-          this.$emit('fusion-done', res.deletedId)
+      const it = this
+      if (constraint) {
+        let msg = {
+          title: 'Fusionner 2 contraintes',
+          body: 'Les groupes avec la contrainte <b>' + constraint.name + '</b> auront désormais la contrainte <b>' + this.mainConstraint.name + '</b>. Voulez-vous confirmer ?'
         }
-      })
+        let options = {
+          html: true,
+          okText: 'Valider',
+          cancelText: 'Fermer',
+          backdropClose: true
+        }
+        this.$dialog
+          .confirm(msg, options)
+          .then(function (dialog) {
+            // Fusion
+            constraintService.fusion(data).then(res => {
+              if (res.error) {
+                it.error = res.error
+              } else {
+                it.$toasted.success('Enregistré !')
+                it.init()
+                it.$emit('fusion-done', res.deletedId)
+              }
+            })
+          })
+          .catch(function () {})
+      }
     },
 
     init: function () {
