@@ -5,27 +5,11 @@ const Plan = require('./plan.model')
 const Model = Sequelize.Model;
 class EventPlan extends Model {}
 EventPlan.init({
-    event_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Event,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
-        allowNull: false,
-    },
-    plan_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Plan,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
-        allowNull: false,
-    }
+    event_id: Sequelize.INTEGER,
+    plan_id: Sequelize.INTEGER,
 }, {
     sequelize,
-    modelName: 'event_plan'
+    modelName: 'eventPlan'
 });
 
 EventPlan.belongsTo(Event, {foreignKey: 'event_id'})

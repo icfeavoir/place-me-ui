@@ -5,35 +5,13 @@ const EventPlan = require('./eventPlan.model')
 const Model = Sequelize.Model;
 class GroupSeat extends Model {}
 GroupSeat.init({
-    group_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Group,
-            key: 'id',
-        },
-        onDelete: 'SET NULL',
-        allowNull: true,
-    },
-    event_plan_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: EventPlan,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
-        allowNull: false,
-    },
-    line: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
-    cell: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    }
+    group_id: Sequelize.INTEGER,
+    event_plan_id: Sequelize.INTEGER,
+    line: Sequelize.INTEGER,
+    cell: Sequelize.INTEGER,
 }, {
     sequelize,
-    modelName: 'group_seat'
+    modelName: 'groupSeat'
 });
 
 GroupSeat.belongsTo(Group, {foreignKey: 'group_id'});

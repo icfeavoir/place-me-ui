@@ -154,9 +154,9 @@ export default {
       this.number = group.number || null
       this.color = group.color || '#000000'
       // event & plan
-      if (group && group.event_plan) {
-        this.event = group.event_plan.event.id
-        this.plan = group.event_plan.plan.id
+      if (group && group.eventPlan) {
+        this.event = group.eventPlan.event.id
+        this.plan = group.eventPlan.plan.id
       } else if (this.selectedEvent && this.selectedPlan) {
         this.event = this.selectedEvent
         this.plan = this.selectedPlan

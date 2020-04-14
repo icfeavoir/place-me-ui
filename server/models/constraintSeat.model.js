@@ -5,43 +5,13 @@ const Constraint = require('./constraint.model')
 const Model = Sequelize.Model;
 class ConstraintSeat extends Model {}
 ConstraintSeat.init({
-    plan_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Plan,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
-        allowNull: false,
-    },
-    constraint_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Constraint,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
-        allowNull: false,
-    },
-    line: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
-    cell: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
-    createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
-    },
-    updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
-    },
+    plan_id: Sequelize.INTEGER,
+    constraint_id: Sequelize.INTEGER,
+    line: Sequelize.INTEGER,
+    cell: Sequelize.INTEGER,
 }, {
     sequelize,
-    modelName: 'constraint_seat'
+    modelName: 'constraintSeat'
 });
 
 ConstraintSeat.belongsTo(Plan, {foreignKey: 'plan_id'});

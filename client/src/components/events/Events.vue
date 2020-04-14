@@ -52,9 +52,9 @@ export default {
       groupService.countGroupByEvent().then((data) => {
         data.forEach(element => {
           if (element) {
-            let prevTotal = this.events.find(e => e.id === element['event_plan.event.id']).total || 0
+            let prevTotal = this.events.find(e => e.id === element['eventPlan.event.id']).total || 0
             let sum = parseInt(prevTotal) + parseInt(element.total)
-            this.$set(this.events.find(e => e.id === element['event_plan.event.id']) || {}, 'total', sum)
+            this.$set(this.events.find(e => e.id === element['eventPlan.event.id']) || {}, 'total', sum)
           }
         })
       })
