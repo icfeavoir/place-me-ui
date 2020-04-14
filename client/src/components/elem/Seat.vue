@@ -33,6 +33,10 @@ export default {
     size: {
       type: Number,
       default: 50
+    },
+    allowDrag: {
+      type: Boolean,
+      default: true
     }
   },
   mounted () {
@@ -45,17 +49,20 @@ export default {
         background: this.bgColor || this.colors.bgColor,
         border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
         opacity: this.opacity,
-        minWidth: this.size + 'px',
-        width: this.size + 'px',
-        maxWidth: this.size + 'px',
-        minHeight: this.size + 'px',
-        height: this.size + 'px',
-        maxHeight: this.size + 'px',
+        minWidth: this.realSize + 'px',
+        width: this.realSize + 'px',
+        maxWidth: this.realSize + 'px',
+        minHeight: this.realSize + 'px',
+        height: this.realSize + 'px',
+        maxHeight: this.realSize + 'px',
         fontSize: this.fontSize + 'px'
       }
     },
+    realSize () {
+      return this.isPortraitView() || this.isSmallWidthScreen() ? Math.max(this.size - 20, 10) : this.size
+    },
     fontSize () {
-      return this.size / 5
+      return this.realSize / 5
     },
     borderSize () {
       return this.isForbidden ? 0 : this.isSelected ? 2 : 1
@@ -139,7 +146,7 @@ export default {
       return this.seat ? this.seat.isForbidden : true
     },
     draggable () {
-      return this.seat && !this.seat.isEmpty && !this.seat.isForbidden
+      return this.allowDrag && this.seat && !this.seat.isEmpty && !this.seat.isForbidden
     },
     isSelected () {
       return this.seat.isSelected

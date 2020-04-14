@@ -44,27 +44,9 @@ $header-height: 10vh;
         .event-plan-header {
             display: flex;
             flex-wrap: nowrap;
-            justify-content: space-evenly;
-            align-items: center;
             height: $header-height;
-
-            /deep/ .main-btn {
-                font-size: 15px;
-                letter-spacing: 1px;
-            }
-
-            .generate {
-                background-color: $lighter-grey;
-                padding: 10px;
-                border-radius: 30px;
-                border: 0;
-                font-size: 15px;
-                letter-spacing: initial;
-
-                i {
-                    margin-right: 5px;
-                }
-            }
+            align-items: center;
+            justify-content: space-evenly;
 
             .suppr-groups {
                 color: $main-red;
@@ -78,25 +60,8 @@ $header-height: 10vh;
                     }
                 }
             }
-
-            @media only screen and (max-width: $small-width) {
-                .allow-small {
-                    position: relative;
-                    width: 25px !important;
-                    height: 25px !important;
-                    i {
-                        margin: auto;
-                        width: 100%;
-                        top: 5px;
-                        position: absolute;
-                        left: 0;
-                    }
-                }
-                .saved {
-                    padding: 0 !important;
-                }
-            }
         }
+
         .plan {
             $padding-bottom: 50px;
             padding-bottom: $padding-bottom;

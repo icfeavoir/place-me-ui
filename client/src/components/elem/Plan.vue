@@ -14,6 +14,7 @@
           :seat="seats.find(s => s.line === (line - 1) && s.cell === (cell - 1))"
           :isSelectable="isSelectable"
           :size="size"
+          :allowDrag="isDraggable"
           @place-group="placeGroup"
           @seat-click="seatClick"
         />
@@ -39,6 +40,14 @@ export default {
       default: true
     },
     multipleSelect: {
+      type: Boolean,
+      default: true
+    },
+    isDraggable: {
+      type: Boolean,
+      default: true
+    },
+    keyListenning: {
       type: Boolean,
       default: true
     }
@@ -424,6 +433,9 @@ export default {
     },
 
     keydown: function (event) {
+      if (!this.keyListenning) {
+        return
+      }
       if (event.ctrlKey) {
         // CTRL
         if (event.keyCode === 65) {
@@ -453,6 +465,9 @@ export default {
       }
     },
     keyup: function (event) {
+      if (!this.keyListenning) {
+        return
+      }
       switch (event.keyCode) {
         case 16:
           // SHIFT
@@ -498,7 +513,7 @@ export default {
       return pos
     },
     mouseMove (e) {
-      if (this.isSelecting) {
+      if (this.isSelecting && this.multipleSelect) {
         let pos = this.getTablePosition()
         if (e.x >= pos.left && e.x <= pos.width && e.y >= pos.top && e.y <= pos.height) {
           let realTop = Math.min(this.selectorStyle.topStart, e.y)
@@ -529,7 +544,7 @@ export default {
     mouseUp (e) {
       if (e) {
         let mouseMoved = e.x !== this.selectorStyle.leftStart && e.y !== this.selectorStyle.topStart
-        if (this.isSelecting && mouseMoved) {
+        if (this.isSelecting && this.multipleSelect && mouseMoved) {
           // on select les seats
           this.setSelectedSeatsWithSelector()
         }

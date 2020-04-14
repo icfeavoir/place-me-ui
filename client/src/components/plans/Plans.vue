@@ -2,8 +2,8 @@
   <div>
     <header>
       <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "PlanAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouveau plan</button></router-link>
-      <router-link :to='{name: "Constraints"}'><button class="main-btn"><i class="fa fa-grip-horizontal"></i>Gérer les contraintes</button></router-link>
+      <router-link :to='{name: "PlanAdd"}'><PrettyButton :allowSmall="false" icon="plus-circle">Nouveau plan</PrettyButton></router-link>
+      <router-link :to='{name: "Constraints"}'><PrettyButton :allowSmall="false" icon="grip-horizontal">Gérer les contraintes</PrettyButton></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="plans && plans.length === 0">Aucun plan</p>
@@ -28,11 +28,13 @@
 import planService from '@/services/plan.service'
 
 import Card from '@/components/elem/Card'
+import PrettyButton from '@/components/elem/PrettyButton'
 
 export default {
   name: 'Plans',
   components: {
-    Card
+    Card,
+    PrettyButton
   },
   data () {
     return {

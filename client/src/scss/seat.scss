@@ -8,19 +8,14 @@ td {
     -ms-user-select: none; /* IE 10+ */
     -moz-user-select: none; /* Gecko (Firefox) */
     -webkit-user-select: none; /* Webkit (Safari, Chrome) */
-    font-size: 10px;
     $transition-time: .3s;
     transition: min-width $transition-time,
                 width $transition-time,
                 max-width $transition-time,
                 min-height $transition-time,
                 height $transition-time,
-                max-height $transition-time;
-
-    @media (orientation: portrait) {
-        font-size: 7px;
-    }
-
+                max-height $transition-time,
+                font-size $transition-time;
     .drop {
         height: 100%;
         .drag {

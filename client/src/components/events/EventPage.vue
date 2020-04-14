@@ -11,7 +11,7 @@
     <hr>
     <header>
       <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <button @click="showModal = true" class="main-btn"><i class="fa fa-plus-circle"></i>Ajouter un plan à cet événement</button>
+      <PrettyButton :allowSmall="false" @click="showModal = true" icon="plus-circle">Ajouter un plan à cet événement</PrettyButton>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="eventPlans && eventPlans.length === 0">Aucun plan sur cet événement</p>
@@ -40,11 +40,13 @@ import eventPlanService from '@/services/eventPlan.service'
 import Card from '@/components/elem/Card'
 import EventAddPlan from '@/components/events/EventAddPlan'
 import Modal from '@/components/elem/Modal'
+import PrettyButton from '@/components/elem/PrettyButton'
 
 export default {
   name: 'Plans',
   components: {
     Card,
+    PrettyButton,
     EventAddPlan,
     Modal
   },

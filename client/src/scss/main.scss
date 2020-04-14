@@ -28,54 +28,8 @@
 html {
     background-color: $bg-color;
 }
-
-.main-btn {
-    color: $bg-color;
-    background-color: rgba(255,255,255,.7);
-    padding: 10px;
-    border-radius: 30px;
-    border: 0;
-    font-size: 25px;
-    letter-spacing: 3px;
-    transition: background-color .5s;
-    position: relative;
-
-    &.small-btn {
-        padding: 2px;
-        border-radius: 5px;
-        font-size: 15px;
-        letter-spacing: initial;
-    }
-    &.del-btn {
-        border: 1px solid $main-red;
-        color: $main-red;
-    }
-
-    @media (orientation: portrait) {
-        font-size: 15px;
-        letter-spacing: 1px;
-        background-color: rgba(255,255,255,.9);
-    }
-
-    &.little-info-btn {
-        width: 25px;
-        height: 25px;
-    }
-    i {
-        margin-right: 10px;
-        &.i-only-center {
-            margin: auto;
-            width: 100%;
-            top: 5px;
-            position: absolute;
-            left: 0;
-        }
-    }
-    
-    &:hover {
-        background-color: rgba(255,255,255,.9);
-        cursor: pointer;
-    }
+a {
+    text-decoration: none !important;
 }
 
 hr {

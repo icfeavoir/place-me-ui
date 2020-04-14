@@ -2,7 +2,7 @@
   <div>
     <header>
       <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "GroupAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvelle réservation</button></router-link>
+      <router-link :to='{name: "GroupAdd"}'><PrettyButton :allowSmall="false" icon="plus-circle">Nouvelle réservation</PrettyButton></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
@@ -25,11 +25,15 @@
 
 <script>
 import groupService from '@/services/group.service'
+
 import Card from '@/components/elem/Card'
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'Groups',
   components: {
-    Card
+    Card,
+    PrettyButton
   },
   data () {
     return {

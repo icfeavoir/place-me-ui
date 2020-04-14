@@ -16,11 +16,11 @@
       </div>
 
       <div class="constraint-container">
-        <button type="button" @click.prevent="showConstraint = true" v-if="!showConstraint"><i class="fa fa-plus"></i> Ajouter une contrainte</button>
+        <PrettyButton :allowSmall="false" class="square small-btn center margin" @click="showConstraint = true" v-if="!showConstraint" icon="plus">Ajouter une contrainte</PrettyButton>
         <transition name="fade">
           <div class="constraint" v-if="showConstraint">
             <hr>
-            <button type="button" @click.prevent="removeConstraint" v-if="showConstraint"><i class="fa fa-minus-circle"></i> Supprimer la contrainte</button>
+            <PrettyButton :allowSmall="false" class="square small-btn center margin" @click="removeConstraint" v-if="showConstraint" icon="minus-circle">Supprimer la contrainte</PrettyButton>
             <p>Choississez une contrainte de la liste, ou entrez-en une nouvelle pour l'enregistrer</p>
             <input type="constraint" id="constraint" v-model="constraint" list="constraintsNames" placeholder="Taper la contrainte" />
             <datalist id="constraintsNames">
@@ -35,7 +35,7 @@
       </div>
 
       <div class="submit-container">
-        <input type="button" :value="group ? 'Modifier la réservation' : 'Enregistrer'" @click="submit">
+        <PrettyButton :allowSmall="false" class="square more-padding center margin" @click="submit" >{{ group ? 'Modifier la réservation' : 'Enregistrer' }}</PrettyButton>
         <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
       </div>
     </form>
@@ -48,11 +48,13 @@ import groupService from '@/services/group.service'
 import eventPlanService from '@/services/eventPlan.service'
 
 import Checkbox from '@/components/elem/Checkbox'
+import PrettyButton from '@/components/elem/PrettyButton'
 
 export default {
   name: 'GroupForm',
   components: {
-    Checkbox
+    Checkbox,
+    PrettyButton
   },
   props: {
     group: Object,

@@ -42,18 +42,6 @@ form.add-form {
     .constraint-container {
         width: 100%;
 
-        button {
-            font-size: 12px;
-            background-color: $light-grey;
-            border: none;
-            color: $bg-color;
-            display: block;
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
-
         .check-constraint {
             width: 100%;
             position: relative;

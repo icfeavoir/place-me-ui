@@ -5,7 +5,7 @@
       <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de l'événement">
       <input id="date" type="date" v-model="date" placeholder="Date" />
       <div class="submit-container">
-        <input type="button" :value="event ? 'Modifier la réservation' : 'Enregistrer'" @click="submit">
+        <PrettyButton :allowSmall="false" class="square more-padding center margin" @click="submit" >{{ group ? 'Modifier l\'évènement' : 'Enregistrer' }}</PrettyButton>
         <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
       </div>
     </form>
@@ -15,9 +15,12 @@
 <script>
 import eventService from '@/services/event.service'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'EventForm',
   components: {
+    PrettyButton
   },
   props: {
     event: Object

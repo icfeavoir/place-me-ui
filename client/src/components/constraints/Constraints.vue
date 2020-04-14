@@ -13,7 +13,7 @@
 
     <header>
       <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "ConstraintAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvelle contrainte</button></router-link>
+      <router-link :to='{name: "ConstraintAdd"}'><PrettyButton :allowSmall="false" icon="plus-circle">Nouvelle contrainte</PrettyButton></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="constraints && constraints.length === 0">Aucune contrainte</p>
@@ -26,7 +26,7 @@
           @click="openConstraint(constraint)"
           @del='deleteConstraint'
         >
-          <button @click.stop="openFusion(constraint)" class="main-btn small-btn"><i class="fa fa-link"></i>Fusionner avec</button>
+          <PrettyButton class="square small-btn center" @click.stop="openFusion(constraint)" icon="link">Fusionner avec</PrettyButton>
         </Card>
       </div>
     </div>
@@ -38,6 +38,7 @@ import constraintService from '@/services/constraint.service'
 
 import Card from '@/components/elem/Card'
 import Modal from '@/components/elem/Modal'
+import PrettyButton from '@/components/elem/PrettyButton'
 
 import ConstraintForm from '@/components/constraints/ConstraintForm'
 import ConstraintFusion from '@/components/constraints/ConstraintFusion'
@@ -46,6 +47,7 @@ export default {
   name: 'Constraints',
   components: {
     Card,
+    PrettyButton,
     Modal,
     ConstraintForm,
     ConstraintFusion

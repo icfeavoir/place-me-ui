@@ -19,7 +19,7 @@
         @blur="focus = false"
         :style="searchStyle"
       />
-      <button class="main-btn little-info-btn allow-small" @click="createGroup"><i class="i-only-center fa fa-user-plus"></i></button>
+      <PrettyButton class="tiny-btn" icon="user-plus" @click="createGroup"></PrettyButton>
     </div>
     <p class="bloc-info" v-if="groups && groups.length === 0">Aucun groupe</p>
     <table class="list" @keydown.esc="select(null)">
@@ -50,10 +50,13 @@ import Modal from '@/components/elem/Modal'
 import GroupForm from '@/components/groups/GroupForm'
 import GroupLine from '@/components/elem/GroupLine'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'GroupList',
   components: {
     Modal,
+    PrettyButton,
     GroupForm,
     GroupLine
   },

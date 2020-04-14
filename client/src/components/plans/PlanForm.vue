@@ -10,7 +10,7 @@
         </div>
 
         <div class="submit-container">
-          <input type="button" :value="plan ? 'Modifier le plan' : 'Enregistrer'" @click="submit">
+          <PrettyButton :allowSmall="false" class="square more-padding center margin" @click="submit" >{{ group ? 'Modifier le plan' : 'Enregistrer' }}</PrettyButton>
           <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
         </div>
     </form>
@@ -20,8 +20,13 @@
 <script>
 import planService from '@/services/plan.service'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'PlanForm',
+  components: {
+    PrettyButton
+  },
   props: {
     plan: Object
   },

@@ -25,7 +25,7 @@ div.form {
     }
 }
 
-input, select, button {
+input, select {
     height: 25px;
     margin: 10px auto;
     border: 1px solid $lighter-grey;
@@ -78,22 +78,6 @@ select {
     }
 }
 
-input[type=button] {
-    height: 50px;
-    background: $light-grey;
-    border: none;
-    color: $bg-color;
-    transition: background-color .3s;
-    font-size: 16px;
-    width: 100%;
-    margin: 20px 10%;
-
-    &:hover {
-        cursor: pointer;
-        background-color: $lighter-grey;
-    }
-}
-
 .error {
     color: $light-red;
     text-align: center;
@@ -120,7 +104,7 @@ input[type=button] {
         border-bottom: none;
     }
     
-    input, select, button {
+    input, select {
         border: 1px solid $bg-color;
         color: $bg-color;
         &.dark {
@@ -130,13 +114,6 @@ input[type=button] {
         }
         &::placeholder {
             color: $light-grey;
-        }
-    }
-    input[type=button] {
-        background: $light-grey;
-        color: $bg-color;
-        &:hover {
-            background-color: $lighter-grey;
         }
     }
 }

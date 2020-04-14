@@ -1,0 +1,89 @@
+@import 'variables';
+
+.pretty-btn {
+    color: $bg-color;
+    background-color: rgba(255,255,255,.7);
+    padding: 10px;
+    border-radius: 30px;
+    border: 0;
+    font-size: 20px;
+    letter-spacing: 2px;
+    transition: background-color .5s;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    text-decoration: none;
+    // not selectable
+    user-select: none; /* CSS3 (little to no support) */
+    -ms-user-select: none; /* IE 10+ */
+    -moz-user-select: none; /* Gecko (Firefox) */
+    -webkit-user-select: none; /* Webkit (Safari, Chrome) */
+    
+    @media only screen and (max-width: $small-width) {
+        font-size: 15px;
+        letter-spacing: 1px;
+        background-color: rgba(255,255,255,.9);
+    }
+    i {
+        margin-right: 5px;
+    }
+
+    &.tiny-btn {
+        width: 10px;
+        height: 10px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+        i {
+            margin: 0;
+        }
+    }
+    &.small-btn {
+        padding: 4px;
+        border-radius: 5px;
+        font-size: 13px;
+        letter-spacing: initial;
+    }
+    &.del-btn {
+        border: 1px solid $main-red;
+        color: $main-red;
+    }
+    &.square {
+        border-radius: 5px;
+    }
+    &.more-padding {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+    &.center {
+        margin-right: auto;
+        margin-left: auto;
+    }
+    &.margin {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    &.inline {
+        display: inline;
+    }
+    
+    &.hoverable:hover {
+        background-color: rgba(255,255,255,.9);
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: $small-width) {
+        &.allow-small {
+            width: 10px;
+            height: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+            i {
+                margin: 0;
+            }
+        }
+    }
+}

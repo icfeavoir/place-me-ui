@@ -6,26 +6,26 @@
       <p class="constraint-error-line"
         v-for="constraint in constraintErrors"
         :key="constraint._id"
-      >La contrainte <b>{{ constraint.name }}</b> n'est définie sur aucun plan. Vous pouvez la définir <router-link class="main-btn small-btn" :to="{name: 'Plans'}" >ici</router-link> ou, si cette contrainte existe déjà sous un autre nom, les fusionner <router-link class="main-btn small-btn" :to="{name: 'Constraints'}" >ici</router-link>.</p>
+      >La contrainte <b>{{ constraint.name }}</b> n'est définie sur aucun plan. Vous pouvez la définir <router-link :to="{name: 'Plans'}" ><PrettyButton class="small-btn inline">ici</PrettyButton></router-link> ou, si cette contrainte existe déjà sous un autre nom, les fusionner <router-link :to="{name: 'Constraints'}" ><PrettyButton class="small-btn inline">ici</PrettyButton></router-link>.</p>
     </div>
 
     <div class="settings-group flex-group truncate-group">
       <p class="group-title">Zone dangereuse</p>
       <div class="truncate-bloc">
         <p class="title">GROUPES</p>
-        <button @click="truncateGroups" class="main-btn del-btn">TOUT SUPPRIMER</button>
+        <PrettyButton @click="truncateGroups" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">PLANS</p>
-        <button @click="truncatePlans" class="main-btn del-btn">TOUT SUPPRIMER</button>
+        <PrettyButton @click="truncatePlans" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">ÉVÈNEMENTS</p>
-        <button @click="truncateEvents" class="main-btn del-btn">TOUT SUPPRIMER</button>
+        <PrettyButton @click="truncateEvents" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">CONTRAINTES</p>
-        <button @click="truncateConstraints" class="main-btn del-btn">TOUT SUPPRIMER</button>
+        <PrettyButton @click="truncateConstraints" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
     </div>
   </div>
@@ -37,8 +37,13 @@ import eventService from '@/services/event.service'
 import planService from '@/services/plan.service'
 import constraintService from '@/services/constraint.service'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'Settings',
+  components: {
+    PrettyButton
+  },
   data () {
     return {
       constraintErrors: null

@@ -8,15 +8,24 @@
     />
     <div class="plan-container" v-if="plan">
       <div class="plan-controls">
-        <div>
+        <div class="info-text">
           <p v-if="$refs.plan" class="plan-infos">{{ plan.name }} : {{ plan.width * plan.height - (forbiddenSeats.length) }} places</p>
           <p>Cliquez sur une des contraintes à gauche, puis sur les sièges concernés par cette contrainte, avant de sauvegarder.</p>
         </div>
         <SaverInfo :isSaved="isSaved" :isSaving="isSaving" :auto="false" @click="save"/>
-        <button class="main-btn" @click="init"><i class="fa fa-undo-alt"></i>Annuler</button>
+        <PrettyButton @click="init" icon="undo-alt">Annuler</PrettyButton>
       </div>
 
-      <Plan ref="plan" class="plan" :plan="plan" :isSelectable="planSelectable" :multipleSelect="false" @select-seat="onSeatClick" />
+      <Plan
+        ref="plan"
+        class="plan"
+        :plan="plan"
+        :isSelectable="planSelectable"
+        :isDraggable="false"
+        :multipleSelect="false"
+        :keyListenning="false"
+        @select-seat="onSeatClick"
+      />
     </div>
   </div>
 </template>
@@ -28,6 +37,7 @@ import constraintService from '@/services/constraint.service'
 
 import Plan from '@/components/elem/Plan'
 import SaverInfo from '@/components/elem/SaverInfo'
+import PrettyButton from '@/components/elem/PrettyButton'
 import ConstraintList from '@/components/constraints/ConstraintList'
 
 export default {
@@ -35,6 +45,7 @@ export default {
   components: {
     Plan,
     SaverInfo,
+    PrettyButton,
     ConstraintList
   },
   data () {
@@ -253,7 +264,7 @@ export default {
 
   beforeRouteLeave (to, from, next) {
     if (!this.isSaved) {
-      this.$toasted.error('Vous n\'avez pas enregistré', {icon: 'ban'})
+      this.$toasted.error('Vous n\'avez pas enregistré', {icon: 'ban', duration: 1000})
     } else {
       next()
     }

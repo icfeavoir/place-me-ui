@@ -4,7 +4,7 @@
      <form class="add-form" @keydown.enter="submit">
         <input v-focus id="name" @change="upperFirst" v-model="name" placeholder="Nom de la contrainte">
         <div class="submit-container">
-          <input type="button" :value="constraint ? 'Modifier la contrainte' : 'Enregistrer'" @click="submit">
+          <PrettyButton :allowSmall="false" class="square more-padding center margin" @click="submit" >{{ group ? 'Modifier la contrainte' : 'Enregistrer' }}</PrettyButton>
           <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
         </div>
     </form>
@@ -14,8 +14,13 @@
 <script>
 import constraintService from '@/services/constraint.service'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'ConstraintForm',
+  components: {
+    PrettyButton
+  },
   props: {
     constraint: Object,
     dark: {

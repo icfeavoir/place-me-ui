@@ -25,17 +25,14 @@
       <div class="plan-container">
         <div class="event-plan-header" v-if="event">
           <router-link :to="{name: 'EventPage', params: {eventId: event.id}}">
-            <button class="main-btn allow-small"><i class="fa fa-arrow-left"></i><a v-if="isLargeScreen">Retour à <b>{{ event.name }}</b></a></button>
+            <PrettyButton icon="arrow-left">Retour à <b>{{ event.name }}</b></PrettyButton>
           </router-link>
-          <button class="main-btn allow-small" @click="generate">
-            <i class="fa fa-running"></i><a v-if="isLargeScreen">Générer</a>
-          </button>
+          <PrettyButton icon="running" @click="generate">Remplir</PrettyButton>
           <SaverInfo :isSaved="isSaved" />
-          <button class="main-btn little-info-btn allow-small" @click="showModalShortcuts = true"><i class="i-only-center fa fa-info"></i></button>
-          <button v-if="this.isMobileAndTabletcheck()" class="main-btn suppr-groups" @click="supprSelectedGroups">
-            <i class="fa fa-trash-alt"></i><a>Suppr</a>
-          </button>
+          <PrettyButton class="tiny-btn no-margin" icon="info" @click="showModalShortcuts = true"></PrettyButton>
+          <PrettyButton v-if="isMobileAndTabletcheck()" :allowSmall="false" class="suppr-groups" icon="trash-alt" @click="supprSelectedGroups">Suppr.</PrettyButton>
         </div>
+
         <Plan
           ref="plan"
           class="plan"
@@ -61,6 +58,7 @@ import constraintService from '@/services/constraint.service'
 import GroupList from '@/components/elem/GroupList'
 import Plan from '@/components/elem/Plan'
 import SaverInfo from '@/components/elem/SaverInfo'
+import PrettyButton from '@/components/elem/PrettyButton'
 import Modal from '@/components/elem/Modal'
 import Shortcuts from '@/components/elem/Shortcuts'
 
@@ -69,6 +67,7 @@ export default {
     GroupList,
     Plan,
     SaverInfo,
+    PrettyButton,
     Modal,
     Shortcuts
   },
@@ -389,7 +388,7 @@ export default {
 
   beforeRouteLeave (to, from, next) {
     if (!this.isSaved) {
-      this.$toasted.error('Enregistrement en cours...', {icon: 'ban'})
+      this.$toasted.error('Enregistrement en cours...', {icon: 'ban', duration: 1000})
     } else {
       next()
     }

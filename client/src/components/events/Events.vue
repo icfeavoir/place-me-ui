@@ -2,7 +2,7 @@
   <div>
     <header>
       <input ref="search" type="text" class="search" placeholder="Rechercher..." v-model="search" @keyup="doSearch" @keydown.esc="search = ''" />
-      <router-link :to='{name: "EventAdd"}'><button class="main-btn"><i class="fa fa-plus-circle"></i>Nouvel événement</button></router-link>
+      <router-link :to='{name: "EventAdd"}'><PrettyButton :allowSmall="false" icon="plus-circle">Nouvel événement</PrettyButton></router-link>
     </header>
     <div class='list'>
       <p class="bloc-info" v-if="events && events.length === 0">Aucun événement</p>
@@ -28,11 +28,13 @@ import eventService from '@/services/event.service'
 import groupService from '@/services/group.service'
 
 import Card from '@/components/elem/Card'
+import PrettyButton from '@/components/elem/PrettyButton'
 
 export default {
   name: 'Events',
   components: {
-    Card
+    Card,
+    PrettyButton
   },
   data () {
     return {

@@ -24,7 +24,7 @@ div.plan-page-main {
             display: flex;
             justify-content: space-evenly;
             align-items: center;
-            div {
+            div.info-text {
                 width: 50%;
                 p {
                     color: $lighter-grey;
