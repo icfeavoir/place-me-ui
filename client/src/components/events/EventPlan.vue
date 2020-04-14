@@ -210,7 +210,7 @@ export default {
           this.$refs.plan.unselectAll()
           // si le groupe est vidé on l'unselect
           if (group.remaining === 0) {
-            this.$refs.groupList.unselect()
+            this.$refs.groupList.selectNext()
           }
         }
       }

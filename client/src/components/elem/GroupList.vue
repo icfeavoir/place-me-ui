@@ -136,9 +136,16 @@ export default {
         this.unselect()
       }
     },
-    unselect: function () {
+    unselect () {
       // on enlève la selection aux autres (en théorie max 1 autre mais bon)
       this.groups.filter(g => g.isSelected).forEach(group => { group.isSelected = false })
+    },
+    selectNext () {
+      // on récupère le groupe du haut
+      let visibleGroups = this.groups.filter(g => g.remaining > 0)
+      if (visibleGroups.length > 0) {
+        this.select(visibleGroups[0])
+      }
     },
 
     onGroupDataChanged (updatedGroup) {
