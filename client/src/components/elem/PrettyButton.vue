@@ -1,5 +1,10 @@
 <template>
-  <div class="pretty-btn" :class="{hoverable: isClickable, 'allow-small': allowSmall, classes}" :style="style" @click="isClickable ? $emit('click') : null">
+  <div
+    class="pretty-btn"
+    :class="{hoverable: isClickable, 'allow-small': allowSmall, classes}"
+    :style="style"
+    @click.stop.prevent="isClickable ? $emit('click') : null"
+  >
     <i v-if="icon" :class="'fa fa-' + icon"></i>
     <a v-if="showText"><slot></slot></a>
   </div>

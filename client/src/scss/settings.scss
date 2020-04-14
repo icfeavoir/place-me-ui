@@ -1,10 +1,7 @@
 @import 'variables';
 
 .settings {
-    width: 100%;
-
     .settings-group {
-        width: 100%;
         margin-bottom: 50px;
         &:last-child {
             margin-bottom: 0;
@@ -12,6 +9,7 @@
         &.flex-group {
             display: flex;
             flex-wrap: wrap;
+            justify-content: space-evenly;
         }
 
         p.group-title {
@@ -51,14 +49,15 @@
         }
 
         &.truncate-group {
+            border: 2px solid $main-red;
             p.group-title {
                 color: $main-red;
-                border: 3px solid $main-red;
+                border: 2px solid $main-red;
             }
 
             .truncate-bloc {
                 width: fit-content;
-                min-width: 250px;
+                min-width: 220px;
                 height: fit-content;
                 min-height: 100px;
                 text-align: center;

@@ -10,22 +10,22 @@
     </div>
 
     <div class="settings-group flex-group truncate-group">
-      <p class="group-title">Zone dangereuse</p>
+      <p class="group-title">Suppression</p>
       <div class="truncate-bloc">
         <p class="title">GROUPES</p>
-        <PrettyButton @click="truncateGroups" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
+        <PrettyButton :allowSmall="false" @click="truncateGroups" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">PLANS</p>
-        <PrettyButton @click="truncatePlans" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
+        <PrettyButton :allowSmall="false" @click="truncatePlans" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">ÉVÈNEMENTS</p>
-        <PrettyButton @click="truncateEvents" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
+        <PrettyButton :allowSmall="false" @click="truncateEvents" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
       <div class="truncate-bloc">
         <p class="title">CONTRAINTES</p>
-        <PrettyButton @click="truncateConstraints" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
+        <PrettyButton :allowSmall="false" @click="truncateConstraints" class="small-btn center del-btn">TOUT SUPPRIMER</PrettyButton>
       </div>
     </div>
   </div>

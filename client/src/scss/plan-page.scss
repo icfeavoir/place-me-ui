@@ -28,10 +28,22 @@ div.plan-page-main {
                 width: 50%;
                 p {
                     color: $lighter-grey;
+                    @media only screen and (max-width: $small-width) {
+                        font-size: 8px;
+                        text-align: justify;
+                        letter-spacing: 1px;
+                        margin: 0;
+                    }
                     &.plan-infos {
                         font-size: 25px;
                         letter-spacing: 2px;
                         margin: 10px 0;
+                        @media only screen and (max-width: $small-width) {
+                            text-align: center;
+                            font-size: 12px;
+                            letter-spacing: 1px;
+                            margin: 0;
+                        }
                     }
                 }
             }

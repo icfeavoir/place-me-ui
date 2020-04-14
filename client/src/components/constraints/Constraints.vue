@@ -26,7 +26,7 @@
           @click="openConstraint(constraint)"
           @del='deleteConstraint'
         >
-          <PrettyButton class="square small-btn center" @click.stop="openFusion(constraint)" icon="link">Fusionner avec</PrettyButton>
+          <PrettyButton class="square small-btn center" @click="openFusion(constraint)" :allowSmall="false" icon="link">Fusionner avec</PrettyButton>
         </Card>
       </div>
     </div>

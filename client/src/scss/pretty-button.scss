@@ -73,6 +73,15 @@
         cursor: pointer;
     }
 
+    &.light {
+        border: 1px solid $bg-color;
+        color: $bg-color;
+        background: $light-grey;
+        &:hover {
+            background-color: $lighter-grey;
+        }
+    }
+
     @media only screen and (max-width: $small-width) {
         &.allow-small {
             width: 10px;

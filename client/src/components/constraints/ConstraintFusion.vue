@@ -7,7 +7,7 @@
             <option v-for="(item, key) in constraints" v-bind:key="key" :value="item.id">{{item.name}}</option>
         </select>
         <div class="submit-container">
-          <input type="button" value="Enregistrer" @click="submit">
+          <PrettyButton :allowSmall="false" class="square more-padding center margin light" @click="submit" >Fusionner</PrettyButton>
           <transition name="fade"><p class="error" v-if="error.length">{{ error }}</p></transition>
         </div>
     </form>
@@ -17,8 +17,13 @@
 <script>
 import constraintService from '@/services/constraint.service'
 
+import PrettyButton from '@/components/elem/PrettyButton'
+
 export default {
   name: 'ConstraintFusion',
+  components: {
+    PrettyButton
+  },
   props: {
     mainConstraint: Object,
     constraints: Array
