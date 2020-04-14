@@ -42,20 +42,8 @@ export default {
         this.group.constraint_name = this.group.constraint.name
       }
     }
-    // on envoie la MAJ (notamment pour vérifier les erreurs) que si le groupe est terminé
-    // car s'il est déjà terminé, le watcher n'est pas appelé
-    if (this.group && this.isAllDone) {
-      this.$emit('group-line-changed', this.group)
-    }
   },
   destroyed () {
-    // quand un group passe de pas fait à fait ou inversement
-    // on envoie la MAJ (notamment pour vérifier les erreurs) que si le groupe est entamé (bug init sinon)
-    if (this.group && !this.isAllRemaining) {
-      this.$emit('group-line-changed', this.group)
-      // on détruit le group
-      this.group = null
-    }
   },
   methods: {
     getStyle (group, key) {
@@ -120,12 +108,6 @@ export default {
         this.group.constraint = null
         this.group.constraint_name = 'pas trouvé'
         this.group.constraint_number = 0
-      }
-    },
-    done (n, o) {
-      // on envoie la MAJ (notamment pour vérifier les erreurs)
-      if (this.group) {
-        this.$emit('group-line-changed', this.group)
       }
     }
   }

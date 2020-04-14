@@ -102,3 +102,8 @@ export default {
 <style lang="scss" scoped>
   @import '@/scss/home-list.scss';
 </style>
+<style lang="scss" scoped>
+  button {
+    margin-bottom: 10px;
+  }
+</style>

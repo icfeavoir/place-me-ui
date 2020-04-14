@@ -9,23 +9,15 @@ td {
     -moz-user-select: none; /* Gecko (Firefox) */
     -webkit-user-select: none; /* Webkit (Safari, Chrome) */
     font-size: 10px;
-
-    $size: 50px;
-    min-width: $size;
-    width: $size;
-    max-width: $size;
-    min-height: $size;
-    height: $size;
-    max-height: $size;
+    $transition-time: .3s;
+    transition: min-width $transition-time,
+                width $transition-time,
+                max-width $transition-time,
+                min-height $transition-time,
+                height $transition-time,
+                max-height $transition-time;
 
     @media (orientation: portrait) {
-        $size: 30px;
-        min-width: $size;
-        width: $size;
-        max-width: $size;
-        min-height: $size;
-        height: $size;
-        max-height: $size;
         font-size: 7px;
     }
 

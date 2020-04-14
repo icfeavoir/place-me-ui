@@ -9,7 +9,7 @@
     <div class="plan-container" v-if="plan">
       <div class="plan-controls">
         <div>
-          <p class="plan-infos">{{ plan.name }} : {{ plan.width * plan.height - (forbidden ? forbidden.length : 0) }} places</p>
+          <p v-if="$refs.plan" class="plan-infos">{{ plan.name }} : {{ plan.width * plan.height - (forbiddenSeats.length) }} places</p>
           <p>Cliquez sur une des contraintes à gauche, puis sur les sièges concernés par cette contrainte, avant de sauvegarder.</p>
         </div>
         <button class="main-btn" @click="save"><i class="fa fa-save"></i>Enregistrer</button>
@@ -212,8 +212,16 @@ export default {
     },
 
     save: function () {
-      var fseats = this.constraints.find(c => c.id === 0)
-      let requests = [forbiddenSeatService.update(this.planId, fseats.seats)]
+      let forbiddenSeats = []
+      // on récupère depuis le plan car il est important que le nombre de F Seats soit exact (moins grave pour constraints)
+      this.forbiddenSeats.forEach(seat => {
+        forbiddenSeats.push({
+          plan_id: this.planId,
+          line: seat.line,
+          cell: seat.cell
+        })
+      })
+      let requests = [forbiddenSeatService.update(this.planId, forbiddenSeats)]
 
       this.constraints.filter(c => c.id > 0).forEach(constraint => {
         requests.push(constraintService.updateConstraintSeat(this.planId, constraint.id, constraint.seats))
@@ -228,6 +236,9 @@ export default {
     }
   },
   computed: {
+    forbiddenSeats () {
+      return this.$refs.plan ? this.$refs.plan.getGroupSeats(0) : []
+    }
   }
 }
 </script>

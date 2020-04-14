@@ -26,10 +26,13 @@ export default {
   },
   props: {
     seat: Object,
-    size: Number,
     isSelectable: {
       type: Boolean,
       default: true
+    },
+    size: {
+      type: Number,
+      default: 50
     }
   },
   mounted () {
@@ -41,11 +44,18 @@ export default {
         color: this.foregroundColor,
         background: this.bgColor || this.colors.bgColor,
         border: this.borderSize + 'px ' + this.borderStyle + ' ' + this.borderColor,
-        opacity: this.opacity
+        opacity: this.opacity,
+        minWidth: this.size + 'px',
+        width: this.size + 'px',
+        maxWidth: this.size + 'px',
+        minHeight: this.size + 'px',
+        height: this.size + 'px',
+        maxHeight: this.size + 'px',
+        fontSize: this.fontSize + 'px'
       }
     },
-    sizeComp () {
-      return this.size || 50
+    fontSize () {
+      return this.size / 5
     },
     borderSize () {
       return this.isForbidden ? 0 : this.isSelected ? 2 : 1
@@ -155,7 +165,6 @@ export default {
       if (!this.isForbidden && drop) {
         drop.seat = this.seat
         this.$emit('place-group', drop)
-        this.$emit('group-dropped', this.seat.group)
         this.isDragged = false
       }
     },
@@ -173,6 +182,9 @@ export default {
         if (this.group.color) {
           this.foregroundColor = this.shoulColorBeDark(this.group.color) ? this.colors.bgColor : this.colors.lighterGrey
         }
+      } else {
+        this.seat.isIsolated = false
+        this.seat.constraint = null
       }
     }
   }

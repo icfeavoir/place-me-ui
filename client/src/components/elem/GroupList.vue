@@ -29,7 +29,6 @@
         :group="group"
         @group-click="onGroupClick"
         @group-drag="onGroupDrag"
-        @group-line-changed="group => $emit('group-line-changed', group)"
       />
       <!-- SEPARATOR -->
       <tr class="around-separator"></tr>
@@ -41,7 +40,6 @@
         :key="'done_' + group._id"
         :group="group"
         @group-click="onGroupClick"
-        @group-line-changed="group => $emit('group-line-changed', group)"
       />
     </table>
   </div>

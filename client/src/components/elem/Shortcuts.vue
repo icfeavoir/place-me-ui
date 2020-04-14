@@ -38,6 +38,8 @@ export default {
         {name: 'Rétablir l\'action annulée', keys: ['ctrl', 'z']},
         {name: 'Annuler la sélection de sièges', keys: ['échap']},
         {name: 'Annuler la sélection du groupe', keys: ['échap']},
+        {name: 'Zoom', keys: ['shift', '+']},
+        {name: 'Dézoom', keys: ['shift', '-']},
         {name: 'Fermer cette fenêtre', keys: ['échap']}
       ],
       funcs: [

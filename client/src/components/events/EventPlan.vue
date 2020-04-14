@@ -20,7 +20,6 @@
         @drag-start="groupDragStart"
         @group-changed="groupSeatChanged"
         @new-group="newGroup"
-        @group-line-changed="groupLineChanged"
       />
 
       <div class="plan-container">
@@ -48,6 +47,7 @@
           :plan="plan"
           @group-changed="groupSeatChanged"
           @select-seat="selectSeat"
+          @groups-changed="checkGroupsErrors"
           @save="saveGroups"
         />
       </div>
@@ -60,6 +60,7 @@ import forbiddenSeatService from '@/services/forbiddenSeat.service'
 import groupService from '@/services/group.service'
 import groupSeatService from '@/services/groupSeat.service'
 import eventPlanService from '@/services/eventPlan.service'
+import constraintService from '@/services/constraint.service'
 
 import GroupList from '@/components/elem/GroupList'
 import Plan from '@/components/elem/Plan'
@@ -79,6 +80,7 @@ export default {
       event: null,
       plan: null,
       groups: null,
+      allConstraints: [],
       isSaved: true,
       isSaving: false,
       isLargeScreen: false,
@@ -116,8 +118,10 @@ export default {
         // on place les gens avec les infos de la DB
         this.setGroupSeats(eventPlanId)
       })
-    })
 
+      // les contraintes
+      constraintService.getByPlan(plan.id).then(constraintSeats => this.$set(this, 'allConstraints', constraintSeats))
+    })
     this.isLargeScreen = !this.isPortraitView() && !this.isSmallWidthScreen()
   },
   methods: {
@@ -146,9 +150,6 @@ export default {
       })
     },
 
-    groupLineChanged (group) { // appelée UNE FOIS quand on bouge un groupe
-      this.$refs.plan.checkGroupErrors(group)
-    },
     groupSeatChanged: function (data) { // appelée pour CHAQUE siège qui change
       // permet de recalculer les groups
       let group = data.group
@@ -291,7 +292,99 @@ export default {
 
     resize () {
       this.isLargeScreen = !this.isPortraitView() && !this.isSmallWidthScreen()
+    },
+
+    /**
+     * CHEKING ERRORS
+     */
+    checkGroupsErrors (groupIds) {
+      groupIds.forEach(id => {
+        let group = this.groups.find(g => g.id === id)
+        this.checkGroupAlone(group)
+        this.checkGroupConstraints(group)
+      })
+    },
+    checkGroupAlone (group) {
+      if (group) {
+        // on prend chaque place de ce groupe
+        this.$refs.plan.getGroupSeats(group.id).forEach(seat => {
+          let isolated = this.isSeatIsolated(seat)
+          seat.isIsolated = isolated
+        })
+      }
+    },
+    isSeatIsolated (seat) { // prend un siège et regarde autour de lui
+      if (seat.group.number === 1) {
+        // le group est une seule personne, normal qu'il soit seul
+        return false
+      } else {
+        let toTest = [
+          {line: seat.line, cell: seat.cell - 1}, // à gauche
+          {line: seat.line, cell: seat.cell + 1} // à droite
+        ]
+        for (let i = 0; i < toTest.length; i++) {
+          let data = toTest[i]
+          let seatTested = this.$refs.plan.findSeat(data.line, data.cell)
+          if (seatTested && seatTested.group && seatTested.group.id === seat.group.id) {
+            return false
+          }
+        }
+      }
+      // on a pas trouvé de gens autour
+      return true
+    },
+    checkGroupConstraints (group) {
+      if (group && group.constraint) {
+        // on prend chaque place de ce groupe
+        const forAll = group.constraint_number === group.number
+        const constraintSeats = this.allConstraints.filter(cs => cs.constraint_id === group.constraint_id)
+        let seatsInError = []
+        let count = 0
+        this.$refs.plan.getGroupSeats(group.id).forEach(seat => {
+          let respect = this.isSeatRespectingConstraint(seat, constraintSeats)
+          if (respect) {
+            count++
+            if (seat.constraint) {
+              // si une erreur était enregistrée, on l'annule
+              seat.constraint.isRespected = true
+              seat.constraint.text = ''
+            }
+          } else {
+            seatsInError.push(seat)
+          }
+        })
+        // on met à jour les seats in error
+        seatsInError.forEach(seat => {
+          // d'abord on vérifie l'objet constrainte
+          if (seat.constraint === null) {
+            seat.constraint = {}
+          }
+          let isOk = forAll ? false : count >= group.constraint_number
+          // si le seat est en error mais que la constrainte est respéctée (count enough)
+          if (isOk) {
+            // on annule la constrainte
+            seat.constraint = null
+          } else {
+            // on met la contrainte
+            seat.constraint.isRespected = false
+            seat.constraint.text = forAll
+              ? 'Le groupe <b>' + group.name + '</b> doit être en place <b>' + group.constraint_name + '</b>'
+              : 'Le groupe <b>' + group.name + '</b> doit avoir au moins ' + group.constraint_number + ' personnes en place <b>' + group.constraint_name + '</b>'
+          }
+        })
+      }
+    },
+    isSeatRespectingConstraint (seat, constraintSeats) {
+      // on regarde si le siège fait partie des sièges de la contrainte
+      for (let i = 0; i < constraintSeats.length; i++) { // boucle pour break en faisant return
+        let cSeat = constraintSeats[i]
+        if (cSeat.line === seat.line && cSeat.cell === seat.cell) {
+          return true
+        }
+      }
+      return false
     }
+
   },
   computed: {
     savedStyle () {

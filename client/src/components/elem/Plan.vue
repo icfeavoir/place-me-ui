@@ -1,5 +1,9 @@
 <template>
   <div ref="plan" class='event-plan' v-if="seats">
+    <div ref="zoomContainer" class="zoom-container">
+      <button @click="zoom(1)"><i class="fa fa-plus"></i></button>
+      <button @click="zoom(-1)"><i class="fa fa-minus"></i></button>
+    </div>
     <div class="plan-selector" :style="selectorStyle"></div>
     <table class="seats" ref="seatsTable">
       <tr v-for="line in lineCount" :key="line">
@@ -9,8 +13,8 @@
           :key="line + '_' + cell"
           :seat="seats.find(s => s.line === (line - 1) && s.cell === (cell - 1))"
           :isSelectable="isSelectable"
+          :size="size"
           @place-group="placeGroup"
-          @group-dropped="checkGroupErrors"
           @seat-click="seatClick"
         />
       </tr>
@@ -19,8 +23,6 @@
 </template>
 
 <script>
-import constraintService from '@/services/constraint.service'
-
 import Line from '@/components/elem/Line'
 import Seat from '@/components/elem/Seat'
 
@@ -46,8 +48,6 @@ export default {
       seats: [],
       lineCount: 0,
       cellCount: 0,
-      // constraints
-      allConstraints: [],
       // select with shift
       isShiftPressed: false,
       firstSelectedSeat: null,
@@ -65,7 +65,8 @@ export default {
         leftStart: 0,
         topStart: 0
       },
-      isSelecting: false
+      isSelecting: false,
+      size: 50
     }
   },
   created () {
@@ -102,7 +103,6 @@ export default {
         }
       }
     }
-    constraintService.getByPlan(this.plan.id).then(constraintSeats => this.$set(this, 'allConstraints', constraintSeats))
   },
   methods: {
     /**
@@ -111,28 +111,33 @@ export default {
      * @param saved Boolean Faut-il enregistrer les modifs ?
      */
     placeGroup: function (data, saved = true) {
-      let hasChanged = true
+      let updatedGroups = []
       if (data.auto) {
         // essaie de placer les gens en auto
         let allowChangeLine = this.isShiftPressed || data.allowChangeLine
-        hasChanged = this.placeGroupAuto(data, allowChangeLine)
+        updatedGroups = this.placeGroupAuto(data, allowChangeLine)
       } else if (data.setSeat) {
         // mode simple : group vers seat
         if (!data.seat.isEmpty && data.seat.group.id === data.group.id) {
           // même groupe
-          hasChanged = false
         } else {
-          this.setSeat(data.seat, data.group)
+          let {oldGroup, newGroup} = this.setSeat(data.seat, data.group)
+          // MAJ
+          updatedGroups = this.addUpdatedGroup(updatedGroups, oldGroup)
+          updatedGroups = this.addUpdatedGroup(updatedGroups, newGroup)
         }
       } else if (data.fromAnotherSeat) {
         if (data.prevSeat === data.seat) {
           // on a drag&drop un seat sur lui même
-          hasChanged = false
         } else {
-          // on vide l'ancien siège
-          this.emptySeat(data.prevSeat)
+          // on enlève le group dragged
+          let draggedGroup = this.emptySeat(data.prevSeat)
           // on assigne
-          this.setSeat(data.seat, data.group)
+          let {oldGroup, newGroup} = this.setSeat(data.seat, data.group)
+          // MAJ (cas particulier:  groupe draggé sur lui-même)
+          updatedGroups = this.addUpdatedGroup(updatedGroups, draggedGroup)
+          updatedGroups = this.addUpdatedGroup(updatedGroups, oldGroup)
+          updatedGroups = this.addUpdatedGroup(updatedGroups, newGroup)
           // on annule le selector
           this.isSelecting = false
           this.mouseUp()
@@ -140,24 +145,39 @@ export default {
       } else if (data.del) {
         if (data.seat.isEmpty) {
           // le siège est vide
-          hasChanged = false
         } else {
           // suppr le siège
           data.group = null
-          this.emptySeat(data.seat)
+          let oldGroup = this.emptySeat(data.seat)
+          // MAJ
+          updatedGroups = this.addUpdatedGroup(updatedGroups, oldGroup)
         }
       } else if (data.delGroup) {
         if (data.groupId) {
           this.getGroupSeats(data.groupId).forEach(seat => {
             this.placeGroup({del: true, seat: seat}, saved)
           })
+          // MAJ
+          updatedGroups = this.addUpdatedGroup(updatedGroups, data.groupId)
         }
       }
 
+      let hasChanged = updatedGroups.length > 0
       if (saved && hasChanged) {
         // on emet pour donner la modif
         this.$emit('save')
       }
+      this.$emit('groups-changed', updatedGroups)
+    },
+
+    addUpdatedGroup (groups, groupId) {
+      if (groupId !== null && typeof groupId === 'object') {
+        groupId = groupId.id
+      }
+      if (groupId && !groups.includes(groupId)) {
+        groups.push(groupId)
+      }
+      return groups
     },
 
     findSeat: function (line, cell) {
@@ -205,9 +225,12 @@ export default {
       // on MAJ l'ancien groupe si existant
       if (!seat.isEmpty && seat.group) {
         this.$emit('group-changed', { group: seat.group, count: -1 })
+        let oldGroup = seat.group
         seat.group = null
         seat.isEmpty = true
+        return oldGroup
       }
+      return null
     },
     setSeat: function (seat, newGroup) {
       if (!seat.isForbidden && newGroup.remaining > 0) {
@@ -215,11 +238,11 @@ export default {
           // on a rien changé
           return false
         }
-        this.emptySeat(seat)
+        let oldGroup = this.emptySeat(seat)
         seat.group = newGroup
         seat.isEmpty = newGroup === null // est vide si group null
         this.$emit('group-changed', { group: newGroup, count: 1 })
-        return true
+        return {oldGroup: oldGroup, newGroup: newGroup}
       }
       return false
     },
@@ -228,12 +251,15 @@ export default {
       let group = data.group
       let seat = data.seat
       let remaining = 'remaining' in group ? group.remaining : group.number
-      let hasChanged = false
+      let updatedGroups = []
       remaining = remaining < 0 ? 0 : remaining
 
       if (seat && remaining) {
         // on met direct le nom du groupe sur le siège
-        hasChanged = this.setSeat(seat, group) || hasChanged
+        let {oldGroup, newGroup} = this.setSeat(seat, group)
+        // MAJ
+        this.addUpdatedGroup(updatedGroups, oldGroup)
+        this.addUpdatedGroup(updatedGroups, newGroup)
       }
 
       const startCell = seat.cell
@@ -273,11 +299,14 @@ export default {
             remaining === 0
         // on regarde si on peut ajouter
         if (!stop) {
-          hasChanged = this.setSeat(currentSeat, group) || hasChanged
+          let {oldGroup, newGroup} = this.setSeat(currentSeat, group)
+          // MAJ
+          this.addUpdatedGroup(updatedGroups, oldGroup)
+          this.addUpdatedGroup(updatedGroups, newGroup)
         }
       } while (stop === false)
 
-      return hasChanged
+      return updatedGroups
     },
 
     selectSeveralSeats (firstSeat, lastSeat) {
@@ -353,7 +382,7 @@ export default {
         let scroll = this.getPlanScroll()
         this.$refs.seats.forEach(seat => { // attention: c'est le seat sous forme html
           let left = seat.$el.offsetLeft + seat.$parent.$el.offsetLeft
-          let top = seat.$el.offsetTop + seat.$parent.$el.offsetTop
+          let top = seat.$el.offsetTop + seat.$parent.$el.offsetTop + this.$refs.zoomContainer.offsetHeight
           let right = left + seat.$el.offsetWidth
           let bottom = top + seat.$el.offsetHeight
 
@@ -378,96 +407,6 @@ export default {
       }
     },
 
-    /**
-     * Peut être appelée par EventPlan ou par un Groupline
-     */
-    checkGroupErrors (group) {
-      this.checkGroupAlone(group)
-      this.checkGroupConstraints(group)
-    },
-    checkGroupConstraints (group) {
-      if (group && group.constraint) {
-        // on prend chaque place de ce groupe
-        const forAll = group.constraint_number === group.number
-        const constraintSeats = this.allConstraints.filter(cs => cs.constraint_id === group.constraint_id)
-        let seatsInError = []
-        let count = 0
-        this.getGroupSeats(group.id).forEach(seat => {
-          let respect = this.isSeatRespectingConstraint(seat, constraintSeats)
-          if (respect) {
-            count++
-            if (seat.constraint) {
-              // si une erreur était enregistrée, on l'annule
-              seat.constraint.isRespected = true
-              seat.constraint.text = ''
-            }
-          } else {
-            seatsInError.push(seat)
-          }
-        })
-        // on met à jour les seats in error
-        seatsInError.forEach(seat => {
-          // d'abord on vérifie l'objet constrainte
-          if (seat.constraint === null) {
-            seat.constraint = {}
-          }
-          let isOk = forAll ? false : count >= group.constraint_number
-          // si le seat est en error mais que la constrainte est respéctée (count enough)
-          if (isOk) {
-            // on annule la constrainte
-            seat.constraint = null
-          } else {
-            // on met la contrainte
-            seat.constraint.isRespected = false
-            seat.constraint.text = forAll
-              ? 'Le groupe <b>' + group.name + '</b> doit être en place <b>' + group.constraint_name + '</b>'
-              : 'Le groupe <b>' + group.name + '</b> doit avoir au moins ' + group.constraint_number + ' personnes en place <b>' + group.constraint_name + '</b>'
-          }
-        })
-      }
-    },
-    isSeatRespectingConstraint (seat, constraintSeats) {
-      // on regarde si le siège fait partie des sièges de la contrainte
-      for (let i = 0; i < constraintSeats.length; i++) { // boucle pour break en faisant return
-        let cSeat = constraintSeats[i]
-        if (cSeat.line === seat.line && cSeat.cell === seat.cell) {
-          return true
-        }
-      }
-      return false
-    },
-    checkGroupAlone (group) {
-      if (group) {
-        // on prend chaque place de ce groupe
-        this.getGroupSeats(group.id).forEach(seat => {
-          let isolated = this.isSeatIsolated(seat)
-          seat.isIsolated = isolated
-        })
-      }
-    },
-    isSeatIsolated (seat) { // prend un siège et regarde autour de lui
-      if (seat.group.number === 1) {
-        // le group est une seule personne, normal qu'il soit seul
-        return false
-      } else {
-        let toTest = [
-          // {line: seat.line - 1, cell: seat.cell}, // au dessus
-          // {line: seat.line + 1, cell: seat.cell}, // en dessous
-          {line: seat.line, cell: seat.cell - 1}, // à gauche
-          {line: seat.line, cell: seat.cell + 1} // à droite
-        ]
-        for (let i = 0; i < toTest.length; i++) {
-          let data = toTest[i]
-          let seatTested = this.findSeat(data.line, data.cell)
-          if (seatTested && seatTested.group && seatTested.group.id === seat.group.id) {
-            return false
-          }
-        }
-      }
-      // on a pas trouvé de gens autour
-      return true
-    },
-
     supprSelectedGroups () {
       let count = 0
       this.getSelectedSeats().forEach(s => {
@@ -476,6 +415,12 @@ export default {
       })
       this.unselectAll()
       return count
+    },
+
+    zoom (update) {
+      this.size += 5 * update
+      this.size = Math.max(this.size, 5)
+      this.size = Math.min(this.size, 150)
     },
 
     keydown: function (event) {
@@ -492,6 +437,18 @@ export default {
         case 16:
           // SHIFT
           this.isShiftPressed = true
+          break
+        case 107:
+          // PLUS
+          if (this.isShiftPressed) {
+            this.zoom(1)
+          }
+          break
+        case 109:
+          // MOINS
+          if (this.isShiftPressed) {
+            this.zoom(-1)
+          }
           break
       }
     },
