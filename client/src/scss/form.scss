@@ -25,6 +25,10 @@ div.form {
     }
 }
 
+label {
+    color: $lighter-grey;
+    margin: 0 10px;
+}
 input, select {
     height: 25px;
     margin: 10px auto;

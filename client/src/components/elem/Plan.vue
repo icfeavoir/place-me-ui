@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import settingService from '@/services/setting.service'
+
 import Line from '@/components/elem/Line'
 import Seat from '@/components/elem/Seat'
 
@@ -111,6 +113,13 @@ export default {
           })
         }
       }
+
+      settingService.getByName('plan_default_size').then(setting => {
+        let size = Number.parseInt(setting.value)
+        if (size) {
+          this.$set(this, 'size', size)
+        }
+      })
     }
   },
   methods: {

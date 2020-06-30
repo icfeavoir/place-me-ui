@@ -84,8 +84,8 @@ export default {
     countBook: function (eventId) {
       groupService.countGroupByEvent().then((data) => {
         data.forEach(element => {
-          if (this.eventPlans && element && element['event_plan.event.id'] === this.event.id) {
-            this.$set(this.eventPlans.find(p => p.plan.id === element['event_plan.plan.id']) || {}, 'total', element.total)
+          if (this.eventPlans && element && element['eventPlan.event.id'] === this.event.id) {
+            this.$set(this.eventPlans.find(p => p.plan.id === element['eventPlan.plan.id']) || {}, 'total', element.total)
           }
         })
       })

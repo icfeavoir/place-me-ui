@@ -6,47 +6,15 @@ const Model = Sequelize.Model;
 class Group extends Model {}
 Group.init({
     // attributes
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    number: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 1
-    },
-    color: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: '#000000'
-    },
-    event_plan_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: EventPlan,
-            key: 'id',
-        },
-        onDelete: 'SET NULL',
-        allowNull: true,
-    },
-    constraint_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: Constraint,
-            key: 'id',
-        },
-        allowNull: true,
-        defaultValue: null,
-    },
-    constraint_number: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    }
+    name: Sequelize.STRING,
+    number: Sequelize.INTEGER,
+    color: Sequelize.STRING,
+    event_plan_id: Sequelize.INTEGER,
+    constraint_id: Sequelize.INTEGER,
+    constraint_number: Sequelize.INTEGER,
 }, {
     sequelize,
     modelName: 'group'
-    // options
 });
 
 Group.belongsTo(EventPlan, {foreignKey: 'event_plan_id'});

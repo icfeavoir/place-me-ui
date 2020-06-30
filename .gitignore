@@ -2,4 +2,4 @@ node_modules
 server/.env
 client/TODO.txt
 conception/*
-info.md
+config.json

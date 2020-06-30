@@ -13,7 +13,7 @@
           :data="{
             title: group.name,
             number: group.number,
-            desc: group.event_plan ? (group.event_plan.event.name + ' en ' + group.event_plan.plan.name) : 'Non placé !',
+            desc: group.eventPlan ? (group.eventPlan.event.name + ' en ' + group.eventPlan.plan.name) : 'Non placé !',
             obj: group
           }"
           @del='del'
@@ -43,11 +43,11 @@ export default {
     }
   },
   mounted () {
-    groupService.getAll()
-      .then((groups) => {
-        this.$set(this, 'allGroups', groups)
-        this.$set(this, 'groups', groups)
-      })
+    groupService.getAll().then((groups) => {
+      this.$set(this, 'allGroups', groups)
+      this.$set(this, 'groups', groups)
+    })
+
     if (this.isMobileAndTabletcheck() === false) {
       this.$refs.search.focus()
     }
