@@ -71,11 +71,13 @@ export default {
     planService.findById(this.planId).then(plan => {
       plan.forbiddenSeats = []
       this.$set(this, 'plan', plan)
+      // puis on init
+      this.init()
     })
-    this.init()
   },
   methods: {
     init () {
+      this.isSaved = true
       this.constraints = []
       // on enlève tous les sièges
       if (this.$refs.plan) {

@@ -32,3 +32,5 @@ socketService.start(server)
 
 const port = process.env.APP_PORT
 server.listen(port, () => console.info(`Place-me app listening on port ${port}!`))
+
+// TODO: mettre les migrations sur le serveur
