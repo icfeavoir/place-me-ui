@@ -34,7 +34,7 @@ export default {
     if (!localStorage.freeToUse || localStorage.freeToUse === 'false') {
       let msg = {
         title: 'Place Me',
-        body: 'Sur cette démonstration, vous êtes libre ! Vous pouvez ajouter - modifier - supprimer des réservations, des plans, des évènements !'
+        body: 'Sur cette démonstration, soyez libre ! Vous pouvez ajouter - modifier - supprimer des réservations, des plans, des évènements !'
       }
       let options = {
         okText: 'C\'est compris !',
