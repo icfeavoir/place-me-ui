@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import settingService from '@/services/setting.service'
-
 import Line from '@/components/elem/Line'
 import Seat from '@/components/elem/Seat'
 
@@ -114,12 +112,8 @@ export default {
         }
       }
 
-      settingService.getByName('plan_default_size').then(setting => {
-        let size = Number.parseInt(setting.value)
-        if (size) {
-          this.$set(this, 'size', size)
-        }
-      })
+      let storedSize = Number.parseInt(localStorage.size)
+      this.size = Number.isInteger(storedSize) ? storedSize : this.size
     }
   },
   methods: {
@@ -439,6 +433,7 @@ export default {
       this.size += 5 * update
       this.size = Math.max(this.size, 5)
       this.size = Math.min(this.size, 150)
+      localStorage.size = this.size
     },
 
     keydown: function (event) {
