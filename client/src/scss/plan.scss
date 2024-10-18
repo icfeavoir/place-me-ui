@@ -28,6 +28,7 @@ table.seats {
         &:last-child {
             border-top-left-radius: initial;
             border-bottom-left-radius: initial;
+            border-left: none;
         }
         &:hover {
             cursor: pointer;

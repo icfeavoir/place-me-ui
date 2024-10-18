@@ -1,8 +1,8 @@
 <template>
   <div ref="plan" class='event-plan' v-if="seats">
     <div ref="zoomContainer" class="zoom-container">
-      <button @click="zoom(1)"><i class="fa fa-plus"></i></button>
-      <button @click="zoom(-1)"><i class="fa fa-minus"></i></button>
+      <button @click="zoom(1)"><i class="fa fa-plus"></i></button><!--
+      --><button @click="zoom(-1)"><i class="fa fa-minus"></i></button>
     </div>
     <div class="plan-selector" :style="selectorStyle"></div>
     <table class="seats" ref="seatsTable">
