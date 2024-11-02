@@ -1,0 +1,20 @@
+- eventPlan
+    - ctrl+z & ctrl+shift+z
+- Gérer le nombre de places -> système de liste d'attente (à activer dans les params avec limite ou infini)
+- Ajouter des lignes / colonnes manuellement
+
+- Paramètres :
+    - liste d'attente (oui ou non)
+        - max file d'attente (null ou nombre)
+    - ajouter en variables globales
+
+- Ajouter "réservation prise par" OU quand on arrive sur le logiciel, un "faux" log
+    --> dans chaque table mettre qui (une table user_session avec le nom, date & heure)
+- Infos en + : num téléphone / commentaire
+- Contrainte du genre "A côté de" ?
+    --> Fusion de groupes plutôt
+
+- Nom des rangés (A1, B6)
+- Génération de docs (liste, étiquettes, etc)
+
+- IA génération plan

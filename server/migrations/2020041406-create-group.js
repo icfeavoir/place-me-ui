@@ -6,56 +6,56 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       number: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          defaultValue: 1
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
       },
       color: {
-          type: Sequelize.STRING,
-          allowNull: false,
-          defaultValue: '#000000'
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: '#000000',
       },
       event_plan_id: {
-          type: Sequelize.INTEGER,
-          references: {
-              model: 'eventPlans',
-              key: 'id',
-          },
-          onDelete: 'SET NULL',
-          allowNull: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'event_plans',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+        allowNull: true,
       },
       constraint_id: {
-          type: Sequelize.INTEGER,
-          references: {
-              model: 'constraints',
-              key: 'id',
-          },
-          allowNull: true,
-          defaultValue: null,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'constraints',
+          key: 'id',
+        },
+        allowNull: true,
+        defaultValue: null,
       },
       constraint_number: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          defaultValue: 0
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('groups');
-  }
+  },
 };

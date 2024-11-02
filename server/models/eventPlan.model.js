@@ -1,22 +1,25 @@
-const {Sequelize, sequelize} = require('../config/db');
-const Event = require('./event.model')
-const Plan = require('./plan.model')
+const { Sequelize, sequelize } = require('../config/db');
+const Event = require('./event.model');
+const Plan = require('./plan.model');
 
 const Model = Sequelize.Model;
 class EventPlan extends Model {}
-EventPlan.init({
+EventPlan.init(
+  {
     event_id: Sequelize.INTEGER,
     plan_id: Sequelize.INTEGER,
-}, {
+  },
+  {
     sequelize,
-    modelName: 'eventPlan'
-});
+    modelName: 'event_plan',
+  }
+);
 
-EventPlan.belongsTo(Event, {foreignKey: 'event_id'})
-EventPlan.belongsTo(Plan, {foreignKey: 'plan_id'})
+EventPlan.belongsTo(Event, { foreignKey: 'event_id' });
+EventPlan.belongsTo(Plan, { foreignKey: 'plan_id' });
 
 EventPlan.addScope('defaultScope', {
-    include: [Event, Plan]
-})
+  include: [Event, Plan],
+});
 
-module.exports = EventPlan
+module.exports = EventPlan;
