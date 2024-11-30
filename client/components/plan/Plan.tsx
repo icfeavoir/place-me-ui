@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useEventPlan } from '@/hooks/eventPlan/useEventPlan';
 import Grid from '@mui/material/Grid2';
+import { Seat } from './Seat';
 
 type Props = {
   eventId: number;
@@ -50,9 +51,8 @@ export const Plan = ({ eventId, planId }: Props) => {
                     aspectRatio: '1 / 1',
                   }}
                 >
-                  <Grid style={{ opacity: 1 }}>
-                    {row} - {col}
-                  </Grid>
+                  <Seat id={`${row} - ${col}`} />
+                  {/* <Grid style={{ opacity: 1 }}>{row} - {col}</Grid> */}
                 </Grid>
               </td>
             ))}
